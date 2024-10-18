@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Napkin Math</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <script src="https://unpkg.com/vue@3"></script>
+    <style>
+        body {
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .card {
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            background: #f9f9f9;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .card:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        .explanation {
+            cursor: pointer;
+            color: #007bff;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app" class="container">
+        <div class="header">
+            <h1>Data Napkin Math for Training Data Value</h1>
+            <p>Order of magnitude estimates about profit distribution, dataset creation costs, and data deals.</p>
+        </div>
+
+        <!-- Introduction Section -->
+        <section id="introduction">
+            <h2>Introduction</h2>
+            <p>This website provides some "napkin math" estimates to explore the value of data contributions in AI models. These estimates aim to help inform discussions on data value and possible revenue distributions to contributors.</p>
+            <p>By considering different scenarios (e.g., dividing LLM revenue among contributors based on token counts), we can explore the implications of various interventions related to training data contributions. This helps to understand how much value individual contributors might receive under different conditions.</p>
+        </section>
+
+        <!-- Napkin Math Section -->
+        <section id="napkinMath">
+            <h2>Napkin Math Calculations</h2>
+            <p>Below are examples of napkin math calculations and scenarios based on the Python functions from the original notebook:</p>
+
+            <!-- Calculation Card: Human-Readable Format Conversion -->
+            <div class="card">
+                <h4>Human-Readable Format Conversion</h4>
+                <p>
+                    <span class="explanation" title="function humanReadableFormat(value) { if (value === 0) return '0'; if (Math.abs(value) < 1) return value.toString(); const suffixes = ['', 'thousand', 'million', 'billion', 'trillion', 'quadrillion', 'quintillion']; const magnitude = Math.floor(Math.log10(Math.abs(value)) / 3); value = value / Math.pow(10, 3 * magnitude); return `${value.toFixed(2)} ${suffixes[magnitude]}`; }">We are converting a numerical value to a more readable format, like thousands or millions.</span>
+                </p>
+                <div class="mb-3">
+                    <label for="exampleValueInput" class="form-label">Input Value:</label>
+                    <input type="number" v-model="humanReadableInput" class="form-control" placeholder="Enter a value">
+                </div>
+                <div class="mt-4">
+                    <p>Human-Readable Format: <strong>{{ humanReadableFormat(humanReadableInput) }}</strong></p>
+                </div>
+            </div>
+
+            <!-- Calculation Card: Estimating Contributor Value -->
+            <div class="card">
+                <h4>Estimating Contributor Value</h4>
+                <p>
+                    <span class="explanation" title="return ((this.totalRevenue * (this.contributionPercentage / 100)) || 0).toFixed(2);">We are estimating the value a contributor might receive based on their contribution percentage and total revenue.</span>
+                </p>
+                <div class="mb-3">
+                    <label for="contributorInput" class="form-label">Total Revenue (in USD):</label>
+                    <input type="number" v-model="totalRevenue" class="form-control" placeholder="Enter total revenue">
+                </div>
+                <div class="mb-3">
+                    <label for="contributionInput" class="form-label">Contribution Percentage (0-100):</label>
+                    <input type="number" v-model="contributionPercentage" class="form-control" placeholder="Enter contribution percentage">
+                </div>
+                <div class="mt-4">
+                    <p>Estimated Contributor Value: <strong>{{ humanReadableFormat(estimatedContributorValue) }}</strong></p>
+                </div>
+            </div>
+
+            <!-- Calculation Card: Cost to Commission a New Dataset -->
+            <div class="card">
+                <h4>Cost to Commission a New Dataset</h4>
+                <p>
+                    <span class="explanation" title="return ((this.datasetSize * this.costPerToken) || 0).toFixed(2);">We are calculating the cost to commission a new dataset based on the size of the dataset and the cost per token.</span>
+                </p>
+                <div class="mb-3">
+                    <label for="datasetSizeInput" class="form-label">Dataset Size (in tokens):</label>
+                    <input type="number" v-model="datasetSize" class="form-control" placeholder="Enter dataset size">
+                </div>
+                <div class="mb-3">
+                    <label for="costPerTokenInput" class="form-label">Cost per Token (in USD):</label>
+                    <input type="number" v-model="costPerToken" class="form-control" placeholder="Enter cost per token">
+                </div>
+                <div class="mt-4">
+                    <p>Estimated Dataset Cost: <strong>{{ humanReadableFormat(estimatedDatasetCost) }}</strong></p>
+                </div>
+            </div>
+
+            <!-- Calculation Card: Revenue per Token Calculation -->
+            <div class="card">
+                <h4>Revenue per Token Calculation</h4>
+                <p>
+                    <span class="explanation" title="return ((this.totalRevenueForToken / this.datasetSizeForRevenue) || 0).toFixed(6);">We are calculating the estimated revenue generated per token based on total revenue and dataset size.</span>
+                </p>
+                <div class="mb-3">
+                    <label for="totalRevenueInput" class="form-label">Total Revenue (in USD):</label>
+                    <input type="number" v-model="totalRevenueForToken" class="form-control" placeholder="Enter total revenue">
+                </div>
+                <div class="mb-3">
+                    <label for="datasetSizeRevenueInput" class="form-label">Dataset Size (in tokens):</label>
+                    <input type="number" v-model="datasetSizeForRevenue" class="form-control" placeholder="Enter dataset size">
+                </div>
+                <div class="mt-4">
+                    <p>Estimated Revenue per Token: <strong>{{ humanReadableFormat(revenuePerToken) }}</strong></p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    humanReadableInput: 1000000,
+                    totalRevenue: 1000000,
+                    contributionPercentage: 10,
+                    datasetSize: 1000000000,
+                    costPerToken: 0.0001,
+                    totalRevenueForToken: 5000000,
+                    datasetSizeForRevenue: 1000000000,
+                };
+            },
+            computed: {
+                estimatedContributorValue() {
+                    return ((this.totalRevenue * (this.contributionPercentage / 100)) || 0).toFixed(2);
+                },
+                estimatedDatasetCost() {
+                    return ((this.datasetSize * this.costPerToken) || 0).toFixed(2);
+                },
+                revenuePerToken() {
+                    return ((this.totalRevenueForToken / this.datasetSizeForRevenue) || 0).toFixed(6);
+                }
+            },
+            methods: {
+                humanReadableFormat(value) {
+                    if (value === 0) return '0';
+                    if (Math.abs(value) < 1) return value.toString();
+                    const suffixes = ['', 'thousand', 'million', 'billion', 'trillion', 'quadrillion', 'quintillion'];
+                    const magnitude = Math.floor(Math.log10(Math.abs(value)) / 3);
+                    value = value / Math.pow(10, 3 * magnitude);
+                    return `${value.toFixed(2)} ${suffixes[magnitude]}`;
+                }
+            }
+        }).mount('#app');
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
