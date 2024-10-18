@@ -52,33 +52,9 @@
             <div class="collapse mt-3" id="inputSection">
                 <div class="card card-body">
                     <h4>Adjust Inputs</h4>
-                    <div class="mb-3">
-                        <label for="humanReadableInputControl" class="form-label">Input Value for Human-Readable Conversion:</label>
-                        <input type="number" v-model="humanReadableInput" id="humanReadableInputControl" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label for="totalRevenueControl" class="form-label">Total Revenue (in USD):</label>
-                        <input type="number" v-model="totalRevenue" id="totalRevenueControl" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label for="contributionPercentageControl" class="form-label">Contribution Percentage (0-100):</label>
-                        <input type="number" v-model="contributionPercentage" id="contributionPercentageControl" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label for="datasetSizeControl" class="form-label">Dataset Size (in tokens):</label>
-                        <input type="number" v-model="datasetSize" id="datasetSizeControl" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label for="costPerTokenControl" class="form-label">Cost per Token (in USD):</label>
-                        <input type="number" v-model="costPerToken" id="costPerTokenControl" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label for="totalRevenueForTokenControl" class="form-label">Total Revenue for Token Calculation (in USD):</label>
-                        <input type="number" v-model="totalRevenueForToken" id="totalRevenueForTokenControl" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label for="datasetSizeForRevenueControl" class="form-label">Dataset Size for Revenue Calculation (in tokens):</label>
-                        <input type="number" v-model="datasetSizeForRevenue" id="datasetSizeForRevenueControl" class="form-control">
+                    <div v-for="(input, key) in inputs" :key="key" class="mb-3">
+                        <label :for="key" class="form-label">{{ input.label }}</label>
+                        <input type="number" v-model="input.value" :id="key" class="form-control">
                     </div>
                 </div>
             </div>
@@ -89,115 +65,115 @@
             <h2>Napkin Math Calculations</h2>
             <p>Below are examples of napkin math calculations and scenarios based on the Python functions from the original notebook:</p>
 
-            <!-- Calculation Card: Human-Readable Format Conversion -->
-            <div class="card">
-                <h4>Human-Readable Format Conversion</h4>
-                <p>
-                    <span class="explanation" title="function humanReadableFormat(value) { if (value === 0) return '0'; if (Math.abs(value) < 1) return value.toString(); const suffixes = ['', 'thousand', 'million', 'billion', 'trillion', 'quadrillion', 'quintillion']; const magnitude = Math.floor(Math.log10(Math.abs(value)) / 3); value = value / Math.pow(10, 3 * magnitude); return `${value.toFixed(2)} ${suffixes[magnitude]}`; }">We are converting a numerical value to a more readable format, like thousands or millions.</span>
-                </p>
-                <div class="mb-3">
-                    <label for="exampleValueInputCard" class="form-label">Input Value:</label>
-                    <input type="number" v-model="humanReadableInput" id="exampleValueInputCard" class="form-control">
-                </div>
-                <div class="mt-4">
-                    <p>Human-Readable Format: <strong>{{ humanReadableFormat(humanReadableInput) }}</strong></p>
-                </div>
-            </div>
-
-            <!-- Calculation Card: Estimating Contributor Value -->
-            <div class="card">
-                <h4>Estimating Contributor Value</h4>
-                <p>
-                    <span class="explanation" title="return ((this.totalRevenue * (this.contributionPercentage / 100)) || 0).toFixed(2);">We are estimating the value a contributor might receive based on their contribution percentage and total revenue.</span>
-                </p>
-                <div class="mb-3">
-                    <label for="totalRevenueInputCard" class="form-label">Total Revenue (in USD):</label>
-                    <input type="number" v-model="totalRevenue" id="totalRevenueInputCard" class="form-control">
-                </div>
-                <div class="mb-3">
-                    <label for="contributionPercentageInputCard" class="form-label">Contribution Percentage (0-100):</label>
-                    <input type="number" v-model="contributionPercentage" id="contributionPercentageInputCard" class="form-control">
-                </div>
-                <div class="mt-4">
-                    <p>Estimated Contributor Value: <strong>{{ humanReadableFormat(estimatedContributorValue) }}</strong></p>
-                </div>
-            </div>
-
-            <!-- Calculation Card: Cost to Commission a New Dataset -->
-            <div class="card">
-                <h4>Cost to Commission a New Dataset</h4>
-                <p>
-                    <span class="explanation" title="return ((this.datasetSize * this.costPerToken) || 0).toFixed(2);">We are calculating the cost to commission a new dataset based on the size of the dataset and the cost per token.</span>
-                </p>
-                <div class="mb-3">
-                    <label for="datasetSizeInputCard" class="form-label">Dataset Size (in tokens):</label>
-                    <input type="number" v-model="datasetSize" id="datasetSizeInputCard" class="form-control">
-                </div>
-                <div class="mb-3">
-                    <label for="costPerTokenInputCard" class="form-label">Cost per Token (in USD):</label>
-                    <input type="number" v-model="costPerToken" id="costPerTokenInputCard" class="form-control">
-                </div>
-                <div class="mt-4">
-                    <p>Estimated Dataset Cost: <strong>{{ humanReadableFormat(estimatedDatasetCost) }}</strong></p>
-                </div>
-            </div>
-
-            <!-- Calculation Card: Revenue per Token Calculation -->
-            <div class="card">
-                <h4>Revenue per Token Calculation</h4>
-                <p>
-                    <span class="explanation" title="return ((this.totalRevenueForToken / this.datasetSizeForRevenue) || 0).toFixed(6);">We are calculating the estimated revenue generated per token based on total revenue and dataset size.</span>
-                </p>
-                <div class="mb-3">
-                    <label for="totalRevenueForTokenInputCard" class="form-label">Total Revenue (in USD):</label>
-                    <input type="number" v-model="totalRevenueForToken" id="totalRevenueForTokenInputCard" class="form-control">
-                </div>
-                <div class="mb-3">
-                    <label for="datasetSizeForRevenueInputCard" class="form-label">Dataset Size (in tokens):</label>
-                    <input type="number" v-model="datasetSizeForRevenue" id="datasetSizeForRevenueInputCard" class="form-control">
-                </div>
-                <div class="mt-4">
-                    <p>Estimated Revenue per Token: <strong>{{ humanReadableFormat(revenuePerToken) }}</strong></p>
-                </div>
-            </div>
+            <!-- Calculation Cards -->
+            <calculation-card 
+                v-for="(calculation, index) in calculations" 
+                :key="index" 
+                :title="calculation.title" 
+                :description="calculation.description" 
+                :inputs="calculation.inputs" 
+                :result="calculation.result">
+            </calculation-card>
         </section>
     </div>
 
+    <template id="calculation-card-template">
+        <div class="card">
+            <h4>{{ title }}</h4>
+            <p>
+                <span class="explanation" :title="description">{{ description }}</span>
+            </p>
+            <div v-for="(input, key) in inputs" :key="key" class="mb-3">
+                <label :for="key" class="form-label">{{ input.label }}</label>
+                <input type="number" v-model="input.value" :id="key" class="form-control">
+            </div>
+            <div class="mt-4">
+                <p>{{ result.label }}: <strong>{{ result.value }}</strong></p>
+            </div>
+        </div>
+    </template>
+
     <script>
-        const { createApp } = Vue;
+        const { createApp, ref, defineComponent, computed } = Vue;
+
+        const CalculationCard = defineComponent({
+            template: '#calculation-card-template',
+            props: {
+                title: String,
+                description: String,
+                inputs: Object,
+                result: Object
+            }
+        });
 
         createApp({
+            components: {
+                CalculationCard
+            },
             data() {
                 return {
-                    humanReadableInput: 1000000,
-                    totalRevenue: 1000000,
-                    contributionPercentage: 10,
-                    datasetSize: 1000000000,
-                    costPerToken: 0.0001,
-                    totalRevenueForToken: 5000000,
-                    datasetSizeForRevenue: 1000000000,
+                    inputs: {
+                        humanReadableInput: { label: 'Input Value for Human-Readable Conversion', value: ref(1000000) },
+                        totalRevenue: { label: 'Total Revenue (in USD)', value: ref(1000000) },
+                        contributionPercentage: { label: 'Contribution Percentage (0-100)', value: ref(10) },
+                        datasetSize: { label: 'Dataset Size (in tokens)', value: ref(1000000000) },
+                        costPerToken: { label: 'Cost per Token (in USD)', value: ref(0.0001) },
+                        totalRevenueForToken: { label: 'Total Revenue for Token Calculation (in USD)', value: ref(5000000) },
+                        datasetSizeForRevenue: { label: 'Dataset Size for Revenue Calculation (in tokens)', value: ref(1000000000) },
+                    },
+                    calculations: [
+                        {
+                            title: 'Human-Readable Format Conversion',
+                            description: 'We are converting a numerical value to a more readable format, like thousands or millions.',
+                            inputs: {
+                                humanReadableInput: { label: 'Input Value', value: ref(1000000) }
+                            },
+                            result: {
+                                label: 'Human-Readable Format',
+                                value: computed(() => {
+                                    const value = ref(1000000).value;
+                                    return value === 0 ? '0' : (Math.abs(value) < 1 ? value.toString() : `${(value / Math.pow(10, 3 * Math.floor(Math.log10(Math.abs(value)) / 3))).toFixed(2)} ${['', 'thousand', 'million', 'billion', 'trillion', 'quadrillion', 'quintillion'][Math.floor(Math.log10(Math.abs(value)) / 3)]}`);
+                                })
+                            }
+                        },
+                        {
+                            title: 'Estimating Contributor Value',
+                            description: 'We are estimating the value a contributor might receive based on their contribution percentage and total revenue.',
+                            inputs: {
+                                totalRevenue: { label: 'Total Revenue (in USD)', value: ref(1000000) },
+                                contributionPercentage: { label: 'Contribution Percentage (0-100)', value: ref(10) }
+                            },
+                            result: {
+                                label: 'Estimated Contributor Value',
+                                value: computed(() => ((ref(1000000).value * (ref(10).value / 100)) || 0).toFixed(2))
+                            }
+                        },
+                        {
+                            title: 'Cost to Commission a New Dataset',
+                            description: 'We are calculating the cost to commission a new dataset based on the size of the dataset and the cost per token.',
+                            inputs: {
+                                datasetSize: { label: 'Dataset Size (in tokens)', value: ref(1000000000) },
+                                costPerToken: { label: 'Cost per Token (in USD)', value: ref(0.0001) }
+                            },
+                            result: {
+                                label: 'Estimated Dataset Cost',
+                                value: computed(() => ((ref(1000000000).value * ref(0.0001).value) || 0).toFixed(2))
+                            }
+                        },
+                        {
+                            title: 'Revenue per Token Calculation',
+                            description: 'We are calculating the estimated revenue generated per token based on total revenue and dataset size.',
+                            inputs: {
+                                totalRevenueForToken: { label: 'Total Revenue (in USD)', value: ref(5000000) },
+                                datasetSizeForRevenue: { label: 'Dataset Size (in tokens)', value: ref(1000000000) }
+                            },
+                            result: {
+                                label: 'Estimated Revenue per Token',
+                                value: computed(() => ((ref(5000000).value / ref(1000000000).value) || 0).toFixed(6))
+                            }
+                        }
+                    ]
                 };
-            },
-            computed: {
-                estimatedContributorValue() {
-                    return ((this.totalRevenue * (this.contributionPercentage / 100)) || 0).toFixed(2);
-                },
-                estimatedDatasetCost() {
-                    return ((this.datasetSize * this.costPerToken) || 0).toFixed(2);
-                },
-                revenuePerToken() {
-                    return ((this.totalRevenueForToken / this.datasetSizeForRevenue) || 0).toFixed(6);
-                }
-            },
-            methods: {
-                humanReadableFormat(value) {
-                    if (value === 0) return '0';
-                    if (Math.abs(value) < 1) return value.toString();
-                    const suffixes = ['', 'thousand', 'million', 'billion', 'trillion', 'quadrillion', 'quintillion'];
-                    const magnitude = Math.floor(Math.log10(Math.abs(value)) / 3);
-                    value = value / Math.pow(10, 3 * magnitude);
-                    return `${value.toFixed(2)} ${suffixes[magnitude]}`;
-                }
             }
         }).mount('#app');
     </script>
