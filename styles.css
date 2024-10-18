@@ -1,0 +1,26 @@
+body {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+.card {
+    margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 10px;
+    background: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+.explanation {
+    cursor: pointer;
+    color: #007bff;
+    text-decoration: underline;
+}
+.collapse {
+    margin-bottom: 20px;
+}
