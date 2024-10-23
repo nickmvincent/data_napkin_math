@@ -26,36 +26,50 @@
         .card:hover {
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
+        .explanation {
+            cursor: pointer;
+            color: #007bff;
+            text-decoration: underline;
+        }
         .collapse {
             margin-bottom: 20px;
         }
-        /* Style for the tooltip container */
-        .tooltip-container {
-        position: relative;
-        display: inline-block;
-        cursor: pointer;
-        margin: 20px;
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            color: #007bff;
+            text-decoration: underline;
+            cursor: pointer;
         }
-
-        /* Tooltip content (hidden by default) */
-        .tooltip-content {
-        visibility: hidden;
-        position: absolute;
-        bottom: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: #333;
-        color: #fff;
-        padding: 5px;
-        border-radius: 3px;
-        white-space: nowrap;
-        font-size: 12px;
-        z-index: 1;
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
         }
-
-        /* Show the tooltip when hovering over the container */
-        .tooltip-container:hover .tooltip-content {
-        visibility: visible;
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
         }
     </style>
 </head>
@@ -86,16 +100,20 @@
         <!-- Napkin Math Section -->
         <section id="napkinMath">
             <h2>Napkin Math Calculations</h2>
-            <p>Below are our existing napkin math scenarios. For each scenario, you can play with the assumed values to see how things might change.
-                You can also see and edit all the assumptions above. To see exactly what's being calculated in each scenario....
-            </p>
+            <p>Below are examples of napkin math calculations and scenarios based on the Python functions from the original notebook:</p>
 
             <!-- Calculation Cards -->
             <div v-for="(calculation, index) in calculations" :key="index" class="card">
                 <header>
-                    <h4>{{ calculation.title }}</h4> 
+                    <h4>{{ calculation.title }}</h4>
                     <p>
-                        <div class="tooltip-container explanation" >{{ calculation.description }} <div class="tooltip-content">{{ calculation.explanation }}</div></span>
+                        <span class="explanation">{{ calculation.description }}</span>
+                        <span class="tooltip">[hover to see calculation details]
+                            <span class="tooltiptext">
+                                <strong>JavaScript Calculation:</strong><br>
+                                {{ calculation.explanation }}
+                            </span>
+                        </span>
                     </p>
                 </header>
                 <div v-for="inputKey in calculation.inputs" :key="inputKey" class="mb-3">
