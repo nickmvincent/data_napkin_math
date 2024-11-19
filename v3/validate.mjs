@@ -24,10 +24,10 @@ async function loadAndValidateYaml(gistUrl) {
 
             // Prepare a context for the equation with the available inputs
             const inputs = calculation.inputs.reduce((acc, key) => {
-                if (typeof data.inputs[key] === 'undefined') {
+                if (!data.inputs[key] || typeof data.inputs[key].value === 'undefined') {
                     throw new Error(`Missing input value for key: ${key} in calculation: ${calculation.title}`);
                 }
-                acc[key] = data.inputs[key];
+                acc[key] = data.inputs[key].value;
                 return acc;
             }, {});
 
@@ -47,5 +47,5 @@ async function loadAndValidateYaml(gistUrl) {
 }
 
 // Example usage
-const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/9f5fc575d4bacb7e8d1cff87f50aa6823121bb7f/gistfile1.txt';
+const gistUrl = "https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/322437c538755d6b65186e3c62229a026037b365/data.yaml";
 loadAndValidateYaml(gistUrl);

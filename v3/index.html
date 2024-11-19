@@ -78,10 +78,15 @@
         .card:hover {
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
+
+        .input-info {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
     </style>
 </head>
 
-<body style="visibility: hidden;">
+<body>
     <div id="app">
         <button @click="toggleSidebar" class="btn btn-primary sidebar-toggle">
             {{ sidebarOpen ? 'Hide' : 'Show' }} ALL Assumptions
@@ -90,10 +95,11 @@
         <div :class="['sidebar', { open: sidebarOpen }]">
             <button @click="toggleSidebar" class="btn btn-secondary mb-3">Close</button>
             <h4>Adjust Inputs</h4>
-            <div v-for="(value, key) in inputs" :key="key" class="mb-3">
-                <label :for="key" class="form-label">{{ formatLabel(key) }}</label>
-                <input type="number" v-model.number="inputs[key]" :id="key" class="form-control"
+            <div v-for="(input, key) in inputs" :key="key" class="mb-3">
+                <label :for="key" class="form-label">{{ formatLabel(key) }} ({{ input.units }})</label>
+                <input type="number" v-model.number="inputs[key].value" :id="key" class="form-control"
                     @input="updateCalculations">
+                <p class="input-info">Source: <a :href="input.source" target="_blank">{{ input.source }}</a></p>
             </div>
             <button @click="loadDataFromGist" class="btn btn-outline-primary mt-3">Load Data from Gist</button>
         </div>
@@ -158,13 +164,15 @@
                     <header>
                         <h4>{{ calculation.title }}</h4>
                         <p>
-                        <div class="tooltip-container explanation">{{ calculation.description }} <div
-                                class="tooltip-content">{{ calculation.explanation }}</div></span>
-                            </p>
+                            {{ calculation.description }}
+                            <div class="tooltip-container explanation">
+                                <a :href="calculation.diagram" target="_blank">View Diagram</a>
+                            </div>
+                        </p>
                     </header>
                     <div v-for="inputKey in calculation.inputs" :key="inputKey" class="mb-3">
-                        <label :for="inputKey" class="form-label">{{ formatLabel(inputKey) }}</label>
-                        <input type="number" v-model.number="inputs[inputKey]" :id="inputKey" class="form-control"
+                        <label :for="inputKey" class="form-label">{{ formatLabel(inputKey) }} ({{ inputs[inputKey].units }})</label>
+                        <input type="number" v-model.number="inputs[inputKey].value" :id="inputKey" class="form-control"
                             @input="updateCalculations">
                     </div>
                     <footer class="mt-4">
@@ -193,36 +201,13 @@
                 toggleHeaderContent() {
                     this.headerContentOpen = !this.headerContentOpen;
                 },
-                humanReadable(value) {
-                    if (value === 0) return '0';
-                    if (Math.abs(value) < 1) return value.toString();
-                    const units = ['', 'thousand', 'million', 'billion', 'trillion'];
-                    const order = Math.floor(Math.log10(Math.abs(value)) / 3);
-                    const unitName = units[order] || `10^${order * 3}`;
-                    return `${(value / Math.pow(10, 3 * order)).toFixed(2)} ${unitName}`;
-                },
-                async loadDataFromGist() {
-                    try {
-                        const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/9f5fc575d4bacb7e8d1cff87f50aa6823121bb7f/gistfile1.txt';
-                        const response = await fetch(gistUrl);
-                        if (!response.ok) throw new Error('Failed to load data from Gist');
-                        const yamlText = await response.text();
-                        const data = jsyaml.load(yamlText);
-                        console.log('Data successfully loaded from Gist');
-                        this.inputs = data.inputs;
-                        this.calculations = data.calculations;
-                        this.updateCalculations();
-                    } catch (e) {
-                        console.error('Failed to load data from Gist:', e);
-                    }
-                },
                 formatLabel(key) {
                     return key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
                 },
                 updateCalculations() {
                     this.calculations.forEach(calculation => {
                         const inputs = calculation.inputs.reduce((acc, key) => {
-                            acc[key] = this.inputs[key];
+                            acc[key] = this.inputs[key].value;
                             return acc;
                         }, {});
 
@@ -234,12 +219,32 @@
                             console.error('Error evaluating calculation:', error);
                         }
                     });
+                },
+                humanReadable(value) {
+                    if (value === 0) return '0';
+                    if (Math.abs(value) < 1) return value.toString();
+                    const units = ['', 'thousand', 'million', 'billion', 'trillion'];
+                    const order = Math.floor(Math.log10(Math.abs(value)) / 3);
+                    const unitName = units[order] || `10^${order * 3}`;
+                    return `${(value / Math.pow(10, 3 * order)).toFixed(2)} ${unitName}`;
+                },
+                async loadDataFromGist() {
+                    try {
+                        const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/322437c538755d6b65186e3c62229a026037b365/data.yaml';
+                        const response = await fetch(gistUrl);
+                        if (!response.ok) throw new Error('Failed to load data from Gist');
+                        const yamlText = await response.text();
+                        const data = jsyaml.load(yamlText);
+                        console.log('Data successfully loaded from Gist');
+                        this.inputs = data.inputs;
+                        this.calculations = data.calculations;
+                        this.updateCalculations();
+                    } catch (e) {
+                        console.error('Failed to load data from Gist:', e);
+                    }
                 }
             },
             mounted() {
-                window.addEventListener('load', () => {
-                    document.body.style.visibility = 'visible';
-                });
                 this.loadDataFromGist();
                 this.updateCalculations();
             }
