@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Napkin Math</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <script src="https://unpkg.com/vue@3"></script>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        #app {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: #f8f9fa;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            transform: translateX(-100%);
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            transition: margin-left 0.3s ease;
+            margin-left: 0;
+        }
+
+        .main-content.shifted {
+            margin-left: 300px;
+        }
+
+        .sidebar-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            background: #f9f9f9;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <button @click="toggleSidebar" class="btn btn-primary sidebar-toggle">
+            {{ sidebarOpen ? 'Hide' : 'Show' }} ALL Assumptions
+        </button>
+
+        <div :class="['sidebar', { open: sidebarOpen }]">
+            <button @click="toggleSidebar" class="btn btn-secondary mb-3">Close</button>
+            <h4>Adjust Inputs</h4>
+            <div v-for="(value, key) in inputs" :key="key" class="mb-3">
+                <label :for="key" class="form-label">{{ formatLabel(key) }}</label>
+                <input type="number" v-model.number="inputs[key]" :id="key" class="form-control"
+                    @input="updateCalculations">
+            </div>
+        </div>
+
+        <div :class="['main-content', { shifted: sidebarOpen }]">
+            <header class="header">
+                <h1>Data Napkin Math for Training Data Value</h1>
+                <p>This is a lightweight web-page for making order of magnitude estimates about profit distribution,
+                    dataset creation costs, and data deals.
+                </p>
+                <button class="btn btn-link" type="button" @click="toggleHeaderContent">
+                    {{ headerContentOpen ? 'Hide' : 'Show' }} Header Description
+                </button>
+                <div v-if="headerContentOpen" id="headerContent">
+                    <p>
+                        There are a number of open debates about making policy and setting norms around the use of data for "AI"
+                        systems.
+
+                        Should we focus more on creating mechanisms to opt-out of contributing to AI training, or requiring
+                        strict opt-in?
+                        What would happen if we redistribute some of the profits of AI directly to data creators?
+                        Just how much data are we talking about?
+                    </p>
+
+                    <p>
+                        Many of these questions involve some abstract moral arguments, but answering them may also depend on
+                        some
+                        rough estimates
+                        of "what kind of numbers are we talking about". Will people be getting $5000 paychecks, or 5 cent
+                        pittances?
+
+                        This tool is interactive so you can edit any assumptions you want. Ultimately, the math here is mostly
+                        just
+                        arithmetic (with the potential to hook more elaborate ML training scenarios or agent-based models)
+                    </p>
+
+                    <p>
+                        To participate in discussion about what some reasonable default values should be, head to the GitHub
+                        where
+                        we host the underlying data.
+                    </p>
+
+                    <p>
+                        There are two types of objects we use here: reported figures, aka the "inputs" (for instance, the number of tokens used to train a model
+                        or the reported revenue of an AI company) and equations. The idea is, anyone can contribute to this estimation process
+                        by updating a figure (for instance, when a new paper comes out), contesting an equation, or adding a new scenario.
+                    </p>
+                </div>
+            </header>
+
+            <!-- Napkin Math Section -->
+            <section id="napkinMath">
+                <h2>Napkin Math Calculations</h2>
+                <p>Below are our existing napkin math scenarios. For each scenario, you can play with the assumed values to
+                    see how things might change.
+                    You can also see and edit all the assumptions in the sidebar. To see exactly what's being calculated in
+                    each scenario, hover over the description.
+                </p>
+
+                <!-- Calculation Cards -->
+                <div v-for="(calculation, index) in calculations" :key="index" class="card">
+                    <header>
+                        <h4>{{ calculation.title }}</h4>
+                        <p>
+                        <div class="tooltip-container explanation">{{ calculation.description }} <div
+                                class="tooltip-content">{{ calculation.explanation }}</div></span>
+                            </p>
+                    </header>
+                    <div v-for="inputKey in calculation.inputs" :key="inputKey" class="mb-3">
+                        <label :for="inputKey" class="form-label">{{ formatLabel(inputKey) }}</label>
+                        <input type="number" v-model.number="inputs[inputKey]" :id="inputKey" class="form-control"
+                            @input="updateCalculations">
+                    </div>
+                    <footer class="mt-4">
+                        <p>{{ calculation.result.label }}: <strong>{{ calculation.result.value }}</strong></p>
+                    </footer>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    sidebarOpen: false,
+                    headerContentOpen: true,
+                    inputs: {},
+                    calculations: []
+                };
+            },
+            methods: {
+                toggleSidebar() {
+                    this.sidebarOpen = !this.sidebarOpen;
+                },
+                toggleHeaderContent() {
+                    this.headerContentOpen = !this.headerContentOpen;
+                },
+                formatLabel(key) {
+                    return key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                },
+                updateCalculations() {
+                    this.calculations.forEach(calculation => {
+                        const inputs = calculation.inputs.reduce((acc, key) => {
+                            acc[key] = this.inputs[key];
+                            return acc;
+                        }, {});
+
+                        let result = 0;
+                        if (calculation.title === 'Estimating Contributor Value') {
+                            result = inputs.totalRevenue * (inputs.contributionPercentage / 100);
+                        } else if (calculation.title === 'Cost to Commission a New Dataset') {
+                            result = inputs.datasetSize * inputs.costPerToken;
+                        } else if (calculation.title === 'Revenue per Token Calculation') {
+                            result = inputs.totalRevenueForToken / inputs.datasetSizeForRevenue;
+                        } else if (calculation.title === 'Dividing LLM-Related Money Amongst Everyone') {
+                            result = inputs.totalRevenue / inputs.numberOfContributors;
+                        } else if (calculation.title === 'Apportion Based on Tokens') {
+                            result = inputs.totalRevenue * (inputs.tokensContributed / inputs.datasetSize);
+                        } else if (calculation.title === 'Valuable Tokens Contribution') {
+                            const weightedTokens = inputs.valuableTokens * inputs.tokenWeight + inputs.regularTokens;
+                            result = inputs.totalRevenue * (weightedTokens / (inputs.datasetSize * inputs.tokenWeight));
+                        }
+
+                        calculation.result.value = this.humanReadable(result);
+                    });
+                },
+                humanReadable(value) {
+                    if (value === 0) return '0';
+                    if (Math.abs(value) < 1) return value.toString();
+                    const units = ['', 'thousand', 'million', 'billion', 'trillion'];
+                    const order = Math.floor(Math.log10(Math.abs(value)) / 3);
+                    const unitName = units[order] || `10^${order * 3}`;
+                    return `${(value / Math.pow(10, 3 * order)).toFixed(2)} ${unitName}`;
+                },
+                async loadData() {
+                    try {
+                        const response = await fetch('data.json');
+                        if (!response.ok) throw new Error('Failed to load data.json');
+                        const data = await response.json();
+                        this.inputs = data.inputs;
+                        this.calculations = data.calculations;
+                    } catch (e) {
+                        console.warn('Failed to load external data, using local defaults.');
+                        // Local defaults (fallback if fetching JSON fails)
+                        this.inputs = {
+                            totalRevenue: 1000000,
+                            contributionPercentage: 10,
+                            datasetSize: 1000000000,
+                            costPerToken: 0.0001,
+                            totalRevenueForToken: 5000000,
+                            datasetSizeForRevenue: 1000000000,
+                            numberOfContributors: 1000,
+                            tokenWeight: 2,
+                            tokensContributed: 10000,
+                            valuableTokens: 5000,
+                            regularTokens: 5000
+                        };
+                        this.calculations = [
+                            {
+                                title: 'Estimating Contributor Value',
+                                description: 'We are estimating the value a contributor might receive based on their contribution percentage and total revenue.',
+                                inputs: ['totalRevenue', 'contributionPercentage'],
+                                result: {
+                                    label: 'Estimated Contributor Value',
+                                    value: 0
+                                },
+                                explanation: 'totalRevenue * (contributionPercentage / 100)'
+                            },
+                            // other calculations...
+                        ];
+                    }
+                }
+            },
+            mounted() {
+                this.loadData();
+                this.updateCalculations();
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+
+</html>
