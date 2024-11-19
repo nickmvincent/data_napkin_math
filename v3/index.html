@@ -94,6 +94,7 @@
                 <input type="number" v-model.number="inputs[key]" :id="key" class="form-control"
                     @input="updateCalculations">
             </div>
+            <button @click="loadDataFromGist" class="btn btn-outline-primary mt-3">Load Data from Gist</button>
         </div>
 
         <div :class="['main-content', { shifted: sidebarOpen }]">
@@ -264,6 +265,19 @@
                             },
                             // other calculations...
                         ];
+                    }
+                },
+                async loadDataFromGist() {
+                    try {
+                        const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/ae478dbc4c6496acaf79eb532b6e0a72/raw/data.json';
+                        const response = await fetch(gistUrl);
+                        if (!response.ok) throw new Error('Failed to load data from Gist');
+                        const data = await response.json();
+                        this.inputs = data.inputs;
+                        this.calculations = data.calculations;
+                        this.updateCalculations();
+                    } catch (e) {
+                        console.error('Failed to load data from Gist:', e);
                     }
                 }
             },
