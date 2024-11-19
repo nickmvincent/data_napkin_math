@@ -1,2 +1,3 @@
-# data_napkin_math
- The Data Napkin Math Project
+# Data Napkin Math
+
+The Data Napkin Math Project
