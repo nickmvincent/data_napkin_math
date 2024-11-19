@@ -93,12 +93,33 @@
             background-color: #007bff;
             color: white;
         }
+
+        details summary {
+            cursor: pointer;
+        }
+
+        details ul {
+            padding-left: 20px;
+            list-style-type: none;
+        }
+
+        details ul li {
+    display: block;
+}
+
+        details[open] ul li {
+            display: block;
+        }
+
+        #headerContent {
+            text-align: left;
+        }
     </style>
 </head>
 
 <body>
     <div id="app">
-        <button @click="toggleSidebar" class="btn btn-primary sidebar-toggle">
+        <button @click="toggleSidebar" class="btn btn-primary sidebar-toggle" style="background-color: #10a37f; color: white; border: none; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
             {{ sidebarOpen ? 'Hide' : 'Show' }} ALL Assumptions
         </button>
 
@@ -106,12 +127,11 @@
             <h4>Adjust Inputs</h4>
             <div v-for="(input, key) in inputs" :key="key" class="mb-3">
                 <label :for="key" class="form-label">{{ formatLabel(key) }} ({{ input.units }})</label>
-                <input type="number" v-model.number="inputs[key].value" :id="key" class="form-control"
-                    @input="updateCalculations">
+                <input type="number" v-model.number="inputs[key].value" :id="key" class="form-control" @input="updateCalculations">
                 <p v-if="input.description" class="input-info">{{ input.description }}</p>
                 <p class="input-info">Source: <a :href="input.source_url" target="_blank">{{ input.source_url }}</a></p>
             </div>
-            <button @click="loadDataFromGist" class="btn btn-outline-primary mt-3">Load Data from Gist</button>
+            <button @click="loadDataFromGist" class="btn btn-outline-primary mt-3" style="border-color: #10a37f; color: #10a37f;">Load Data from Gist</button>
         </div>
 
         <div :class="['main-content', { shifted: sidebarOpen }]">
@@ -131,14 +151,12 @@
                     <p>
                         Many of these questions involve some abstract moral arguments, but answering them may also depend on
                         some
-                        rough estimates
-                        of "what kind of numbers are we talking about". Will people be getting $5000 paychecks, or 5 cent
+                        rough estimates of "what kind of numbers are we talking about". Will people be getting $5000 paychecks, or 5 cent
                         pittances?
                     </p>
                     <p>
                         This tool is interactive so you can edit any assumptions you want. Ultimately, the math here is mostly
-                        just
-                        arithmetic (with the potential to hook more elaborate ML training scenarios or agent-based models)
+                        just arithmetic (with the potential to hook more elaborate ML training scenarios or agent-based models)
                     </p>
                     <p>
                         To participate in discussion about what some reasonable default values should be, head to the GitHub
@@ -156,8 +174,7 @@
             <section id="napkinMath">
                 <h2>Napkin Math Calculations</h2>
                 <p>Below are our existing napkin math scenarios. For each scenario, you can play with the assumed values to
-                    see how things might change.
-                    You can also see and edit all the assumptions in the sidebar. To see exactly what's being calculated in
+                    see how things might change. You can also see and edit all the assumptions in the sidebar. To see exactly what's being calculated in
                     each scenario, hover over the description.
                 </p>
 
@@ -168,25 +185,37 @@
                         <p>
                             {{ calculation.description }}
                             <div class="tooltip-container explanation">
-                                <a :href="calculation.diagram" target="_blank">View Diagram</a>
+                                <a v-if="calculation.diagram" :href="calculation.diagram" target="_blank">View Diagram</a>
                             </div>
                         </p>
                     </header>
                     <div v-for="inputKey in calculation.inputs" :key="inputKey" class="mb-3">
-                        <label :for="inputKey" class="form-label">{{ formatLabel(inputKey) }} ({{ inputs[inputKey].units }})</label>
-                        <input type="number" v-model.number="inputs[inputKey].value" :id="inputKey" class="form-control"
-                            @input="updateCalculations">
-                    </div>
-                    <details>
+    <label :for="inputKey" class="form-label">{{ formatLabel(inputKey) }} ({{ inputs[inputKey].units }})</label>
+    <input type="number" v-model.number="inputs[inputKey].value" :id="inputKey" class="form-control" @input="updateCalculations">
+    <details>
+        <summary>Show Details</summary>
+        <ul>
+            <li v-if="inputs[inputKey] && inputs[inputKey].value_description"><strong>Value Description:</strong> {{ inputs[inputKey].value_description }}</li>
+            <li v-if="inputs[inputKey] && inputs[inputKey].variable_type"><strong>Variable Type:</strong> {{ inputs[inputKey].variable_type }}</li>
+            <li v-if="inputs[inputKey] && inputs[inputKey].confidence_in_number"><strong>Confidence in Number:</strong> {{ inputs[inputKey].confidence_in_number }}</li>
+            <li v-if="inputs[inputKey] && inputs[inputKey].key_assumption"><strong>Key Assumption:</strong> {{ inputs[inputKey].key_assumption }}</li>
+            <li v-if="inputs[inputKey] && inputs[inputKey].source_notes"><strong>Source Notes:</strong> {{ inputs[inputKey].source_notes }}</li>
+            <li v-if="inputs[inputKey] && inputs[inputKey].units"><strong>Units:</strong> {{ inputs[inputKey].units }}</li>
+            <li v-if="inputs[inputKey] && inputs[inputKey].source_url"><strong>Source URL:</strong> <a :href="inputs[inputKey].source_url" target="_blank">{{ inputs[inputKey].source_url }}</a></li>
+        </ul>
+    </details>
+</div>
                         <summary>Show Details</summary>
-                        <p><strong>Explanation:</strong> {{ calculation.explanation }}</p>
-                        <ul v-for="inputKey in calculation.inputs" :key="inputKey" v-if="inputs[inputKey]">
-                            <li><strong>Value Description:</strong> {{ inputs[inputKey]?.value_description }}</li>
-                            <li><strong>Variable Type:</strong> {{ inputs[inputKey]?.variable_type }}</li>
-                            <li><strong>Confidence in Number:</strong> {{ inputs[inputKey]?.confidence_in_number }}</li>
-                            <li><strong>Key Assumption:</strong> {{ inputs[inputKey]?.key_assumption }}</li>
-                            <li><strong>Source Notes:</strong> {{ inputs[inputKey]?.source_notes }}</li>
+                        <ul>
+                            <li v-if="inputs[inputKey] && inputs[inputKey].value_description"><strong>Value Description:</strong> {{ inputs[inputKey].value_description }}</li>
+                            <li v-if="inputs[inputKey] && inputs[inputKey].variable_type"><strong>Variable Type:</strong> {{ inputs[inputKey].variable_type }}</li>
+                            <li v-if="inputs[inputKey] && inputs[inputKey].confidence_in_number"><strong>Confidence in Number:</strong> {{ inputs[inputKey].confidence_in_number }}</li>
+                            <li v-if="inputs[inputKey] && inputs[inputKey].key_assumption"><strong>Key Assumption:</strong> {{ inputs[inputKey].key_assumption }}</li>
+                            <li v-if="inputs[inputKey] && inputs[inputKey].source_notes"><strong>Source Notes:</strong> {{ inputs[inputKey].source_notes }}</li>
+                            <li v-if="inputs[inputKey] && inputs[inputKey].units"><strong>Units:</strong> {{ inputs[inputKey].units }}</li>
+                            <li v-if="inputs[inputKey] && inputs[inputKey].source_url"><strong>Source URL:</strong> <a :href="inputs[inputKey].source_url" target="_blank">{{ inputs[inputKey].source_url }}</a></li>
                         </ul>
+                        <p><strong>Explanation:</strong> {{ calculation.explanation }}</p>
                     </details>
                     <footer class="mt-4">
                         <p>{{ calculation.result.label }}: <strong>{{ calculation.result.value }}</strong></p>
@@ -229,11 +258,9 @@
                         try {
                             // Create a function with scoped inputs for safe evaluation
                             const result = (() => {
-    try {
-        const scopedInputs = { ...inputs };
-        return new Function(...Object.keys(scopedInputs), `return (${calculation.explanation})`)(...Object.values(scopedInputs));
-                                    const func = new Function(...Object.keys(scopedInputs), `return ${calculation.explanation}`);
-                                    return func(...Object.values(scopedInputs));
+                                try {
+                                    const scopedInputs = { ...inputs };
+                                    return new Function(...Object.keys(scopedInputs), `return (${calculation.explanation})`)(...Object.values(scopedInputs));
                                 } catch (error) {
                                     console.error('Error evaluating calculation:', error, 'Calculation:', calculation.explanation);
                                     return NaN;
@@ -262,9 +289,9 @@
                         const data = jsyaml.load(yamlText);
                         console.log('Data successfully loaded from Gist');
                         this.inputs = data.inputs.reduce((acc, input) => {
-    acc[input.variable] = input;
-    return acc;
-}, {});
+                            acc[input.variable] = input;
+                            return acc;
+                        }, {});
                         this.calculations = data.calculations.map(calculation => ({ ...calculation, result: { label: calculation.result.label, value: 0 } }));
                         this.updateCalculations();
                     } catch (e) {
