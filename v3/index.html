@@ -103,13 +103,13 @@
         </button>
 
         <div :class="['sidebar', { open: sidebarOpen }]">
-            <br> <br>
+            <h4>Adjust Inputs</h4>
             <div v-for="(input, key) in inputs" :key="key" class="mb-3">
                 <label :for="key" class="form-label">{{ formatLabel(key) }} ({{ input.units }})</label>
                 <input type="number" v-model.number="inputs[key].value" :id="key" class="form-control"
                     @input="updateCalculations">
                 <p v-if="input.description" class="input-info">{{ input.description }}</p>
-                <p class="input-info">Source: <a :href="input.source" target="_blank">{{ input.source }}</a></p>
+                <p class="input-info">Source: <a :href="input.source_url" target="_blank">{{ input.source_url }}</a></p>
             </div>
             <button @click="loadDataFromGist" class="btn btn-outline-primary mt-3">Load Data from Gist</button>
         </div>
@@ -178,8 +178,15 @@
                             @input="updateCalculations">
                     </div>
                     <details>
-                        <summary>Show Explanation</summary>
-                        <p>{{ calculation.explanation }}</p>
+                        <summary>Show Details</summary>
+                        <p><strong>Explanation:</strong> {{ calculation.explanation }}</p>
+                        <ul v-for="inputKey in calculation.inputs" :key="inputKey" v-if="inputs[inputKey]">
+                            <li><strong>Value Description:</strong> {{ inputs[inputKey]?.value_description }}</li>
+                            <li><strong>Variable Type:</strong> {{ inputs[inputKey]?.variable_type }}</li>
+                            <li><strong>Confidence in Number:</strong> {{ inputs[inputKey]?.confidence_in_number }}</li>
+                            <li><strong>Key Assumption:</strong> {{ inputs[inputKey]?.key_assumption }}</li>
+                            <li><strong>Source Notes:</strong> {{ inputs[inputKey]?.source_notes }}</li>
+                        </ul>
                     </details>
                     <footer class="mt-4">
                         <p>{{ calculation.result.label }}: <strong>{{ calculation.result.value }}</strong></p>
@@ -213,16 +220,28 @@
                 updateCalculations() {
                     this.calculations.forEach(calculation => {
                         const inputs = calculation.inputs.reduce((acc, key) => {
-                            acc[key] = this.inputs[key].value;
+                            if (this.inputs[key]) {
+                                acc[key] = this.inputs[key].value;
+                            }
                             return acc;
                         }, {});
 
                         try {
                             // Create a function with scoped inputs for safe evaluation
-                            const result = new Function(...Object.keys(inputs), `return ${calculation.explanation}`)(...Object.values(inputs));
+                            const result = (() => {
+    try {
+        const scopedInputs = { ...inputs };
+        return new Function(...Object.keys(scopedInputs), `return (${calculation.explanation})`)(...Object.values(scopedInputs));
+                                    const func = new Function(...Object.keys(scopedInputs), `return ${calculation.explanation}`);
+                                    return func(...Object.values(scopedInputs));
+                                } catch (error) {
+                                    console.error('Error evaluating calculation:', error, 'Calculation:', calculation.explanation);
+                                    return NaN;
+                                }
+                            })();
                             calculation.result.value = this.humanReadable(result);
                         } catch (error) {
-                            console.error('Error evaluating calculation:', error);
+                            console.error('Error evaluating calculation:', error, 'Calculation:', calculation.explanation);
                         }
                     });
                 },
@@ -236,14 +255,17 @@
                 },
                 async loadDataFromGist() {
                     try {
-                        const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/322437c538755d6b65186e3c62229a026037b365/data.yaml';
+                        const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/5560e727221f298805d731004ea687de24fa60c7/data.yaml';
                         const response = await fetch(gistUrl);
                         if (!response.ok) throw new Error('Failed to load data from Gist');
                         const yamlText = await response.text();
                         const data = jsyaml.load(yamlText);
                         console.log('Data successfully loaded from Gist');
-                        this.inputs = data.inputs;
-                        this.calculations = data.calculations;
+                        this.inputs = data.inputs.reduce((acc, input) => {
+    acc[input.variable] = input;
+    return acc;
+}, {});
+                        this.calculations = data.calculations.map(calculation => ({ ...calculation, result: { label: calculation.result.label, value: 0 } }));
                         this.updateCalculations();
                     } catch (e) {
                         console.error('Failed to load data from Gist:', e);
@@ -252,7 +274,6 @@
             },
             mounted() {
                 this.loadDataFromGist();
-                this.updateCalculations();
             }
         });
 
