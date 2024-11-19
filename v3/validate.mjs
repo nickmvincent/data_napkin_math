@@ -1,7 +1,7 @@
 // Script to load and validate YAML from GitHub Gist to ensure all equations are runnable
 
-const jsyaml = require('js-yaml');
-const fetch = require('node-fetch');
+import jsyaml from 'js-yaml';
+import fetch from 'node-fetch';
 
 async function loadAndValidateYaml(gistUrl) {
     try {
