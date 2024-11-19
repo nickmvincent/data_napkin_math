@@ -229,50 +229,13 @@
                     const unitName = units[order] || `10^${order * 3}`;
                     return `${(value / Math.pow(10, 3 * order)).toFixed(2)} ${unitName}`;
                 },
-                async loadData() {
-                    try {
-                        const response = await fetch('data.json');
-                        if (!response.ok) throw new Error('Failed to load data.json');
-                        const data = await response.json();
-                        this.inputs = data.inputs;
-                        this.calculations = data.calculations;
-                    } catch (e) {
-                        console.warn('Failed to load external data, using local defaults.');
-                        // Local defaults (fallback if fetching JSON fails)
-                        this.inputs = {
-                            totalRevenue: 1000000,
-                            contributionPercentage: 10,
-                            datasetSize: 1000000000,
-                            costPerToken: 0.0001,
-                            totalRevenueForToken: 5000000,
-                            datasetSizeForRevenue: 1000000000,
-                            numberOfContributors: 1000,
-                            tokenWeight: 2,
-                            tokensContributed: 10000,
-                            valuableTokens: 5000,
-                            regularTokens: 5000
-                        };
-                        this.calculations = [
-                            {
-                                title: 'Estimating Contributor Value',
-                                description: 'We are estimating the value a contributor might receive based on their contribution percentage and total revenue.',
-                                inputs: ['totalRevenue', 'contributionPercentage'],
-                                result: {
-                                    label: 'Estimated Contributor Value',
-                                    value: 0
-                                },
-                                explanation: 'totalRevenue * (contributionPercentage / 100)'
-                            },
-                            // other calculations...
-                        ];
-                    }
-                },
                 async loadDataFromGist() {
                     try {
-                        const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/ae478dbc4c6496acaf79eb532b6e0a72/raw/data.json';
+                        const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/ae478dbc4c6496acaf79eb532b6e0a72/raw/4ee846eb6eff244b6af8a8c5b884743f1cbf3f0b/data.json';
                         const response = await fetch(gistUrl);
                         if (!response.ok) throw new Error('Failed to load data from Gist');
                         const data = await response.json();
+                        console.log('Data successfully loaded from Gist');
                         this.inputs = data.inputs;
                         this.calculations = data.calculations;
                         this.updateCalculations();
@@ -282,7 +245,7 @@
                 }
             },
             mounted() {
-                this.loadData();
+                this.loadDataFromGist();
                 this.updateCalculations();
             }
         });
