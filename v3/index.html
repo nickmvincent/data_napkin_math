@@ -13,7 +13,7 @@
             margin: 0;
             height: 100vh;
             display: flex;
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', Arial, sans-serif;
             overflow: hidden;
         }
 
@@ -73,6 +73,7 @@
             border-radius: 10px;
             background: #f9f9f9;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
         }
 
         .card:hover {
@@ -82,6 +83,15 @@
         .input-info {
             font-size: 0.9em;
             color: #6c757d;
+        }
+
+        .btn {
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #007bff;
+            color: white;
         }
     </style>
 </head>
@@ -93,12 +103,12 @@
         </button>
 
         <div :class="['sidebar', { open: sidebarOpen }]">
-            <button @click="toggleSidebar" class="btn btn-secondary mb-3">Close</button>
-            <h4>Adjust Inputs</h4>
+            <br> <br>
             <div v-for="(input, key) in inputs" :key="key" class="mb-3">
                 <label :for="key" class="form-label">{{ formatLabel(key) }} ({{ input.units }})</label>
                 <input type="number" v-model.number="inputs[key].value" :id="key" class="form-control"
                     @input="updateCalculations">
+                <p v-if="input.description" class="input-info">{{ input.description }}</p>
                 <p class="input-info">Source: <a :href="input.source" target="_blank">{{ input.source }}</a></p>
             </div>
             <button @click="loadDataFromGist" class="btn btn-outline-primary mt-3">Load Data from Gist</button>
@@ -117,31 +127,23 @@
                     <p>
                         There are a number of open debates about making policy and setting norms around the use of data for "AI"
                         systems.
-
-                        Should we focus more on creating mechanisms to opt-out of contributing to AI training, or requiring
-                        strict opt-in?
-                        What would happen if we redistribute some of the profits of AI directly to data creators?
-                        Just how much data are we talking about?
                     </p>
-
                     <p>
                         Many of these questions involve some abstract moral arguments, but answering them may also depend on
                         some
                         rough estimates
                         of "what kind of numbers are we talking about". Will people be getting $5000 paychecks, or 5 cent
                         pittances?
-
+                    </p>
+                    <p>
                         This tool is interactive so you can edit any assumptions you want. Ultimately, the math here is mostly
                         just
                         arithmetic (with the potential to hook more elaborate ML training scenarios or agent-based models)
                     </p>
-
                     <p>
                         To participate in discussion about what some reasonable default values should be, head to the GitHub
-                        where
-                        we host the underlying data.
+                        where we host the underlying data.
                     </p>
-
                     <p>
                         There are two types of objects we use here: reported figures, aka the "inputs" (for instance, the number of tokens used to train a model
                         or the reported revenue of an AI company) and equations. The idea is, anyone can contribute to this estimation process
@@ -175,6 +177,10 @@
                         <input type="number" v-model.number="inputs[inputKey].value" :id="inputKey" class="form-control"
                             @input="updateCalculations">
                     </div>
+                    <details>
+                        <summary>Show Explanation</summary>
+                        <p>{{ calculation.explanation }}</p>
+                    </details>
                     <footer class="mt-4">
                         <p>{{ calculation.result.label }}: <strong>{{ calculation.result.value }}</strong></p>
                     </footer>
