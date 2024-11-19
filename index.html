@@ -12,10 +12,12 @@
             padding: 20px;
             font-family: Arial, sans-serif;
         }
+
         .header {
             text-align: center;
             margin-bottom: 30px;
         }
+
         .card {
             margin-bottom: 20px;
             padding: 20px;
@@ -23,39 +25,42 @@
             background: #f9f9f9;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+
         .card:hover {
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
+
         .collapse {
             margin-bottom: 20px;
         }
+
         /* Style for the tooltip container */
         .tooltip-container {
-        position: relative;
-        display: inline-block;
-        cursor: pointer;
-        margin: 20px;
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            margin: 20px;
         }
 
         /* Tooltip content (hidden by default) */
         .tooltip-content {
-        visibility: hidden;
-        position: absolute;
-        bottom: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: #333;
-        color: #fff;
-        padding: 5px;
-        border-radius: 3px;
-        white-space: nowrap;
-        font-size: 12px;
-        z-index: 1;
+            visibility: hidden;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: #fff;
+            padding: 5px;
+            border-radius: 3px;
+            white-space: nowrap;
+            font-size: 12px;
+            z-index: 1;
         }
 
         /* Show the tooltip when hovering over the container */
         .tooltip-container:hover .tooltip-content {
-        visibility: visible;
+            visibility: visible;
         }
     </style>
 </head>
@@ -64,12 +69,43 @@
     <div id="app" class="container">
         <header class="header">
             <h1>Data Napkin Math for Training Data Value</h1>
-            <p>Order of magnitude estimates about profit distribution, dataset creation costs, and data deals.</p>
+            <p>This is a lightweight web-page for making order of magnitude estimates about profit distribution,
+                dataset creation costs, and data deals.
+            </p>
+
+            <p>
+                There are a number of open debates about making policy and setting norms around the use of data for "AI"
+                systems.
+
+                Should we focus more on creating mechanisms to opt-out of contributing to AI training, or requiring
+                strict opt-in?
+                What would happen if we redistribute some of the profits of AI directly to data creators?
+                Just how much data are we talking about?
+            </p>
+
+            <p>
+                Many of these questions involve some abstract moral arguments, but answering them may also depend on
+                some
+                rough estimates
+                of "what kind of numbers are we talking about". Will people be getting $5000 paychecks, or 5 cent
+                pittances?
+
+                This tool is interactive so you can edit any assumptions you want. Ultimately, the math here is mostly
+                just
+                arithmetic.
+            </p>
+
+            <p>
+                To participate in discussion about what some reasonable default values should be, head to the GitHub
+                where
+                we host the underlying data.
+            </p>
         </header>
 
         <!-- Collapsible Input Section -->
         <section class="mb-4">
-            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#inputSection" aria-expanded="false" aria-controls="inputSection">
+            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#inputSection"
+                aria-expanded="false" aria-controls="inputSection">
                 Adjust All Assumptions
             </button>
             <div class="collapse mt-3" id="inputSection">
@@ -77,7 +113,8 @@
                     <h4>Adjust Inputs</h4>
                     <div v-for="(value, key) in inputs" :key="key" class="mb-3">
                         <label :for="key" class="form-label">{{ formatLabel(key) }}</label>
-                        <input type="number" v-model.number="inputs[key]" :id="key" class="form-control" @input="updateCalculations">
+                        <input type="number" v-model.number="inputs[key]" :id="key" class="form-control"
+                            @input="updateCalculations">
                     </div>
                 </div>
             </div>
@@ -86,21 +123,25 @@
         <!-- Napkin Math Section -->
         <section id="napkinMath">
             <h2>Napkin Math Calculations</h2>
-            <p>Below are our existing napkin math scenarios. For each scenario, you can play with the assumed values to see how things might change.
-                You can also see and edit all the assumptions above. To see exactly what's being calculated in each scenario....
+            <p>Below are our existing napkin math scenarios. For each scenario, you can play with the assumed values to
+                see how things might change.
+                You can also see and edit all the assumptions above. To see exactly what's being calculated in each
+                scenario....
             </p>
 
             <!-- Calculation Cards -->
             <div v-for="(calculation, index) in calculations" :key="index" class="card">
                 <header>
-                    <h4>{{ calculation.title }}</h4> 
+                    <h4>{{ calculation.title }}</h4>
                     <p>
-                        <div class="tooltip-container explanation" >{{ calculation.description }} <div class="tooltip-content">{{ calculation.explanation }}</div></span>
-                    </p>
+                    <div class="tooltip-container explanation">{{ calculation.description }} <div
+                            class="tooltip-content">{{ calculation.explanation }}</div></span>
+                        </p>
                 </header>
                 <div v-for="inputKey in calculation.inputs" :key="inputKey" class="mb-3">
                     <label :for="inputKey" class="form-label">{{ formatLabel(inputKey) }}</label>
-                    <input type="number" v-model.number="inputs[inputKey]" :id="inputKey" class="form-control" @input="updateCalculations">
+                    <input type="number" v-model.number="inputs[inputKey]" :id="inputKey" class="form-control"
+                        @input="updateCalculations">
                 </div>
                 <footer class="mt-4">
                     <p>{{ calculation.result.label }}: <strong>{{ calculation.result.value }}</strong></p>
