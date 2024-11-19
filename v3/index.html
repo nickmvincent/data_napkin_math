@@ -81,7 +81,7 @@
     </style>
 </head>
 
-<body>
+<body style="visibility: hidden;">
     <div id="app">
         <button @click="toggleSidebar" class="btn btn-primary sidebar-toggle">
             {{ sidebarOpen ? 'Hide' : 'Show' }} ALL Assumptions
@@ -193,35 +193,6 @@
                 toggleHeaderContent() {
                     this.headerContentOpen = !this.headerContentOpen;
                 },
-                formatLabel(key) {
-                    return key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-                },
-                updateCalculations() {
-                    this.calculations.forEach(calculation => {
-                        const inputs = calculation.inputs.reduce((acc, key) => {
-                            acc[key] = this.inputs[key];
-                            return acc;
-                        }, {});
-
-                        let result = 0;
-                        if (calculation.title === 'Estimating Contributor Value') {
-                            result = inputs.totalRevenue * (inputs.contributionPercentage / 100);
-                        } else if (calculation.title === 'Cost to Commission a New Dataset') {
-                            result = inputs.datasetSize * inputs.costPerToken;
-                        } else if (calculation.title === 'Revenue per Token Calculation') {
-                            result = inputs.totalRevenueForToken / inputs.datasetSizeForRevenue;
-                        } else if (calculation.title === 'Dividing LLM-Related Money Amongst Everyone') {
-                            result = inputs.totalRevenue / inputs.numberOfContributors;
-                        } else if (calculation.title === 'Apportion Based on Tokens') {
-                            result = inputs.totalRevenue * (inputs.tokensContributed / inputs.datasetSize);
-                        } else if (calculation.title === 'Valuable Tokens Contribution') {
-                            const weightedTokens = inputs.valuableTokens * inputs.tokenWeight + inputs.regularTokens;
-                            result = inputs.totalRevenue * (weightedTokens / (inputs.datasetSize * inputs.tokenWeight));
-                        }
-
-                        calculation.result.value = this.humanReadable(result);
-                    });
-                },
                 humanReadable(value) {
                     if (value === 0) return '0';
                     if (Math.abs(value) < 1) return value.toString();
@@ -244,9 +215,31 @@
                     } catch (e) {
                         console.error('Failed to load data from Gist:', e);
                     }
+                },
+                formatLabel(key) {
+                    return key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                },
+                updateCalculations() {
+                    this.calculations.forEach(calculation => {
+                        const inputs = calculation.inputs.reduce((acc, key) => {
+                            acc[key] = this.inputs[key];
+                            return acc;
+                        }, {});
+
+                        try {
+                            // Create a function with scoped inputs for safe evaluation
+                            const result = new Function(...Object.keys(inputs), `return ${calculation.explanation}`)(...Object.values(inputs));
+                            calculation.result.value = this.humanReadable(result);
+                        } catch (error) {
+                            console.error('Error evaluating calculation:', error);
+                        }
+                    });
                 }
             },
             mounted() {
+                window.addEventListener('load', () => {
+                    document.body.style.visibility = 'visible';
+                });
                 this.loadDataFromGist();
                 this.updateCalculations();
             }
