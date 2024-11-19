@@ -7,6 +7,7 @@
     <title>Data Napkin Math</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
     <script src="https://unpkg.com/vue@3"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.0.0/js-yaml.min.js"></script>
     <style>
         body {
             margin: 0;
@@ -231,10 +232,11 @@
                 },
                 async loadDataFromGist() {
                     try {
-                        const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/ae478dbc4c6496acaf79eb532b6e0a72/raw/4ee846eb6eff244b6af8a8c5b884743f1cbf3f0b/data.json';
+                        const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/9f5fc575d4bacb7e8d1cff87f50aa6823121bb7f/gistfile1.txt';
                         const response = await fetch(gistUrl);
                         if (!response.ok) throw new Error('Failed to load data from Gist');
-                        const data = await response.json();
+                        const yamlText = await response.text();
+                        const data = jsyaml.load(yamlText);
                         console.log('Data successfully loaded from Gist');
                         this.inputs = data.inputs;
                         this.calculations = data.calculations;
