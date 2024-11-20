@@ -12,9 +12,18 @@ async function loadAndValidateYaml(gistUrl) {
         const data = jsyaml.load(yamlText);
 
         // Validate the YAML structure
-        if (!data.inputs || !Array.isArray(data.calculations)) {
-            throw new Error('Invalid YAML structure. Expected "inputs" and "calculations" fields.');
+        if (!Array.isArray(data.inputs) || !Array.isArray(data.calculations)) {
+            throw new Error('Invalid YAML structure. Expected "inputs" and "calculations" fields as arrays.');
         }
+
+        // Convert inputs array to a map for easier lookup
+        const inputsMap = data.inputs.reduce((acc, input) => {
+            if (!input.variable || typeof input.value === 'undefined') {
+                throw new Error(`Invalid input entry: ${input.variable || 'Unknown Variable'}`);
+            }
+            acc[input.variable] = input;
+            return acc;
+        }, {});
 
         // Validate each calculation for required fields and run the equations
         data.calculations.forEach(calculation => {
@@ -24,10 +33,10 @@ async function loadAndValidateYaml(gistUrl) {
 
             // Prepare a context for the equation with the available inputs
             const inputs = calculation.inputs.reduce((acc, key) => {
-                if (!data.inputs[key] || typeof data.inputs[key].value === 'undefined') {
+                if (!inputsMap[key] || typeof inputsMap[key].value === 'undefined') {
                     throw new Error(`Missing input value for key: ${key} in calculation: ${calculation.title}`);
                 }
-                acc[key] = data.inputs[key].value;
+                acc[key] = inputsMap[key].value;
                 return acc;
             }, {});
 
@@ -47,5 +56,8 @@ async function loadAndValidateYaml(gistUrl) {
 }
 
 // Example usage
-const gistUrl = "https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/322437c538755d6b65186e3c62229a026037b365/data.yaml";
+const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/';
+//const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/727f8f35ee476fb57dad8c70eb1462ea8f09cc1f/data.yaml'
+//const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/1b67e3fd040715812fe8b1d44d91735b16bb755d/data.yaml';
+//const gistUrl = "https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/1b67e3fd040715812fe8b1d44d91735b16bb755d/data.yaml";
 loadAndValidateYaml(gistUrl);
