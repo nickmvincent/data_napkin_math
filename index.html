@@ -22,9 +22,15 @@
             <br><br>
             <div v-for="(input, key) in inputs" :key="key" class="mb-3">
                 <label :for="key" class="form-label">{{ formatLabel(key) }} ({{ input.units }})</label>
-                <input type="number" v-model.number="formattedInputs[key]" :id="key" class="form-control" @input="updateCalculations">
-                <p v-if="input.description" class="input-info">{{ input.description }}</p>
-                <p class="input-info">Source: <a :href="input.source_url" target="_blank">{{ input.source_url }}</a></p>
+                <input type="number" :value="formatValue(input.value, input.scale)" @input="updateValue($event, key)" :id="key" class="form-control">
+                <details>
+                    <summary>Show Input Details</summary>
+                    <ul>
+                        <li><strong>Raw Value:</strong> {{ inputs[key].value }}</li> <!-- Display raw value of the input here -->
+                        <li v-if="input.description" class="input-info"><strong>Description:</strong> {{ input.description }}</li>
+                        <li class="input-info"><strong>Source:</strong> <a :href="input.source_url" target="_blank">{{ input.source_url }}</a></li>
+                    </ul>
+                </details>
             </div>
             <button @click="loadDataFromGist" class="btn btn-outline-primary mt-3"
                 style="border-color: #10a37f; color: #10a37f;">Load Data from Gist</button>
@@ -36,47 +42,33 @@
                 <p>Napkin math, back of the envelope estimates, ballpark figures: this is a lightweight web-page for making order of magnitude estimates about
                     a number of an important "data value" questions. How will the proceeds and other benefits of AI be distributed?
                 </p>
-                <!-- <button class="btn" type="button" @click="toggleHeaderContent">
-                    {{ headerContentOpen ? '(Hide)' : '(Show)' }} 
-                </button> -->
                 <details open id="headerContent">
-                <summary>About this page</summary>
-                
-                <div>
-                    <p>
-                        There are a number of open debates about making policy and setting norms around the use of data
-                        for "AI"
-                        systems.
-                    </p>
-                    <p>
-                        Many of these questions involve some abstract moral arguments, but answering them may also
-                        depend on
-                        some
-                        rough estimates of "what kind of numbers are we talking about". Will people be getting $5000
-                        paychecks, or 5 cent
-                        pittances?
-                    </p>
-                    <p>
-                        This tool is interactive so you can edit any assumptions you want. Ultimately, the math here is
-                        mostly
-                        just arithmetic (with the potential to hook more elaborate ML training scenarios or agent-based
-                        models).
-                    </p>
-                    <p>
-                        To participate in discussion about what some reasonable default values should be, head to the
-                        GitHub page
-                        where we host the underlying data or visit our public Google Sheet and leave a comment.
-                    </p>
-                    <p>
-                        There are two types of objects we use here: reported figures, aka the "inputs" (for instance,
-                        the number of tokens used to train a model
-                        or the reported revenue of an AI company) and equations. You can see all of these on the left sidebar.
-                        Anyone can contribute to
-                        this estimation process
-                        by updating a figure (for instance, when a new paper comes out), contesting an equation, or
-                        adding a new scenario.
-                    </p>
-                </div>
+                    <summary>About this page</summary>
+                    <div>
+                        <p>
+                            There are a number of open debates about making policy and setting norms around the use of data
+                            for "AI" systems.
+                        </p>
+                        <p>
+                            Many of these questions involve some abstract moral arguments, but answering them may also
+                            depend on some rough estimates of "what kind of numbers are we talking about". Will people be getting $5000
+                            paychecks, or 5 cent pittances?
+                        </p>
+                        <p>
+                            This tool is interactive so you can edit any assumptions you want. Ultimately, the math here is
+                            mostly just arithmetic (with the potential to hook more elaborate ML training scenarios or agent-based
+                            models).
+                        </p>
+                        <p>
+                            To participate in discussion about what some reasonable default values should be, head to the
+                            GitHub page where we host the underlying data or visit our public Google Sheet and leave a comment.
+                        </p>
+                        <p>
+                            There are two types of objects we use here: reported figures, aka the "inputs" (for instance,
+                            the number of tokens used to train a model or the reported revenue of an AI company) and equations. You can see all of these on the left sidebar.
+                            Anyone can contribute to this estimation process by updating a figure (for instance, when a new paper comes out), contesting an equation, or adding a new scenario.
+                        </p>
+                    </div>
                 </details>
             </header>
 
@@ -84,8 +76,7 @@
             <section id="napkinMath">
                 <h2>Scenarios</h2>
                 <p>Below are our existing napkin math scenarios. For each scenario, you can play with the inputs
-                    to
-                    see how things might change. You can also see and edit all the assumptions in the sidebar.
+                    to see how things might change. You can also see and edit all the assumptions in the sidebar.
                 </p>
 
                 <!-- Calculation Cards -->
@@ -100,11 +91,11 @@
                     </header>
                     <div v-for="inputKey in calculation.inputs" :key="inputKey" class="mb-3">
                         <label :for="inputKey" class="form-label">{{ formatLabel(inputKey) }} ({{ inputs[inputKey].units }})</label>
-                        <input type="number" v-model.number="formattedInputs[inputKey]" :id="inputKey" class="form-control"
-                            @input="updateCalculations">
+                        <input type="number" :value="formatValue(inputs[inputKey].value, inputs[inputKey].scale)" @input="updateValue($event, inputKey)" :id="inputKey" class="form-control">
                         <details>
                             <summary>Show Input Details</summary>
                             <ul>
+                                <li><strong>Raw Value:</strong> {{ inputs[inputKey].value }}</li> <!-- Display raw value of input here -->
                                 <li v-if="inputs[inputKey] && inputs[inputKey].value_description"><strong>Value Description:</strong> {{ inputs[inputKey].value_description }}</li>
                                 <li v-if="inputs[inputKey] && inputs[inputKey].variable_type"><strong>Variable Type:</strong> {{ inputs[inputKey].variable_type }}</li>
                                 <li v-if="inputs[inputKey] && inputs[inputKey].confidence_in_number"><strong>Confidence in Number:</strong> {{ inputs[inputKey].confidence_in_number }}</li>
@@ -118,6 +109,7 @@
                     <details>
                         <summary>Show Calculation Details</summary>
                         <p><strong>Explanation:</strong> {{ calculation.explanation }}</p>
+                        <p><strong>Raw Value:</strong> {{ calculation.result.rawValue }}</p> <!-- Display raw value here -->
                     </details>
                     <footer class="mt-4">
                         <p>{{ calculation.result.label }}: <strong>{{ calculation.result.value }}</strong></p>
@@ -137,35 +129,20 @@
                     calculations: []
                 };
             },
-            computed: {
-                formattedInputs: {
-                    get() {
-                        const formatted = {};
-                        for (const key in this.inputs) {
-                            if (this.inputs[key]) {
-                                const scale = this.inputs[key].scale || 1;
-                                formatted[key] = this.inputs[key].value / scale;
-                            }
-                        }
-                        return formatted;
-                    },
-                    set(newValues) {
-                        for (const key in newValues) {
-                            if (this.inputs[key]) {
-                                const scale = this.inputs[key].scale || 1;
-                                this.inputs[key].value = newValues[key] * scale;
-                            }
-                        }
-                    }
-                }
-            },
             methods: {
                 toggleSidebar() {
                     this.sidebarOpen = !this.sidebarOpen;
                 },
-
                 formatLabel(key) {
                     return key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                },
+                formatValue(value, scale) {
+                    return scale ? value / scale : value;
+                },
+                updateValue(event, key) {
+                    const scale = this.inputs[key].scale || 1;
+                    this.inputs[key].value = event.target.value * scale;
+                    this.updateCalculations();
                 },
                 updateCalculations() {
                     this.calculations.forEach(calculation => {
@@ -177,7 +154,6 @@
                         }, {});
 
                         try {
-                            // Create a function with scoped inputs for safe evaluation
                             const result = (() => {
                                 try {
                                     const scopedInputs = { ...inputs };
@@ -188,6 +164,7 @@
                                 }
                             })();
                             calculation.result.value = this.humanReadable(result);
+                            calculation.result.rawValue = result; // Store raw value for display
                         } catch (error) {
                             console.error('Error evaluating calculation:', error, 'Calculation:', calculation.explanation);
                         }
@@ -195,7 +172,7 @@
                 },
                 humanReadable(value) {
                     if (value === 0) return '0';
-                    if (Math.abs(value) < 1) return value.toString();
+                    if (Math.abs(value) < 1) return value.toFixed(2);
                     const units = ['', 'thousand', 'million', 'billion', 'trillion'];
                     const order = Math.floor(Math.log10(Math.abs(value)) / 3);
                     const unitName = units[order] || `10^${order * 3}`;
@@ -211,8 +188,7 @@
                 },
                 async loadDataFromGist() {
                     try {
-                        const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/d444d0ccef664d847e412c8eaed379b5a84c4f61/data.yaml';
-                        //const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/';
+                        const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/';
                         const response = await fetch(gistUrl);
                         if (!response.ok) throw new Error('Failed to load data from Gist');
                         const yamlText = await response.text();
@@ -222,7 +198,7 @@
                             acc[input.variable] = input;
                             return acc;
                         }, {});
-                        this.calculations = data.calculations.map(calculation => ({ ...calculation, result: { label: calculation.result.label, value: 0 } }));
+                        this.calculations = data.calculations.map(calculation => ({ ...calculation, result: { label: calculation.result.label, value: 0, rawValue: 0 } }));
                         this.updateUnits();
                         this.updateCalculations();
                     } catch (e) {

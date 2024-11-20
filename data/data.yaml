@@ -2,8 +2,8 @@ inputs:
 - variable: total_tokens
   value: 15000000000000.0
   units: tokens
-  scale: 1e-6
-  displayUnits: millions of tokens
+  scale: 1e6
+  display_units: millions of tokens
   value_description: total tokens used for pre-training
   variable_type: dataset
   confidence_in_number: moderate
@@ -14,8 +14,8 @@ inputs:
 - variable: ai_revenue
   value: 3490000000.0
   units: dollars
-  scale: 1e-6
-  displayUnits: millions of dollars
+  scale: 1e6
+  display_units: millions of dollars
   value_description: Value of the model in dollars
   variable_type: company
   confidence_in_number: moderate
