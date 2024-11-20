@@ -57,7 +57,5 @@ async function loadAndValidateYaml(gistUrl) {
 
 // Example usage
 const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/';
-//const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/727f8f35ee476fb57dad8c70eb1462ea8f09cc1f/data.yaml'
-//const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/1b67e3fd040715812fe8b1d44d91735b16bb755d/data.yaml';
-//const gistUrl = "https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/1b67e3fd040715812fe8b1d44d91735b16bb755d/data.yaml";
+
 loadAndValidateYaml(gistUrl);

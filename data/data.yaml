@@ -2,58 +2,65 @@ inputs:
 - variable: total_tokens
   value: 15000000000000.0
   units: tokens
-  value_description: total tokens in pre-training
+  scale: 1e-6
+  displayUnits: millions of tokens
+  value_description: total tokens used for pre-training
   variable_type: dataset
   confidence_in_number: moderate
   key_assumption: assuming all frontier models use roughly same pre-training size,
     we can use Llama3 and FineWeb numbers as our representative figure
   source_url: https://github.com/meta-llama/llama3/blob/main/MODEL_CARD.md
   source_notes: Llama 3 model card describes total number of tokens for pre-training
-- variable: model_value
+- variable: ai_revenue
   value: 3490000000.0
   units: dollars
+  scale: 1e-6
+  displayUnits: millions of dollars
   value_description: Value of the model in dollars
-  variable_type: revenue_data
+  variable_type: company
   confidence_in_number: moderate
   key_assumption: assuming all 2024 OpenAI revenue is from LLMs
   source_url: https://www.bloomberg.com/news/articles/2024-06-12/openai-doubles-annualized-revenue-to-3-4-billion-information
   source_notes: business news coverage of openai
 - variable: average_tokens_per_contribution
-  value: 1500.0
+  value: 1413.0
   units: tokens / contribution
-  value_description: Average number of tokens per contribution
+  value_description: Average number of tokens in a single 'contribution'
   variable_type: dataset
-  confidence_in_number: unknown
+  confidence_in_number: high
   key_assumption: working with averages here
   source_url: https://github.com/togethercomputer/RedPajama-Data
-  source_notes: RedPajama readme reports a ratio of documents to tokens (after dedupe)
+  source_notes: RedPajama readme reports a ratio of documents to tokens (after dedupe). We use the English figures (20.5T tokens / 14.5B documents)
 - variable: num_books_in_books3
-  value: 200000.0
+  value: 196640.0
   units: books
-  value_description: https://www.aiaaic.org/aiaaic-repository/ai-algorithmic-and-automation-incidents/books3-ai-training-dataset
+  value_description: Number of books in Books3
   variable_type: dataset
-  confidence_in_number: unknown
-  key_assumption: Number of books in Books3
-  source_url: https://placeholder-link.com
-  source_notes: No additional notes.
+  confidence_in_number: high
+  key_assumption: N/A
+  source_url: https://www.aiaaic.org/aiaaic-repository/ai-algorithmic-and-automation-incidents/books3-ai-training-dataset
+  source_notes: Entry in the AIAAIC repository.
+
 - variable: average_book_length_words
-  value: 90000.0
+  value: 80000.0
   units: words
-  value_description: https://gitnux.org/average-book-length/
+  value_description: An average number of words per book
   variable_type: dataset
-  confidence_in_number: unknown
-  key_assumption: Average number of tokens per book
-  source_url: https://placeholder-link.com
+  confidence_in_number: moderate
+  key_assumption: Average number of words per book
+  source_url: https://www.penguin.co.uk/articles/2020/09/book-length-debate-fiction-long-novels
   source_notes: No additional notes.
+
 - variable: words_per_token
   value: 0.75
   units: words / token
   value_description: average number of words per token
   variable_type: training_detail
-  confidence_in_number: unknown
-  key_assumption: '...'
+  confidence_in_number: moderate
+  key_assumption: Average across random queries
   source_url: https://platform.openai.com/tokenizer
   source_notes: OpenAI Tokenizer
+
 - variable: freelance_rate_per_word_low
   value: 0.05
   units: dollars / word
@@ -63,6 +70,7 @@ inputs:
   key_assumption: '...'
   source_url: source needed
   source_notes: source needed
+
 - variable: freelance_rate_per_word_high
   value: 0.1
   units: dollars / word
@@ -82,32 +90,32 @@ inputs:
   source_url: source needed
   source_notes: source needed
 - variable: reddit_users
-  value: 267500000.0
-  units: users
-  value_description: Number of Reddit users
+  value: 267500.0
+  units: thousands of daily active users
+  value_description: Number of Reddit daily active users
   variable_type: group_size
   confidence_in_number: high
-  key_assumption: split between all users
+  key_assumption: None
   source_url: https://backlinko.com/reddit-users
-  source_notes: 'article about # reddit users'
-- variable: reddit_deal_value
-  value: 60000000.0
-  units: dollars
-  value_description: Payment made to reddit by Google
+  source_notes: 'article about # of reddit users'
+- variable: reddit_google_deal_value
+  value: 60.0
+  units: milliosn fo dollars
+  value_description: Payment made to Reddit by Google
   variable_type: deal_data
   confidence_in_number: high
-  key_assumption: Not specified
-  source_url: source needed
-  source_notes: notes here
-- variable: tf_deal_value
-  value: 10000000.0
-  units: dollars
+  key_assumption: None
+  source_url: https://www.cbsnews.com/news/google-reddit-60-million-deal-ai-training/
+  source_notes: CBS news coverage
+- variable: taylorandfrancis_microsoft_deal_value
+  value: 10.0
+  units: millions of dollars
   value_description: Value of the Taylor and Francis deal
   variable_type: deal_data
   confidence_in_number: high
-  key_assumption: Not specified
+  key_assumption: None
   source_url: https://www.thebookseller.com/news/academic-authors-shocked-after-taylor--francis-sells-access-to-their-research-to-microsoft-ai
-  source_notes: news coverage
+  source_notes: news coverage of deal
 - variable: newscorp_deal_value
   value: 50000000.0
   units: dollars
@@ -163,27 +171,40 @@ inputs:
   source_url: https://p2pmodels.eu/power-law-distribution-characterize-wiki-communities/
   source_notes: No additional notes.
 calculations:
-  - title: "Distributing model 'value generated' per taken"
-    description: "Estimate a $/token value. Take some estimate of value generated (e.g., the revenue of an AI company) and divide by the
-    number of tokens used to train that companies models."
-    inputs:
-      - model_value
-      - total_tokens
-    result:
-      label: "Revenue per Token"
-      value: 0
-    explanation: "model_value / total_tokens"
   - title: "Distributing model 'value generated' to everyone in the world"
     description: "If we were to immediately distribute AI revenue to everyone on Earth, how much would each person receive?"
     inputs:
-      - model_value
+      - ai_revenue
       - global_num_people
     result:
       label: "Dividend per person"
       value: 0
-    explanation: "model_value / global_num_people"
+    explanation: "ai_revenue / global_num_people"
+
+  - title: "Commissiong a fresh LLM dataset"
+    description: How much would it cost to pay for a brand new LLM-scale pre-training dataset assuming moderate freelance writing wages. 
+    inputs:
+      - words_per_token
+      - freelance_rate_per_word_high
+      - total_tokens
+    result:
+      label: Total cost
+      value: 0
+    explanation: "total_tokens * words_per_token * freelance_rate_per_word_high"
+  
+  - title: "Distributing model 'value generated' per token"
+    description: "Estimate a $/token value. Take some estimate of value generated (e.g., the revenue of an AI company) and divide by the
+    number of tokens used to train that company's models."
+    inputs:
+      - ai_revenue
+      - total_tokens
+    result:
+      label: "Revenue per Token"
+      value: 0
+    explanation: "ai_revenue / total_tokens"
+  
   - title: "Average Contribution Size"
-    description: "Estimate the average contribution size in tokens based on the dataset size and number of contributions."
+    description: "Estimate of the average contribution size in tokens based on the dataset size and number of contributions."
     inputs:
       - total_tokens
       - average_tokens_per_contribution
@@ -191,27 +212,27 @@ calculations:
       label: "Average Contribution Size"
       value: 0
     explanation: "total_tokens / average_tokens_per_contribution"
-  - title: "Dataset Contribution Revenue"
+  - title: "Revenue per contribution"
     description: "Calculate the revenue generated per contribution based on the average tokens per contribution and revenue per token."
     inputs:
       - average_tokens_per_contribution
-      - model_value
+      - ai_revenue
       - total_tokens
     result:
       label: "Revenue per Contribution"
       value: 0
-    explanation: "(model_value / total_tokens) * average_tokens_per_contribution"
+    explanation: "(ai_revenue / total_tokens) * average_tokens_per_contribution"
   - title: "Revenue per Book in Books3"
     description: "Estimate the revenue generated per book in the Books3 dataset."
     inputs:
       - num_books_in_books3
       - average_book_length_words
-      - model_value
+      - ai_revenue
       - total_tokens
     result:
       label: "Revenue per Book"
       value: 0
-    explanation: "(model_value / total_tokens) * (num_books_in_books3 * average_book_length_words)"
+    explanation: "(ai_revenue / total_tokens) * (num_books_in_books3 * average_book_length_words)"
   - title: "Dataset Coverage Ratio"
     description: "Calculate the ratio of books in the Books3 dataset relative to the total number of tokens."
     inputs:
