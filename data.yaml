@@ -162,42 +162,6 @@ inputs:
   key_assumption: Not specified
   source_url: https://p2pmodels.eu/power-law-distribution-characterize-wiki-communities/
   source_notes: No additional notes.
-- variable: .nan
-  value: .nan
-  units: .nan
-  value_description: .nan
-  variable_type: .nan
-  confidence_in_number: unknown
-  key_assumption: Not specified
-  source_url: https://placeholder-link.com
-  source_notes: No additional notes.
-- variable: .nan
-  value: .nan
-  units: .nan
-  value_description: .nan
-  variable_type: .nan
-  confidence_in_number: unknown
-  key_assumption: Not specified
-  source_url: https://placeholder-link.com
-  source_notes: No additional notes.
-- variable: .nan
-  value: .nan
-  units: .nan
-  value_description: .nan
-  variable_type: .nan
-  confidence_in_number: unknown
-  key_assumption: Not specified
-  source_url: https://placeholder-link.com
-  source_notes: No additional notes.
-- variable: .nan
-  value: .nan
-  units: .nan
-  value_description: .nan
-  variable_type: '~'
-  confidence_in_number: unknown
-  key_assumption: Not specified
-  source_url: https://placeholder-link.com
-  source_notes: No additional notes.
 calculations:
   - title: "Distributing model 'value' based on tokens"
     description: "Estimate the revenue generated per token based on model value and total tokens. If we were to immediately distribute AI revenue to data creators, you could multiply this by your number of tokens contributed to see how much you'd earn."

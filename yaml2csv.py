@@ -44,6 +44,6 @@ def yaml_to_csv(yaml_file, csv_file):
     print(f"Converted YAML to CSV: {csv_file}")
 
 # Example usage
-yaml_file_path = "enhanced_inputs.yaml"  # Path to your YAML file
-csv_file_path = "enhanced_inputs.csv"   # Output CSV file path
+yaml_file_path = "data.yaml"  # Path to your YAML file
+csv_file_path = "data.csv"   # Output CSV file path
 yaml_to_csv(yaml_file_path, csv_file_path)

@@ -1,0 +1,23 @@
+variable,value,units,value_description,variable_type,confidence_in_number,key_assumption,source_url,source_notes
+total_tokens,15000000000000.0,tokens,total tokens in pre-training,dataset,moderate,"assuming all frontier models use roughly same pre-training size, we can use Llama3 and FineWeb numbers as our representative figure",https://github.com/meta-llama/llama3/blob/main/MODEL_CARD.md,Llama 3 model card describes total number of tokens for pre-training
+model_value,3490000000.0,dollars,Value of the model in dollars,revenue_data,moderate,assuming all 2024 OpenAI revenue is from LLMs,https://www.bloomberg.com/news/articles/2024-06-12/openai-doubles-annualized-revenue-to-3-4-billion-information,business news coverage of openai
+average_tokens_per_contribution,1500.0,tokens / contribution,Average number of tokens per contribution,dataset,unknown,working with averages here,https://github.com/togethercomputer/RedPajama-Data,RedPajama readme reports a ratio of documents to tokens (after dedupe)
+num_books_in_books3,200000.0,books,https://www.aiaaic.org/aiaaic-repository/ai-algorithmic-and-automation-incidents/books3-ai-training-dataset,dataset,unknown,Number of books in Books3,https://placeholder-link.com,No additional notes.
+average_book_length_words,90000.0,words,https://gitnux.org/average-book-length/,dataset,unknown,Average number of tokens per book,https://placeholder-link.com,No additional notes.
+words_per_token,0.75,words / token,average number of words per token,training_detail,unknown,...,https://platform.openai.com/tokenizer,OpenAI Tokenizer
+freelance_rate_per_word_low,0.05,dollars / word,Freelance rate per word (low estimate),wage_data,unknown,...,source needed,source needed
+freelance_rate_per_word_high,0.1,dollars / word,Freelance rate per word (high estimate),wage_date,unknown,assumptions needed,source needed,source needed
+freelance_rate_per_word_very_high,1.0,dollars / word,Freelance rate per word (very high estimate),wage_data,unknown,assumptions needed,source needed,source needed
+reddit_users,267500000.0,users,Number of Reddit users,group_size,high,split between all users,https://backlinko.com/reddit-users,article about # reddit users
+reddit_deal_value,60000000.0,dollars,Payment made to reddit by Google,deal_data,high,Not specified,source needed,notes here
+tf_deal_value,10000000.0,dollars,Value of the Taylor and Francis deal,deal_data,high,Not specified,https://www.thebookseller.com/news/academic-authors-shocked-after-taylor--francis-sells-access-to-their-research-to-microsoft-ai,news coverage
+newscorp_deal_value,50000000.0,dollars,Value of the News Corp deal,deal_date,high,Not specified,https://www.nytimes.com/2024/05/22/business/media/openai-news-corp-content-deal.html,notes here
+tf_users,140000.0,nan,Number of Taylor and Francis Articles,group_size,moderate,assuming each article has 1 unique author,source needed,notes here
+wsj_journalists,2000.0,nan,Number of WSJ journalists,group_size,moderate,Not specified,https://en.wikipedia.org/wiki/The_Wall_Street_Journal,Wikipedia article
+newscorp_num_employees,25000.0,nan,Number of News Corp employees,group_size,moderate,Not specified,https://en.wikipedia.org/wiki/News_Corp,Wikipedia article (primary source is sec.gov)
+global_num_people,8100000000.0,nan,Number of people on Earth,group_size,high,Not specified,https://www.worldometers.info/world-population/,Worldometer website
+wikipedia_contribution_distribution,nan,nan,nan,nan,unknown,Not specified,https://p2pmodels.eu/power-law-distribution-characterize-wiki-communities/,No additional notes.
+nan,nan,nan,nan,nan,unknown,Not specified,https://placeholder-link.com,No additional notes.
+nan,nan,nan,nan,nan,unknown,Not specified,https://placeholder-link.com,No additional notes.
+nan,nan,nan,nan,nan,unknown,Not specified,https://placeholder-link.com,No additional notes.
+nan,nan,nan,nan,~,unknown,Not specified,https://placeholder-link.com,No additional notes.
