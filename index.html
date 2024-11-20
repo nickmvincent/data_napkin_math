@@ -127,7 +127,7 @@
     <div id="app">
         <button @click="toggleSidebar" class="btn btn-primary sidebar-toggle"
             style="background-color: #10a37f; color: white; border: none; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
-            {{ sidebarOpen ? 'Hide' : 'Show' }} ALL Assumptions
+            {{ sidebarOpen ? 'Hide' : 'Show' }} All Inputs
         </button>
 
         <div :class="['sidebar', { open: sidebarOpen }]">
@@ -149,10 +149,13 @@
                 <p>This is a lightweight web-page for making order of magnitude estimates about profit distribution,
                     dataset creation costs, and data deals.
                 </p>
-                <button class="btn btn-link" type="button" @click="toggleHeaderContent">
-                    {{ headerContentOpen ? '(Hide)' : '(Show)' }} About this page
-                </button>
-                <div v-if="headerContentOpen" id="headerContent">
+                <!-- <button class="btn" type="button" @click="toggleHeaderContent">
+                    {{ headerContentOpen ? '(Hide)' : '(Show)' }} 
+                </button> -->
+                <details open>
+                <summary>About this page</summary>
+                
+                <div id="headerContent">
                     <p>
                         There are a number of open debates about making policy and setting norms around the use of data
                         for "AI"
@@ -186,6 +189,7 @@
                         adding a new scenario.
                     </p>
                 </div>
+                </details>
             </header>
 
             <!-- Napkin Math Section -->
@@ -294,7 +298,8 @@
                 },
                 async loadDataFromGist() {
                     try {
-                        const gistUrl= 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/cff7784796d6411ef4080189c3b20098d2bd157c/data.yaml'
+                        
+                        // const gistUrl= 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/cff7784796d6411ef4080189c3b20098d2bd157c/data.yaml'
                         //const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/5560e727221f298805d731004ea687de24fa60c7/data.yaml';
                         const response = await fetch(gistUrl);
                         if (!response.ok) throw new Error('Failed to load data from Gist');
