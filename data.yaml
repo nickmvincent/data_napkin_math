@@ -163,8 +163,9 @@ inputs:
   source_url: https://p2pmodels.eu/power-law-distribution-characterize-wiki-communities/
   source_notes: No additional notes.
 calculations:
-  - title: "Distributing model 'value' based on tokens"
-    description: "Estimate the revenue generated per token based on model value and total tokens. If we were to immediately distribute AI revenue to data creators, you could multiply this by your number of tokens contributed to see how much you'd earn."
+  - title: "Distributing model 'value generated' per taken"
+    description: "Estimate a $/token value. Take some estimate of value generated (e.g., the revenue of an AI company) and divide by the
+    number of tokens used to train that companies models."
     inputs:
       - model_value
       - total_tokens
@@ -172,7 +173,15 @@ calculations:
       label: "Revenue per Token"
       value: 0
     explanation: "model_value / total_tokens"
-    diagram: "Divide20by4.svg.png"
+  - title: "Distributing model 'value generated' to everyone in the world"
+    description: "If we were to immediately distribute AI revenue to everyone on Earth, how much would each person receive?"
+    inputs:
+      - model_value
+      - global_num_people
+    result:
+      label: "Dividend per person"
+      value: 0
+    explanation: "model_value / global_num_people"
   - title: "Average Contribution Size"
     description: "Estimate the average contribution size in tokens based on the dataset size and number of contributions."
     inputs:
