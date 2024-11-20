@@ -131,7 +131,7 @@
         </button>
 
         <div :class="['sidebar', { open: sidebarOpen }]">
-            <h4>Adjust Inputs</h4>
+            <br><br>
             <div v-for="(input, key) in inputs" :key="key" class="mb-3">
                 <label :for="key" class="form-label">{{ formatLabel(key) }} ({{ input.units }})</label>
                 <input type="number" v-model.number="inputs[key].value" :id="key" class="form-control"
@@ -294,9 +294,7 @@
                 },
                 async loadDataFromGist() {
                     try {
-                        const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/1b67e3fd040715812fe8b1d44d91735b16bb755d/data.yaml';
-                        // const gistUrl= 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/cff7784796d6411ef4080189c3b20098d2bd157c/data.yaml'
-                        //const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/5560e727221f298805d731004ea687de24fa60c7/data.yaml';
+                        const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/';
                         const response = await fetch(gistUrl);
                         if (!response.ok) throw new Error('Failed to load data from Gist');
                         const yamlText = await response.text();
