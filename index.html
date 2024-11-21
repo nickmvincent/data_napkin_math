@@ -286,9 +286,9 @@
                 },
                 async loadDataFromGist() {
                     try {
-                        const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/41692d20ba0f06f2d4ec83400ebdb08867354c4a/data.yaml';
+                        //const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/41692d20ba0f06f2d4ec83400ebdb08867354c4a/data.yaml';
                         //const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/c649fcd41a10e69a11026854131de9f77f80d500/data.yaml';
-                        //const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/';
+                        const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/';
                         const response = await fetch(gistUrl);
                         if (!response.ok) throw new Error('Failed to load data from Gist');
                         const yamlText = await response.text();
