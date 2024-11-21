@@ -14,7 +14,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Data Napkin Math</a>
+            <a class="navbar-brand" href="#headerContent">Data Napkin Math</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -24,7 +24,7 @@
                         <a class="nav-link active" aria-current="page" href="#napkinMath">Scenarios</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#headerContent">About</a>
+                        <a class="nav-link" href="#aboutContent">About</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">GitHub</a>
@@ -70,14 +70,14 @@
         </div>
 
         <div :class="['main-content', { shifted: sidebarOpen }]">
-            <header class="header">
+            <header class="header" id="headerContent">
                 <h1>Napkin Math for Training Data Value</h1>
                 <div class="col-content"><p class="clean-text">Napkin math, back of the envelope estimates, ballpark figures: this is a lightweight web-page for
                     making order of magnitude estimates about
                     important "data value" questions. How will the proceeds and other benefits of AI be
                     distributed?
                 </p></div>
-                <details open id="headerContent" class="col-content">
+                <details open id="aboutContent" class="col-content">
                     <summary>About this page</summary>
                     <div>
                         <p>

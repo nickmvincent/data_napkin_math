@@ -102,8 +102,14 @@ details[open] ul li {
     display: block;
 }
 
-#headerContent {
+#aboutContent {
     text-align: left;
+}
+
+#headerContent,
+#aboutContent,
+#napkinMath {
+    scroll-margin-top: 80px; /* Adjust the value to match the height of the navbar */
 }
 
 .fixed-image {
