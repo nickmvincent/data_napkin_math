@@ -44,16 +44,16 @@ inputs:
   related_inputs:
     - yearly_revenue__openai__dollars
 
-- variable: average_tokens_per_contribution__redpajama__tokens_per_contribution
-  variable_type: dataset
+- variable: dataset_attribute__redpajama__tokens_per_contribution
+  variable_type: dataset_attribute
   entity: redpajama
-  units: tokens / contribution
-  nice_name: Average number of a token in a single document
+  units: dataset_attribute__redpajama__tokens_per_contribution
+  nice_name: Average number of a token in a single document (Red Pajama dataset)
   value: 1413.0
   scale: 1
   display_units: tokens per contribution
   value_description: Average number of tokens in a single 'contribution'
-  key_assumption: working with averages here
+  key_assumption: Working with averages here
   source_url: https://github.com/togethercomputer/RedPajama-Data
   source_notes: RedPajama readme reports a ratio of documents to tokens (after dedupe). We use the English figures (20.5T tokens / 14.5B documents)
 
@@ -83,10 +83,10 @@ inputs:
   source_url: https://www.penguin.co.uk/articles/2020/09/book-length-debate-fiction-long-novels
   source_notes: No additional notes.
 
-- variable: words_per_token__generic__words_per_token
+- variable: training_detail__openai__words_per_token
   variable_type: training_detail
-  entity: generic
-  units: words / token
+  entity: openai
+  units: words_per_token
   nice_name: Average words per token
   value: 0.75
   scale: 1
@@ -96,47 +96,47 @@ inputs:
   source_url: https://platform.openai.com/tokenizer
   source_notes: OpenAI Tokenizer
 
-- variable: freelance_rate_low__generic__dollars_per_word
+- variable: wage_data__generic_freelance_lower__dollars_per_word
   variable_type: wage_data
-  entity: generic
-  units: dollars / word
+  entity: generic_freelance_lower
+  units: dollars_per_word
   nice_name: Freelance rate per word (low estimate)
-  value: 0.05
+  value: 0.10
   scale: 1
   display_units: dollars per word
-  value_description: Freelance rate per word (low estimate)
+  value_description: Freelance rate per word (beginner)
   key_assumption: Rate estimate based on market conditions
-  source_url: source needed
-  source_notes: source needed
+  source_url: https://www.clearvoice.com/resources/how-much-to-pay-a-freelance-writer/
+  source_notes: Survey by ClearVoice, a company
 
-- variable: freelance_rate_high__generic__dollars_per_word
+- variable: wage_data__generic_freelance_higher__dollars_per_word
   variable_type: wage_data
-  entity: generic
-  units: dollars / word
+  entity: generic_freelance_higher
+  units: dollars_per_word
   nice_name: Freelance rate per word (high estimate)
-  value: 0.1
+  value: 1.00
   scale: 1
   display_units: dollars per word
-  value_description: Freelance rate per word (high estimate)
-  key_assumption: assumptions needed
-  source_url: source needed
-  source_notes: source needed
+  value_description: Freelance rate per word (expert)
+  key_assumption: Rate estimate based on market conditions
+  source_url: https://www.clearvoice.com/resources/how-much-to-pay-a-freelance-writer/
+  source_notes: Survey by ClearVoice, a company
 
-- variable: daily_active_users__reddit__users
+- variable: group_size_users__reddit__daily_active_users
   variable_type: group_size
   entity: reddit
-  units: daily active users
+  units: daily_active_users
   nice_name: Number of Reddit daily active users
   value: 267500000.0
   scale: 1e6
-  display_units: thousands of users
+  display_units: millions of daily active users
   value_description: Number of Reddit daily active users
   key_assumption: None
   source_url: https://backlinko.com/reddit-users
   source_notes: article about # of reddit users
 
-- variable: deal_value__reddit_google__millions_dollar
-  variable_type: deal_data
+- variable: deal_value__reddit_google__dollars
+  variable_type: deal_value
   entity: reddit_google
   units: dollars
   nice_name: Payment made to Reddit by Google
@@ -148,8 +148,8 @@ inputs:
   source_url: https://www.cbsnews.com/news/google-reddit-60-million-deal-ai-training/
   source_notes: CBS news coverage
 
-- variable: deal_value__taylorandfrancis_microsoft__millions_dollars
-  variable_type: deal_data
+- variable: deal_value__taylorandfrancis_microsoft__dollars
+  variable_type: deal_value
   entity: taylorandfrancis_microsoft
   units: dollars
   nice_name: Value of the Taylor and Francis deal
@@ -174,23 +174,23 @@ inputs:
   source_url: https://www.nytimes.com/2024/05/22/business/media/openai-news-corp-content-deal.html
   source_notes: notes here
 
-- variable: total_articles__taylorandfrancis__count
+- variable: group_size__taylorandfrancis__articles
   variable_type: group_size
   entity: taylorandfrancis
   units: articles
   nice_name: Number of Taylor and Francis Articles
-  value: 140000.0
-  scale: 1
-  display_units: articles
+  value: 5291000
+  scale: 1e6
+  display_units: millions of articles
   value_description: Number of Taylor and Francis Articles
   key_assumption: assuming each article has 1 unique author
-  source_url: source needed
-  source_notes: notes here
+  source_url: https://www.tandfonline.com/#:~:text=Advanced%20search.%205%2C291%2C000+%20articles.%20Find%20a%20journal.
+  source_notes: T&F search engine
 
-- variable: journalists__wsj__count
+- variable: group_size__wsj__journalists
   variable_type: group_size
   entity: wsj
-  units: people
+  units: journalists
   nice_name: Number of WSJ journalists
   value: 2000.0
   scale: 1
@@ -200,10 +200,10 @@ inputs:
   source_url: https://en.wikipedia.org/wiki/The_Wall_Street_Journal
   source_notes: Wikipedia article
 
-- variable: total_employees__newscorp__count
+- variable: group_size__newscorp__employees
   variable_type: group_size
   entity: newscorp
-  units: people
+  units: employees
   nice_name: Number of News Corp employees
   value: 25000.0
   scale: 1
@@ -213,7 +213,7 @@ inputs:
   source_url: https://en.wikipedia.org/wiki/News_Corp
   source_notes: Wikipedia article (primary source is sec.gov)
 
-- variable: total_population__world__people
+- variable: group_size__world__people
   variable_type: group_size
   entity: world
   units: people
@@ -226,18 +226,18 @@ inputs:
   source_url: https://www.worldometers.info/world-population/
   source_notes: Worldometer website
 
-- variable: contribution_distribution__wikipedia__unknown
-  variable_type: distribution
-  entity: wikipedia
-  units: contributions
-  nice_name: Distribution of Wikipedia contributions
-  value: .nan
-  scale: 1
-  display_units: unknown
-  value_description: Power-law distribution for Wikipedia contributions
-  key_assumption: Not specified
-  source_url: https://p2pmodels.eu/power-law-distribution-characterize-wiki-communities/
-  source_notes: No additional notes.
+# - variable: contribution_distribution__wikipedia__unknown
+#   variable_type: distribution
+#   entity: wikipedia
+#   units: contributions
+#   nice_name: Distribution of Wikipedia contributions
+#   value: .nan
+#   scale: 1
+#   display_units: unknown
+#   value_description: Power-law distribution for Wikipedia contributions
+#   key_assumption: Not specified
+#   source_url: https://p2pmodels.eu/power-law-distribution-characterize-wiki-communities/
+#   source_notes: No additional notes.
 
 
 calculations:
@@ -316,3 +316,48 @@ calculations:
       label: "Dataset Coverage Ratio"
       value: 0
     explanation: "(total_books__books3__books * average_length__book__words) / dataset_size__llama3__tokens"
+
+  - title: "Value per Reddit User"
+    description: "Estimate the value of the Reddit-Google deal per Reddit daily active user."
+    inputs:
+      - deal_value__reddit_google__millions_dollar
+      - daily_active_users__reddit__users
+    result:
+      label: "Value per Reddit User"
+      units: dollars
+      value: 0
+    explanation: "(deal_value__reddit_google__millions_dollar * 1e6) / (daily_active_users__reddit__users * 1e3)"
+
+  - title: "Freelance Cost per Book in Books3"
+    description: "Calculate the cost of paying freelance writers to create content equivalent to a book in the Books3 dataset, using high freelance rates."
+    inputs:
+      - average_length__book__words
+      - freelance_rate_high__generic__dollars_per_word
+    result:
+      label: "Freelance Cost per Book"
+      units: dollars
+      value: 0
+    explanation: "average_length__book__words * freelance_rate_high__generic__dollars_per_word"
+
+  - title: "Total Freelance Cost for Books3"
+    description: "Estimate the total cost to pay freelance writers to create content equivalent to all books in the Books3 dataset."
+    inputs:
+      - total_books__books3__books
+      - average_length__book__words
+      - freelance_rate_high__generic__dollars_per_word
+    result:
+      label: "Total Freelance Cost for Books3"
+      units: dollars
+      value: 0
+    explanation: "total_books__books3__books * average_length__book__words * freelance_rate_high__generic__dollars_per_word"
+
+  - title: "Revenue per WSJ Journalist"
+    description: "Estimate the revenue per journalist at WSJ based on News Corp's total revenue from their AI deal."
+    inputs:
+      - deal_value__newscorp__dollars
+      - journalists__wsj__count
+    result:
+      label: "Revenue per WSJ Journalist"
+      units: dollars
+      value: 0
+    explanation: "deal_value__newscorp__dollars / journalists__wsj__count"

@@ -11,6 +11,7 @@ Data Napkin Math is a lightweight web tool for making order-of-magnitude estimat
 
 ### Prerequisites
 - [Node.js](https://nodejs.org/) is required only if you want to run the test script or convert data formats.
+- pyyaml is required to run `yaml2csv.py`.
 
 ### Installation
 1. **Clone the Repository**:
