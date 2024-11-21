@@ -7,46 +7,6 @@ Data Napkin Math is a lightweight web tool for making order-of-magnitude estimat
 - **Interactive Web Page**: Built as a single-page app, this tool is easy to use without the need for installation.
 - **Collaborative inputs**: Inputs are loaded from a YAML file in the project GitHub repository: you can suggest additions and changes via GitHub or Google Sheets.
 
-## Getting Started
-
-### Prerequisites
-- [Node.js](https://nodejs.org/) is required only if you want to run the test script or convert data formats.
-- pyyaml is required to run `yaml2csv.py`.
-
-### Installation
-1. **Clone the Repository**:
-   ```
-   git clone https://github.com/nickmvincent/data-napkin-math.git
-   cd data-napkin-math
-   ```
-2. **Install Dependencies** (optional, only if running scripts):
-   ```
-   npm install
-   ```
-
-### Running the Application
-To run the application, simply open `index.html` in your browser. No server setup is required.
-
-### Available Scripts
-- **Run Tests**:
-  ```
-  node run validate.mjs
-  ```
-  This script tries to run all the most recent "scenarios".
-
-- **Convert YAML to CSV**:
-  ```
-  python3 yaml2csv.py
-  ```
-  This script converts data from YAML to CSV format, so we can export data to the public Google Sheet.
-
-## Directory Structure
-- `data/`: Contains the data file (`data.yaml`) that is used for calculations, as well as a csv copy.
-- `scripts/`: Two short scripts: yaml2csv and validation.
-- `index.html`: The main HTML page that hosts the application.
-- `style.css`: Styles for the application.
-- `CONTRIBUTING.md`: Guidelines for contributing to the project.
-
 ## Usage
 The web page loads default "input values" from a collaboratively edited YAML file. Each scenario is affected by these inputs, which the user can edit, enabling you to test different assumptions quickly. You can:
 
@@ -55,20 +15,62 @@ The web page loads default "input values" from a collaboratively edited YAML fil
 - **See Calculation Details**: Expand each calculation to understand the underlying assumptions.
 
 ## Contributing
-There are two ways to contribute to Data Napkin Math:
+There are three ways to contribute to Data Napkin Math:
 
 1. **Pull Requests via GitHub**: Edit the `data/data.yaml` file and submit your changes.
 2. **Google Sheet Comments**: If you prefer, you can leave suggestions or feedback directly in our [public Google Sheet](#).
+3. Just send us a note or open a GitHub issue with your thoughts.
 
-For detailed guidelines, see [CONTRIBUTING.md](./CONTRIBUTING.md).
+For detailed guidelines, see [CONTRIBUTING.md](./docs/CONTRIBUTING.md).
+
+
+### Installation and Pre-reqs
+
+To install the full repo:
+
+```
+git clone https://github.com/nickmvincent/data-napkin-math.git
+cd data-napkin-math
+```
+
+There are currently no pre-requisites required to run the app (just open index.html),
+but you will need either Node.js or Python to run tests (suggested after editing data.yaml).
+
+- [Node.js](https://nodejs.org/) to run tests (`js-yaml`, `node-fetch`, `yargs`)
+- `npm install` to install dependencies, `npm test` to run tests. See `tests` for more.
+- You can also run tests using Python, which requires `pyyaml` and `requests`.
+- To convert `data.yaml` to `data.csv` using `scripts/yaml2csv.py`, only `pyyaml` is needed.
+
+
+### Running the Application
+To run the application, simply open `index.html` in your browser. No server setup is required. This may change in the future.
+
+### Updating the centralized databaes
+
+Currently, the shared data underlying this app is handled in a lightweight manner: all inputs
+and scenarios are loaded from `data.yaml` (currently stored in a Gist). This may change in the future
+(suggestions welcome!).
+
+The current implementation requires manual approval:
+
+- a maintainer merges PRs and incorporates comments from Google sheets
+- the maintainer updates the gist (or points web app directly to the `data` folder on main branch)
+- the maintainer runs `python yaml2csv.py` to produce an updated CSV file that will be imported to Google sheets
+
+## Directory Structure
+
+Directories:
+- `data/`: Contains the data file (`data.yaml`) that is used for calculations, as well as a csv copy.
+- `docs/`: Details about contributing to the project and the data schema.
+- `scripts/`: Scripts (currently just yaml2csv.py)
+- `tests`/: validate input data and scenario calculations
+
+Key files:
+- `index.html`: The main HTML page that hosts the application.
+- `style.css`: Styles for the application.
+
+
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
-
-## Contact
-For questions or feedback, please create an issue on GitHub or contact us directly.
-
----
-
-We appreciate any contributions and feedback to improve Data Napkin Math!
 
