@@ -2,6 +2,8 @@
 
 Data Napkin Math is a lightweight web tool for making order-of-magnitude estimates about important "data value" questions. The goal of this tool is to help answer questions such as: How will the proceeds and other benefits of AI be distributed? It is designed to be interactive, allowing users to easily modify assumptions and explore different scenarios.
 
+[Visit the site!](https://nickmvincent.github.io/data_napkin_math/)
+
 ## Usage
 The web page loads default "input values" from a collaboratively edited YAML file. Each scenario is affected by these inputs, which the user can edit, enabling you to test different assumptions quickly. You can:
 
