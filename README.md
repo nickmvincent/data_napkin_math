@@ -2,17 +2,13 @@
 
 Data Napkin Math is a lightweight web tool for making order-of-magnitude estimates about important "data value" questions. The goal of this tool is to help answer questions such as: How will the proceeds and other benefits of AI be distributed? It is designed to be interactive, allowing users to easily modify assumptions and explore different scenarios.
 
-## Features
-- **Simple Assumptions and Estimates**: Modify key input values to see how they impact various scenarios.
-- **Interactive Web Page**: Built as a single-page app, this tool is easy to use without the need for installation.
-- **Collaborative inputs**: Inputs are loaded from a YAML file in the project GitHub repository: you can suggest additions and changes via GitHub or Google Sheets.
-
 ## Usage
 The web page loads default "input values" from a collaboratively edited YAML file. Each scenario is affected by these inputs, which the user can edit, enabling you to test different assumptions quickly. You can:
 
-- **Edit Inputs Directly**: Modify input values via the form on the left sidebar.
+- **Edit Inputs Directly**: Modify key input values to see how they impact various scenarios.
 - **Switch Between Related Variables**: Use the interface to swap inputs for related data (for instance, to swap out OpenAI's revenue for Anthropic's revenue as an input into some calculations).
 - **See Calculation Details**: Expand each calculation to understand the underlying assumptions.
+- **Collaboratively produced**: Help us improve our inputs and scenarios! Inputs are loaded from a YAML file in the project GitHub repository: you can suggest additions and changes via GitHub or Google Sheets. (see below)
 
 ## Contributing
 There are three ways to contribute to Data Napkin Math:
