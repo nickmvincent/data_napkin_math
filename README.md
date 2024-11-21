@@ -14,7 +14,7 @@ The web page loads default "input values" from a collaboratively edited YAML fil
 There are three ways to contribute to Data Napkin Math:
 
 1. **Pull Requests via GitHub**: Edit the `data/data.yaml` file and submit your changes.
-2. **Google Sheet Comments**: If you prefer, you can leave suggestions or feedback directly in our [public Google Sheet](#).
+2. **Google Sheet Comments**: If you prefer, you can leave suggestions or feedback directly in our [public Google Drive folder (comment link)](https://drive.google.com/drive/folders/1_UKI4KXKeItuDDCmOtxx8cgmoh3weui5?usp=sharing).
 3. Just send us a note or open a GitHub issue with your thoughts.
 
 For detailed guidelines, see [CONTRIBUTING.md](./docs/CONTRIBUTING.md).
