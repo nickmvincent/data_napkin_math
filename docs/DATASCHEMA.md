@@ -2,7 +2,7 @@
 
 This document provides an overview of all the attributes in our current data schema. Each data entry has a set of attributes that define its context, purpose, and properties. Below, you will find descriptions for each attribute used in our dataset, along with an example for clarity.
 
-## Data Attributes
+## "Inputs" Attributes
 
 ### 1. `variable`
 - **Description**: The unique identifier for the data point. It follows a consistent naming convention of `description__specific_entity__unit` to ensure clarity. This attribute provides insight into what the variable represents, the entity associated with it, and its unit.
@@ -53,7 +53,10 @@ This document provides an overview of all the attributes in our current data sch
 - **Description**: Additional notes about the source, such as context or reliability, which might be useful for understanding the origin of the data.
 - **Example**: `Source is the Llama 3 model card. It describes the total number of tokens used for pre-training.`
 
-## Example Data Point
+### 12. `related_inputs`
+- **Description**: A list of inputs that are the same "category" (e.g. OpenAI revenue and Anthropic revenue)
+
+### Example Data Point
 Below is an example that uses all the attributes described above:
 
 ```yaml
@@ -72,4 +75,36 @@ Below is an example that uses all the attributes described above:
   source_url: https://github.com/meta-llama/llama3/blob/main/MODEL_CARD.md
   source_notes: Source is the Llama 3 model card. It describes total number of tokens for pre-training.
 ```
+
+## "Calculations" Attributes
+
+## "Calculations" Attributes
+
+### 1. `title`
+- **Description**: A short, descriptive title that defines the calculation.
+- **Example**: "Distributing the 'value generated' by AI to everyone in the world"
+
+### 2. `description`
+- **Description**: A detailed explanation of what the calculation aims to solve or describe.
+- **Example**: "If we were to immediately distribute AI revenue to everyone on Earth, how much would each person receive?"
+
+### 3. `inputs`
+- **Description**: A list of input variables needed for the calculation. Each input variable is represented by its unique identifier.
+- **Example**: `yearly_revenue__openai__dollars, group_size__world__people`
+
+### 4. `result.label`
+- **Description**: A label that describes what the result represents.
+- **Example**: "Dividend per person"
+
+### 5. `result.units`
+- **Description**: The unit of measurement for the result.
+- **Example**: `dollars`
+
+### 6. `result.value`
+- **Description**: The computed value based on the provided inputs and calculation.
+- **Example**: `0`
+
+### 7. `explanation`
+- **Description**: The formula or reasoning used to derive the result.
+- **Example**: `"yearly_revenue__openai__dollars / group_size__world__people"`
 
