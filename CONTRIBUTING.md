@@ -41,6 +41,16 @@ If you are less familiar with GitHub or prefer a simpler way to contribute, you 
 - **Clarity**: Make sure your comments are clear and easy to understand.
 - **Context**: Include enough context about why you think the value or information should be changed.
 
+
+## Naming Scheme for Variables
+
+To ensure consistency and clarity across our dataset, we use a specific naming scheme for variables. Each variable name follows this format: description__specific_entity__unit. This format helps make the variable's purpose, the context, and the units of measurement clear at a glance. 
+
+Here are some examples:
+
+- total_tokens__llama3__tokens: Represents the total number of tokens used in the Llama3 dataset.- yearly_revenue__openai__dollars: Refers to the yearly revenue of OpenAI in dollars.
+- average_tokens_per_contribution__redpajama__tokens_per_contribution: Represents the average number of tokens per contribution in the RedPajama dataset.
+
 ## Questions or Feedback?
 
 If you have questions about contributing or if you need more information, feel free to reach out via the GitHub issues page. We appreciate all forms of contribution and feedback, and we're excited to collaborate with you!
