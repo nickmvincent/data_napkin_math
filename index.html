@@ -112,7 +112,7 @@
                         <p><strong>Raw Value:</strong> {{ calculation.result.rawValue }}</p> <!-- Display raw value here -->
                     </details>
                     <footer class="mt-4">
-                        <p>{{ calculation.result.label }}: <strong>{{ calculation.result.value }}</strong></p>
+                        <p>{{ calculation.result.label }}: <strong>{{ calculation.result.value }} {{calculation.units}} </strong></p>
                     </footer>
                 </div>
             </section>
@@ -181,7 +181,7 @@
                 updateUnits() {
                     for (const key in this.inputs) {
                         if (this.inputs[key]) {
-                            const displayUnits = this.inputs[key].display_units || 'Units';
+                            const displayUnits = this.inputs[key].display_units || this.inputs[key].units;
                             this.inputs[key].units = displayUnits;
                         }
                     }
