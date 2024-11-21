@@ -252,7 +252,7 @@ calculations:
       value: 0
     explanation: "yearly_revenue__openai__dollars / group_size__world__people"
 
-  - title: "Commissiong a fresh LLM dataset"
+  - title: "Commisioning a fresh LLM dataset"
     description: How much would it cost to pay for a brand new LLM-scale pre-training dataset assuming moderate freelance writing wages. 
     inputs:
       - training_detail__openai__words_per_token
