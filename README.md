@@ -1,6 +1,8 @@
 # Data Napkin Math
 
-Data Napkin Math is a lightweight web tool for making order-of-magnitude estimates about important "data value" questions. The goal of this tool is to help answer questions such as: How will the proceeds and other benefits of AI be distributed? It is designed to be interactive, allowing users to easily modify assumptions and explore different scenarios.
+Data Napkin Math is a lightweight web tool and peer production project for making order-of-magnitude estimates about important "data value" questions. The goal of this tool is to help answer questions such as: How will the proceeds and other benefits of AI be distributed? It is designed to be interactive, allowing users to easily modify assumptions and explore different scenarios.
+
+The tool itself consists of a small website. A key aspect of this project that makes the website useful is the collaboratively edited dataset of relevant inputs (estimates of dataset size, AI company revenue, wage, etc.) and scenarios ("what if we distribute profits from AI to everyone in the world?")
 
 [Visit the site!](https://nickmvincent.github.io/data_napkin_math/)
 
