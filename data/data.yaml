@@ -47,7 +47,7 @@ inputs:
 - variable: dataset_attribute__redpajama__tokens_per_contribution
   variable_type: dataset_attribute
   entity: redpajama
-  units: dataset_attribute__redpajama__tokens_per_contribution
+  units: tokens_per_contribution
   nice_name: Average number of a token in a single document (Red Pajama dataset)
   value: 1413.0
   scale: 1

@@ -71,12 +71,14 @@ const argv = yargs(hideBin(process.argv))
         alias: 'u',
         type: 'string',
         description: 'URL of the YAML file to be validated',
-        default: 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/',
+        //default: 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/',
     })
     .option('file', {
         alias: 'f',
         type: 'string',
         description: 'Path to the local YAML file to be validated',
+        default: 'data/data.yaml',
+
     })
     .help()
     .argv;

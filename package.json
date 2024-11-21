@@ -1,4 +1,13 @@
 {
+  "name": "data_napkin_math",
+  "version": "1.0.0",
+  "description": "A project for validating data napkin math scenarios",
+  "main": "index.js",
+  "scripts": {
+    "test": "node scripts/validate_inputs.mjs && node scripts/validate_scenarios.mjs"
+  },
+  "author": "Nick Vincent",
+  "license": "MIT",
   "dependencies": {
     "js-yaml": "^4.1.0",
     "node-fetch": "^3.3.2",
