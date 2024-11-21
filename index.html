@@ -31,13 +31,14 @@
                         <li class="input-info"><strong>Source:</strong> <a :href="input.source_url" target="_blank">{{ input.source_url }}</a></li>
                     </ul>
                 </details>
-                <div v-if="input.related_inputs && input.related_inputs.length" class="related-inputs mt-2">
+                <!-- currently only show "related inputs" in the main body-->
+                <!-- <div v-if="input.related_inputs && input.related_inputs.length" class="related-inputs mt-2">
                     <label class="form-label">Related Inputs:</label>
                     <div v-for="related in input.related_inputs" :key="related" class="d-flex align-items-center">
                         <span>{{ inputs[related]?.nice_name || formatLabel(related) }}</span>
                         <button @click="applyRelatedInput(key, related)" class="btn btn-sm btn-link">Use Value</button>
                     </div>
-                </div>
+                </div> -->
             </div>
             <button @click="loadDataFromGist" class="btn btn-outline-primary mt-3"
                 style="border-color: #10a37f; color: #10a37f;">Load Data from Gist</button>
@@ -111,14 +112,15 @@
                                 <li v-if="inputs[inputKey] && inputs[inputKey].units"><strong>Units:</strong> {{ inputs[inputKey].units }}</li>
                                 <li v-if="inputs[inputKey] && inputs[inputKey].source_url"><strong>Source URL:</strong> <a :href="inputs[inputKey].source_url" target="_blank">{{ inputs[inputKey].source_url }}</a></li>
                             </ul>
-                        </details>
-                        <div v-if="inputs[inputKey].related_inputs && inputs[inputKey].related_inputs.length" class="related-inputs mt-2">
-                            <label class="form-label">Related Inputs:</label>
-                            <div v-for="related in inputs[inputKey].related_inputs" :key="related" class="d-flex align-items-center">
-                                <span>{{ inputs[related]?.nice_name || formatLabel(related) }}</span>
-                                <button @click="applyRelatedInput(inputKey, related)" class="btn btn-sm btn-link">Use Value</button>
+                            <div v-if="inputs[inputKey].related_inputs && inputs[inputKey].related_inputs.length" class="related-inputs mt-2">
+                                <label class="form-label">Related Inputs:</label>
+                                <div v-for="related in inputs[inputKey].related_inputs" :key="related" class="d-flex align-items-center">
+                                    <span>{{ inputs[related]?.nice_name || formatLabel(related) }}</span>
+                                    <button @click="applyRelatedInput(inputKey, related)" class="btn btn-sm btn-link">Use Value</button>
+                                </div>
                             </div>
-                        </div>
+                        </details>
+                        
                     </div>
                     <details>
                         <summary>Show Calculation Details</summary>
@@ -159,8 +161,22 @@
                     this.updateCalculations();
                 },
                 applyRelatedInput(targetKey, relatedKey) {
+                    // if (this.inputs[relatedKey]) {
+                    //     this.inputs[targetKey].value = this.inputs[relatedKey].value;
+                    //     this.updateCalculations();
+                    // }
                     if (this.inputs[relatedKey]) {
+                        // Update target input with related input value
                         this.inputs[targetKey].value = this.inputs[relatedKey].value;
+                        
+                        // Update the input references in the scenario
+                        this.calculations.forEach(calculation => {
+                            calculation.inputs = calculation.inputs.map(inputKey => inputKey === targetKey ? relatedKey : inputKey);
+                            // Update the explanation using find and replace
+                            calculation.explanation = calculation.explanation.replace(new RegExp(targetKey, 'g'), relatedKey);
+                        });
+                        
+                        // Update the explanation or any other dependent data accordingly
                         this.updateCalculations();
                     }
                 },
