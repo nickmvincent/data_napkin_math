@@ -12,6 +12,27 @@
 </head>
 
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Data Napkin Math</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#napkinMath">Scenarios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#headerContent">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">GitHub</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
     <div id="app">
         <button @click="toggleSidebar" class="btn btn-primary sidebar-toggle"
             style="background-color: #10a37f; color: white; border: none; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
@@ -19,16 +40,20 @@
         </button>
 
         <div :class="['sidebar', { open: sidebarOpen }]">
-            <br><br>
             <div v-for="(input, key) in inputs" :key="key" class="mb-3">
-                <label :for="key" class="form-label">{{ input.nice_name || formatLabel(key) }} ({{ input.units }})</label>
-                <input type="number" :value="formatValue(input.value, input.scale)" @input="updateValue($event, key)" :id="key" class="form-control">
+                <label :for="key" class="form-label">{{ input.nice_name || formatLabel(key) }} ({{ input.units
+                    }})</label>
+                <input type="number" :value="formatValue(input.value, input.scale)" @input="updateValue($event, key)"
+                    :id="key" class="form-control">
                 <details>
                     <summary>Show Input Details</summary>
                     <ul>
-                        <li><strong>Raw Value:</strong> {{ inputs[key].value }}</li> <!-- Display raw value of the input here -->
-                        <li v-if="input.description" class="input-info"><strong>Description:</strong> {{ input.description }}</li>
-                        <li class="input-info"><strong>Source:</strong> <a :href="input.source_url" target="_blank">{{ input.source_url }}</a></li>
+                        <li><strong>Raw Value:</strong> {{ inputs[key].value }}</li>
+                        <!-- Display raw value of the input here -->
+                        <li v-if="input.description" class="input-info"><strong>Description:</strong> {{
+                            input.description }}</li>
+                        <li class="input-info"><strong>Source:</strong> <a :href="input.source_url" target="_blank">{{
+                                input.source_url }}</a></li>
                     </ul>
                 </details>
                 <!-- currently only show "related inputs" in the main body-->
@@ -47,34 +72,42 @@
         <div :class="['main-content', { shifted: sidebarOpen }]">
             <header class="header">
                 <h1>Napkin Math for Training Data Value</h1>
-                <p>Napkin math, back of the envelope estimates, ballpark figures: this is a lightweight web-page for making order of magnitude estimates about
-                    a number of an important "data value" questions. How will the proceeds and other benefits of AI be distributed?
-                </p>
-                <details open id="headerContent">
+                <div class="col-content"><p class="clean-text">Napkin math, back of the envelope estimates, ballpark figures: this is a lightweight web-page for
+                    making order of magnitude estimates about
+                    important "data value" questions. How will the proceeds and other benefits of AI be
+                    distributed?
+                </p></div>
+                <details open id="headerContent" class="col-content">
                     <summary>About this page</summary>
                     <div>
                         <p>
-                            There are a number of open debates about making policy and setting norms around the use of data
-                            for "AI" systems.
+                            There are a number of open debates about making policy and setting norms around the use of
+                            data
+                            for "AI" systems. Many of these questions involve some abstract moral arguments, but answering them may also
+                            depend on some rough estimates of "what kind of numbers are we talking about". Will people
+                            be getting $5000
+                            paychecks, or 5 cent pittances?                            
                         </p>
                         <p>
-                            Many of these questions involve some abstract moral arguments, but answering them may also
-                            depend on some rough estimates of "what kind of numbers are we talking about". Will people be getting $5000
-                            paychecks, or 5 cent pittances?
-                        </p>
-                        <p>
-                            This tool is interactive so you can edit any assumptions you want. Ultimately, the math here is
-                            mostly just arithmetic (with the potential to hook more elaborate ML training scenarios or agent-based
+                            This tool is interactive so you can edit any assumptions you want. Ultimately, the math here
+                            is
+                            mostly just arithmetic (with the potential to hook more elaborate ML training scenarios or
+                            agent-based
                             models).
                         </p>
                         <p>
-                            To participate in discussion about what some reasonable default values should be, head to the
-                            GitHub page where we host the underlying data or visit our public Google Sheet and leave a comment.
+                            To participate in discussion about what some reasonable default values should be, head to
+                            the
+                            GitHub page where we host the underlying data or visit our public Google Sheet and leave a
+                            comment.
                         </p>
                         <p>
-                            There are two types of objects we use here: reported figures, aka the "inputs" (for instance,
-                            the number of tokens used to train a model or the reported revenue of an AI company) and equations. You can see all of these on the left sidebar.
-                            Anyone can contribute to this estimation process by updating a figure (for instance, when a new paper comes out), contesting an equation, or adding a new scenario.
+                            There are two types of objects we use here: reported figures, aka the "inputs" (for
+                            instance,
+                            the number of tokens used to train a model or the reported revenue of an AI company) and
+                            equations. You can see all of these on the left sidebar.
+                            Anyone can contribute to this estimation process by updating a figure (for instance, when a
+                            new paper comes out), contesting an equation, or adding a new scenario.
                         </p>
                     </div>
                 </details>
@@ -92,43 +125,65 @@
                     <header>
                         <h4>{{ calculation.title }}</h4>
                         <p>{{ calculation.description }}</p>
-                        <details v-if="calculation.diagram">
+                        <details :id="'diagram-details-' + index" v-if="calculation.diagram">
                             <summary>View Diagram</summary>
                             <img :src="calculation.diagram" alt="Diagram" class="fixed-image mt-2 mb-2" />
                         </details>
                     </header>
                     <div v-for="inputKey in calculation.inputs" :key="inputKey" class="mb-3">
-                        <label :for="inputKey" class="form-label">{{ inputs[inputKey]?.nice_name || formatLabel(inputKey) }} ({{ inputs[inputKey].units }})</label>
-                        <input type="number" :value="formatValue(inputs[inputKey].value, inputs[inputKey].scale)" @input="updateValue($event, inputKey)" :id="inputKey" class="form-control">
-                        <details>
+                        <label :for="inputKey" class="form-label">{{ inputs[inputKey]?.nice_name ||
+                            formatLabel(inputKey) }} ({{ inputs[inputKey].units }})</label>
+                        <input type="number" :value="formatValue(inputs[inputKey].value, inputs[inputKey].scale)"
+                            @input="updateValue($event, inputKey)" :id="inputKey" class="form-control">
+                        <details :id="'calculation-details-' + inputKey">
                             <summary>Show Input Details</summary>
                             <ul>
-                                <li><strong>Raw Value:</strong> {{ inputs[inputKey].value }}</li> <!-- Display raw value of input here -->
-                                <li v-if="inputs[inputKey] && inputs[inputKey].value_description"><strong>Value Description:</strong> {{ inputs[inputKey].value_description }}</li>
-                                <li v-if="inputs[inputKey] && inputs[inputKey].variable_type"><strong>Variable Type:</strong> {{ inputs[inputKey].variable_type }}</li>
-                                <li v-if="inputs[inputKey] && inputs[inputKey].confidence_in_number"><strong>Confidence in Number:</strong> {{ inputs[inputKey].confidence_in_number }}</li>
-                                <li v-if="inputs[inputKey] && inputs[inputKey].key_assumption"><strong>Key Assumption:</strong> {{ inputs[inputKey].key_assumption }}</li>
-                                <li v-if="inputs[inputKey] && inputs[inputKey].source_notes"><strong>Source Notes:</strong> {{ inputs[inputKey].source_notes }}</li>
-                                <li v-if="inputs[inputKey] && inputs[inputKey].units"><strong>Units:</strong> {{ inputs[inputKey].units }}</li>
-                                <li v-if="inputs[inputKey] && inputs[inputKey].source_url"><strong>Source URL:</strong> <a :href="inputs[inputKey].source_url" target="_blank">{{ inputs[inputKey].source_url }}</a></li>
+                                <li><strong>Raw Value:</strong> {{ inputs[inputKey].value }}</li>
+                                <!-- Display raw value of input here -->
+                                <li v-if="inputs[inputKey].default_value"><strong>Default Value:</strong> {{
+                                    inputs[inputKey].default_value }}</li> <!-- Display default value -->
+                                <li v-if="inputs[inputKey] && inputs[inputKey].value_description"><strong>Value
+                                        Description:</strong> {{ inputs[inputKey].value_description }}</li>
+                                <li v-if="inputs[inputKey] && inputs[inputKey].variable_type"><strong>Variable
+                                        Type:</strong> {{ inputs[inputKey].variable_type }}</li>
+                                <li v-if="inputs[inputKey] && inputs[inputKey].confidence_in_number"><strong>Confidence
+                                        in Number:</strong> {{ inputs[inputKey].confidence_in_number }}</li>
+                                <li v-if="inputs[inputKey] && inputs[inputKey].key_assumption"><strong>Key
+                                        Assumption:</strong> {{ inputs[inputKey].key_assumption }}</li>
+                                <li v-if="inputs[inputKey] && inputs[inputKey].source_notes"><strong>Source
+                                        Notes:</strong> {{ inputs[inputKey].source_notes }}</li>
+                                <li v-if="inputs[inputKey] && inputs[inputKey].units"><strong>Units:</strong> {{
+                                    inputs[inputKey].units }}</li>
+                                <li v-if="inputs[inputKey] && inputs[inputKey].source_url"><strong>Source URL:</strong>
+                                    <a :href="inputs[inputKey].source_url" target="_blank">{{
+                                        inputs[inputKey].source_url }}</a></li>
+
+                                <li>
+                                    <div v-if="inputs[inputKey].related_inputs && inputs[inputKey].related_inputs.length"
+                                        class="related-inputs mt-2">
+                                        <label class="form-label">Related Inputs:</label>
+                                        <div v-for="related in inputs[inputKey].related_inputs" :key="related"
+                                            class="d-flex align-items-center">
+                                            <span>{{ inputs[related]?.nice_name || formatLabel(related) }}</span>
+                                            <button @click="applyRelatedInput(inputKey, related)"
+                                                class="btn btn-sm btn-link">Use Value</button>
+                                        </div>
+                                    </div>
+                                </li>
+
                             </ul>
-                            <div v-if="inputs[inputKey].related_inputs && inputs[inputKey].related_inputs.length" class="related-inputs mt-2">
-                                <label class="form-label">Related Inputs:</label>
-                                <div v-for="related in inputs[inputKey].related_inputs" :key="related" class="d-flex align-items-center">
-                                    <span>{{ inputs[related]?.nice_name || formatLabel(related) }}</span>
-                                    <button @click="applyRelatedInput(inputKey, related)" class="btn btn-sm btn-link">Use Value</button>
-                                </div>
-                            </div>
                         </details>
-                        
+
                     </div>
                     <details>
                         <summary>Show Calculation Details</summary>
                         <p><strong>Explanation:</strong> {{ calculation.explanation }}</p>
-                        <p><strong>Raw Value:</strong> {{ calculation.result.rawValue }}</p> <!-- Display raw value here -->
+                        <p><strong>Raw Value:</strong> {{ calculation.result.rawValue }}</p>
+                        <!-- Display raw value here -->
                     </details>
                     <footer class="mt-4">
-                        <p>{{ calculation.result.label }}: <strong>{{ calculation.result.value }} {{calculation.units}} </strong></p>
+                        <p>{{ calculation.result.label }}: <strong>{{ calculation.result.value }} {{calculation.units}}
+                            </strong></p>
                     </footer>
                 </div>
             </section>
@@ -161,21 +216,28 @@
                     this.updateCalculations();
                 },
                 applyRelatedInput(targetKey, relatedKey) {
-                    // if (this.inputs[relatedKey]) {
-                    //     this.inputs[targetKey].value = this.inputs[relatedKey].value;
-                    //     this.updateCalculations();
-                    // }
                     if (this.inputs[relatedKey]) {
                         // Update target input with related input value
-                        this.inputs[targetKey].value = this.inputs[relatedKey].value;
                         
-                        // Update the input references in the scenario
+
+                        const openDetailsIds = ['calculation-details-' + relatedKey];
+                        
                         this.calculations.forEach(calculation => {
                             calculation.inputs = calculation.inputs.map(inputKey => inputKey === targetKey ? relatedKey : inputKey);
                             // Update the explanation using find and replace
                             calculation.explanation = calculation.explanation.replace(new RegExp(targetKey, 'g'), relatedKey);
                         });
                         
+                        // Restore the state of previously open details elements
+                        this.$nextTick(() => {
+                            openDetailsIds.forEach(id => {
+                                const detail = document.getElementById(id);
+                                if (detail) {
+                                    detail.open = true;
+                                }
+                            });
+                        });
+
                         // Update the explanation or any other dependent data accordingly
                         this.updateCalculations();
                     }
@@ -233,7 +295,10 @@
                         const data = jsyaml.load(yamlText);
                         console.log('Data successfully loaded from Gist');
                         this.inputs = data.inputs.reduce((acc, input) => {
-                            acc[input.variable] = input;
+                            acc[input.variable] = {
+                                ...input,
+                                default_value: input.value // Store the default value
+                            };
                             return acc;
                         }, {});
                         this.calculations = data.calculations.map(calculation => ({ ...calculation, result: { label: calculation.result.label, value: 0, rawValue: 0 } }));
