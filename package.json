@@ -4,7 +4,7 @@
   "description": "A project for validating data napkin math scenarios",
   "main": "index.js",
   "scripts": {
-    "test": "node scripts/validate_inputs.mjs && node scripts/validate_scenarios.mjs"
+    "test": "node tests/validate_inputs.mjs && node tests/validate_scenarios.mjs"
   },
   "author": "Nick Vincent",
   "license": "MIT",
