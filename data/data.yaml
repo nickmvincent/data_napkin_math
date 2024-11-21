@@ -8,11 +8,11 @@ inputs:
   value_description: Total tokens used for pre-training
   variable_type: dataset
   confidence_in_number: moderate
-  key_assumption: We can use 15 trillion as a default value based on the assumption that most frontier models use roughly same pre-training size.
-  15T is the number cited in Llama3 model card and close to the FineWeb size.
+  key_assumption: "We can use 15 trillion as a default value based on the assumption that most frontier models use roughly same pre-training size.
+  15T is the number cited in Llama3 model card and close to the FineWeb size."
   source_url: https://github.com/meta-llama/llama3/blob/main/MODEL_CARD.md
   source_notes: Source is the Llama 3 model card. It describes total number of tokens for pre-training.
-  
+
 - variable: ai_revenue
   nice_name: Revenue from AI
   value: 3490000000.0
