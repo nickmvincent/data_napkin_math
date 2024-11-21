@@ -245,24 +245,24 @@ calculations:
     description: "If we were to immediately distribute AI revenue to everyone on Earth, how much would each person receive?"
     inputs:
       - yearly_revenue__openai__dollars
-      - total_population__world__people
+      - group_size__world__people
     result:
       label: "Dividend per person"
       units: dollars
       value: 0
-    explanation: "yearly_revenue__openai__dollars / total_population__world__people"
+    explanation: "yearly_revenue__openai__dollars / group_size__world__people"
 
   - title: "Commissiong a fresh LLM dataset"
     description: How much would it cost to pay for a brand new LLM-scale pre-training dataset assuming moderate freelance writing wages. 
     inputs:
-      - words_per_token__generic__words_per_token
-      - freelance_rate_per_word_high
+      - training_detail__openai__words_per_token
+      - wage_data__generic_freelance_higher__dollars_per_word
       - dataset_size__llama3__tokens
     result:
       label: Total cost
       units: dollars
       value: 0
-    explanation: "dataset_size__llama3__tokens * words_per_token__generic__words_per_token * freelance_rate_per_word_high"
+    explanation: "dataset_size__llama3__tokens * training_detail__openai__words_per_token * wage_data__generic_freelance_higher__dollars_per_word"
   
   - title: "Distributing model 'value generated' per token"
     description: >
@@ -280,21 +280,21 @@ calculations:
     description: "Estimate of the average contribution size in tokens based on the dataset size and number of contributions."
     inputs:
       - dataset_size__llama3__tokens
-      - average_tokens_per_contribution__redpajama__tokens_per_contribution
+      - dataset_attribute__redpajama__tokens_per_contribution
     result:
       label: "Average Contribution Size"
       value: 0
-    explanation: "dataset_size__llama3__tokens / average_tokens_per_contribution__redpajama__tokens_per_contribution"
+    explanation: "dataset_size__llama3__tokens / dataset_attribute__redpajama__tokens_per_contribution"
   - title: "Revenue per contribution"
     description: "Calculate the revenue generated per contribution based on the average tokens per contribution and revenue per token."
     inputs:
-      - average_tokens_per_contribution__redpajama__tokens_per_contribution
+      - dataset_attribute__redpajama__tokens_per_contribution
       - yearly_revenue__openai__dollars
       - dataset_size__llama3__tokens
     result:
       label: "Revenue per Contribution"
       value: 0
-    explanation: "(yearly_revenue__openai__dollars / dataset_size__llama3__tokens) * average_tokens_per_contribution__redpajama__tokens_per_contribution"
+    explanation: "(yearly_revenue__openai__dollars / dataset_size__llama3__tokens) * dataset_attribute__redpajama__tokens_per_contribution"
   - title: "Revenue per Book in Books3"
     description: "Estimate the revenue generated per book in the Books3 dataset."
     inputs:
@@ -320,44 +320,44 @@ calculations:
   - title: "Value per Reddit User"
     description: "Estimate the value of the Reddit-Google deal per Reddit daily active user."
     inputs:
-      - deal_value__reddit_google__millions_dollar
-      - daily_active_users__reddit__users
+      - deal_value__reddit_google__dollars
+      - group_size_users__reddit__daily_active_users
     result:
       label: "Value per Reddit User"
       units: dollars
       value: 0
-    explanation: "(deal_value__reddit_google__millions_dollar * 1e6) / (daily_active_users__reddit__users * 1e3)"
+    explanation: "(deal_value__reddit_google__dollars * 1e6) / (group_size_users__reddit__daily_active_users * 1e3)"
 
   - title: "Freelance Cost per Book in Books3"
     description: "Calculate the cost of paying freelance writers to create content equivalent to a book in the Books3 dataset, using high freelance rates."
     inputs:
       - average_length__book__words
-      - freelance_rate_high__generic__dollars_per_word
+      - wage_data__generic_freelance_lower__dollars_per_word
     result:
       label: "Freelance Cost per Book"
       units: dollars
       value: 0
-    explanation: "average_length__book__words * freelance_rate_high__generic__dollars_per_word"
+    explanation: "average_length__book__words * wage_data__generic_freelance_lower__dollars_per_word"
 
   - title: "Total Freelance Cost for Books3"
     description: "Estimate the total cost to pay freelance writers to create content equivalent to all books in the Books3 dataset."
     inputs:
       - total_books__books3__books
       - average_length__book__words
-      - freelance_rate_high__generic__dollars_per_word
+      - wage_data__generic_freelance_lower__dollars_per_word
     result:
       label: "Total Freelance Cost for Books3"
       units: dollars
       value: 0
-    explanation: "total_books__books3__books * average_length__book__words * freelance_rate_high__generic__dollars_per_word"
+    explanation: "total_books__books3__books * average_length__book__words * wage_data__generic_freelance_lower__dollars_per_word"
 
   - title: "Revenue per WSJ Journalist"
     description: "Estimate the revenue per journalist at WSJ based on News Corp's total revenue from their AI deal."
     inputs:
       - deal_value__newscorp__dollars
-      - journalists__wsj__count
+      - group_size__wsj__journalists
     result:
       label: "Revenue per WSJ Journalist"
       units: dollars
       value: 0
-    explanation: "deal_value__newscorp__dollars / journalists__wsj__count"
+    explanation: "deal_value__newscorp__dollars / group_size__wsj__journalists"

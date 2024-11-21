@@ -1,14 +1,24 @@
-// Script to load and validate YAML from GitHub Gist to ensure all equations are runnable
-
 import jsyaml from 'js-yaml';
 import fetch from 'node-fetch';
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
+import fs from 'fs/promises';
 
-async function loadAndValidateYaml(gistUrl) {
+async function loadAndValidateYaml(gistUrl, filePath) {
     try {
-        // Fetch the YAML file from the provided Gist URL
-        const response = await fetch(gistUrl);
-        if (!response.ok) throw new Error('Failed to load data from Gist');
-        const yamlText = await response.text();
+        let yamlText;
+
+        // Load YAML from local file or URL
+        if (filePath) {
+            // Read the YAML file from the provided file path
+            yamlText = await fs.readFile(filePath, 'utf8');
+        } else {
+            // Fetch the YAML file from the provided Gist URL
+            const response = await fetch(gistUrl);
+            if (!response.ok) throw new Error('Failed to load data from Gist');
+            yamlText = await response.text();
+        }
+
         const data = jsyaml.load(yamlText);
 
         // Validate the YAML structure
@@ -55,7 +65,25 @@ async function loadAndValidateYaml(gistUrl) {
     }
 }
 
-// Example usage
-const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/';
+// Using yargs to add optional CLI arguments for the URL or local file path
+const argv = yargs(hideBin(process.argv))
+    .option('url', {
+        alias: 'u',
+        type: 'string',
+        description: 'URL of the YAML file to be validated',
+        default: 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/',
+    })
+    .option('file', {
+        alias: 'f',
+        type: 'string',
+        description: 'Path to the local YAML file to be validated',
+    })
+    .help()
+    .argv;
 
-loadAndValidateYaml(gistUrl);
+// Example usage
+if (argv.file) {
+    loadAndValidateYaml(null, argv.file);
+} else {
+    loadAndValidateYaml(argv.url, null);
+}
