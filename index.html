@@ -9,6 +9,7 @@
     <script src="https://unpkg.com/vue@3"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.0.0/js-yaml.min.js"></script>
     <link rel="stylesheet" href="style.css">
+    <script type="module" src="./calculations.js"></script>
 </head>
 
 <body>
@@ -41,29 +42,19 @@
 
         <div :class="['sidebar', { open: sidebarOpen }]">
             <div v-for="(input, key) in inputs" :key="key" class="mb-3">
-                <label :for="key" class="form-label">{{ input.nice_name || formatLabel(key) }} ({{ input.units
-                    }})</label>
+                <label :for="key" class="form-label">{{ input.nice_name || formatLabel(key) }} ({{ input.units }})</label>
                 <input type="number" :value="formatValue(input.value, input.scale)" @input="updateValue($event, key)"
                     :id="key" class="form-control">
                 <details>
                     <summary>Show Input Details</summary>
                     <ul>
                         <li><strong>Raw Value:</strong> {{ inputs[key].value }}</li>
-                        <!-- Display raw value of the input here -->
                         <li v-if="input.description" class="input-info"><strong>Description:</strong> {{
                             input.description }}</li>
                         <li class="input-info"><strong>Source:</strong> <a :href="input.source_url" target="_blank">{{
                                 input.source_url }}</a></li>
                     </ul>
                 </details>
-                <!-- currently only show "related inputs" in the main body-->
-                <!-- <div v-if="input.related_inputs && input.related_inputs.length" class="related-inputs mt-2">
-                    <label class="form-label">Related Inputs:</label>
-                    <div v-for="related in input.related_inputs" :key="related" class="d-flex align-items-center">
-                        <span>{{ inputs[related]?.nice_name || formatLabel(related) }}</span>
-                        <button @click="applyRelatedInput(key, related)" class="btn btn-sm btn-link">Use Value</button>
-                    </div>
-                </div> -->
             </div>
             <button @click="loadDataFromGist" class="btn btn-outline-primary mt-3"
                 style="border-color: #10a37f; color: #10a37f;">Load Data from Gist</button>
@@ -125,7 +116,7 @@
                 </p>
 
                 <!-- Calculation Cards -->
-                <div v-for="(calculation, index) in calculations" :key="index" class="card">
+                <div v-for="(calculation, index) in calculationsData" :key="index" class="card">
                     <header>
                         <h4>{{ calculation.title }}</h4>
                         <p>{{ calculation.description }}</p>
@@ -134,7 +125,8 @@
                             <img :src="calculation.diagram" alt="Diagram" class="fixed-image mt-2 mb-2" />
                         </details>
                     </header>
-                    <div v-for="inputKey in calculation.inputs" :key="inputKey" class="mb-3">
+                    <div v-if="Object.keys(inputs).length === 0">Loading inputs...</div>
+                    <div v-else v-for="inputKey in calculation.inputs" :key="inputKey" class="mb-3">
                         <label :for="inputKey" class="form-label">{{ inputs[inputKey]?.nice_name ||
                             formatLabel(inputKey) }} ({{ inputs[inputKey].units }})</label>
                         <input type="number" :value="formatValue(inputs[inputKey].value, inputs[inputKey].scale)"
@@ -182,13 +174,12 @@
                     <details>
                         <summary>Show Calculation Details</summary>
                         <ul>
-                        <li><strong>Explanation:</strong> {{ calculation.explanation }}</li>
-                        <li><strong>Raw Value:</strong> {{ calculation.result.rawValue }}</li>
+                            <li><strong>Explanation:</strong> {{ calculation.explanation }}</li>
+                            <li><strong>Raw Value:</strong> {{ calculation.result.rawValue }}</li>
                         </ul>
-                        <!-- Display raw value here -->
                     </details>
                     <footer class="mt-4">
-                        <p>{{ calculation.result.label }}: <strong>{{ calculation.result.value }} {{calculation.units}}
+                        <p>{{ calculation.result.label }}: <strong>{{ calculation.result.value }} {{calculation.result.units}}
                             </strong></p>
                     </footer>
                 </div>
@@ -197,13 +188,16 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
-    <script>
+    <script type="module">
+        import { calculationsData } from './calculations.js';
+
+
         const app = Vue.createApp({
             data() {
                 return {
                     sidebarOpen: false,
                     inputs: {},
-                    calculations: []
+                    calculationsData: calculationsData
                 };
             },
             methods: {
@@ -224,11 +218,9 @@
                 applyRelatedInput(targetKey, relatedKey) {
                     if (this.inputs[relatedKey]) {
                         // Update target input with related input value
-                        
-
                         const openDetailsIds = ['calculation-details-' + relatedKey];
                         
-                        this.calculations.forEach(calculation => {
+                        this.calculationsData.forEach(calculation => {
                             calculation.inputs = calculation.inputs.map(inputKey => inputKey === targetKey ? relatedKey : inputKey);
                             // Update the explanation using find and replace
                             calculation.explanation = calculation.explanation.replace(new RegExp(targetKey, 'g'), relatedKey);
@@ -243,38 +235,40 @@
                                 }
                             });
                         });
-
-                        // Update the explanation or any other dependent data accordingly
                         this.updateCalculations();
                     }
                 },
                 updateCalculations() {
-                    this.calculations.forEach(calculation => {
-                        const inputs = calculation.inputs.reduce((acc, key) => {
-                            if (this.inputs[key]) {
-                                acc[key] = this.inputs[key].value;
-                            }
-                            return acc;
-                        }, {});
+                    
+                    this.calculationsData.forEach(calculation => {
+                        const inputKeys = calculation.inputs;
 
-                        try {
-                            const result = (() => {
-                                try {
-                                    const scopedInputs = { ...inputs };
-                                    return new Function(...Object.keys(scopedInputs), `return (${calculation.explanation})`)(...Object.values(scopedInputs));
-                                } catch (error) {
-                                    console.error('Error evaluating calculation:', error, 'Calculation:', calculation.explanation);
-                                    return NaN;
+                        if (inputKeys) {
+                            const inputValues = inputKeys.map(key => {
+                                if (this.inputs[key]) {
+                                    return this.inputs[key].value;
+                                } else {
+                                    console.error(`Missing input value for key: ${key}`);
+                                    return null;
                                 }
-                            })();
-                            calculation.result.value = this.humanReadable(result);
-                            calculation.result.rawValue = result; // Store raw value for display
-                        } catch (error) {
-                            console.error('Error evaluating calculation:', error, 'Calculation:', calculation.explanation);
+                            });
+
+                            if (!inputValues.includes(null)) {
+                                try {
+                                    const result = calculation.calculate(...inputValues);
+                                    calculation.result.value = this.humanReadable(result);
+                                    calculation.result.rawValue = result;
+                                } catch (error) {
+                                    console.error('Error evaluating calculation:', error, 'Calculation:', calculation.title);
+                                }
+                            } else {
+                                console.error(`Missing inputs for calculation: ${calculation.title}`);
+                            }
+                        } else {
+                            console.error(`Input keys not found for calculation: ${calculation.title}`);
                         }
                     });
-                },
-                humanReadable(value) {
+                }, humanReadable(value) {
                     if (value === 0) return '0';
                     if (Math.abs(value) < 1) return value.toFixed(2);
                     const units = ['', 'thousand', 'million', 'billion', 'trillion'];
@@ -292,12 +286,13 @@
                 },
                 async loadDataFromGist() {
                     try {
-                        const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/';
+                        const gistUrl = "data/data.yaml";
+                        //const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/';
                         const response = await fetch(gistUrl);
                         if (!response.ok) throw new Error('Failed to load data from Gist');
                         const yamlText = await response.text();
                         const data = jsyaml.load(yamlText);
-                        console.log('Data successfully loaded from Gist');
+                        console.log('Data successfully loaded');
                         this.inputs = data.inputs.reduce((acc, input) => {
                             acc[input.variable] = {
                                 ...input,
@@ -305,7 +300,10 @@
                             };
                             return acc;
                         }, {});
+                        // console.log('*', this.inputs)
+                        // console.log(this.inputs['yearly_revenue__openai__dollars'])
                         this.calculations = data.calculations.map(calculation => ({ ...calculation, result: { label: calculation.result.label, value: 0, rawValue: 0 } }));
+                        // console.log('**', this.calculations)
                         this.updateUnits();
                         this.updateCalculations();
                     } catch (e) {

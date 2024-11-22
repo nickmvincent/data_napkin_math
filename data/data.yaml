@@ -260,6 +260,7 @@ inputs:
 
 calculations:
   - title: "Distributing the 'value generated' by AI to everyone in the world"
+    function_key: "distributeAIRevenueToEveryone"
     description: "If we were to immediately distribute AI revenue to everyone on Earth, how much would each person receive?"
     inputs:
       - yearly_revenue__openai__dollars
