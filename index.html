@@ -83,7 +83,7 @@
                     <div>
                         <p>
                             <b> This website is a very early beta stage! Head to GitHub to see some open issues</b>.
-                            
+
                             There are a number of open debates about making policy and setting norms around the use of
                             data
                             for "AI" systems. Many of these questions involve some abstract moral arguments, but answering them may also
@@ -158,20 +158,20 @@
                                         Notes:</strong> {{ inputs[inputKey].source_notes }}</li>
                                 <li v-if="inputs[inputKey] && inputs[inputKey].units"><strong>Units:</strong> {{
                                     inputs[inputKey].units }}</li>
-                                <li v-if="inputs[inputKey] && inputs[inputKey].source_url"><strong>Source URL:</strong>
+                                <li v-if="inputs[inputKey] && inputs[inputKey].source_url"><strong>Source URL: </strong>
                                     <a :href="inputs[inputKey].source_url" target="_blank">{{
                                         inputs[inputKey].source_url }}</a></li>
 
                                 <li>
                                     <div v-if="inputs[inputKey].related_inputs && inputs[inputKey].related_inputs.length"
                                         class="related-inputs mt-2">
-                                        <label class="form-label">Related Inputs:</label>
-                                        <div v-for="related in inputs[inputKey].related_inputs" :key="related"
+                                        <label class="form-label"><strong>Related Inputs:</strong></label>
+                                        <ul><li v-for="related in inputs[inputKey].related_inputs" :key="related"
                                             class="d-flex align-items-center">
                                             <span>{{ inputs[related]?.nice_name || formatLabel(related) }}</span>
                                             <button @click="applyRelatedInput(inputKey, related)"
                                                 class="btn btn-sm btn-link">Use Value</button>
-                                        </div>
+                                        </li></ul>
                                     </div>
                                 </li>
 
@@ -181,8 +181,10 @@
                     </div>
                     <details>
                         <summary>Show Calculation Details</summary>
-                        <p><strong>Explanation:</strong> {{ calculation.explanation }}</p>
-                        <p><strong>Raw Value:</strong> {{ calculation.result.rawValue }}</p>
+                        <ul>
+                        <li><strong>Explanation:</strong> {{ calculation.explanation }}</li>
+                        <li><strong>Raw Value:</strong> {{ calculation.result.rawValue }}</li>
+                        </ul>
                         <!-- Display raw value here -->
                     </details>
                     <footer class="mt-4">
