@@ -217,27 +217,64 @@
                 },
                 applyRelatedInput(targetKey, relatedKey) {
                     if (this.inputs[relatedKey]) {
-                        // Update target input with related input value
-                        const openDetailsIds = ['calculation-details-' + relatedKey];
+                        // Swap the target input's value with the related input's value
+                        console.log(`Swapping ${targetKey} with ${relatedKey}`);
+
                         
+                        
+                        // // Update the input value
+                        // this.inputs[targetKey].value = this.inputs[relatedKey].value;
+
+                        // // Update related properties if needed, like units, scale, etc.
+                        // if (this.inputs[relatedKey].units) {
+                        //     this.inputs[targetKey].units = this.inputs[relatedKey].units;
+                        // }
+                        // if (this.inputs[relatedKey].scale) {
+                        //     this.inputs[targetKey].scale = this.inputs[relatedKey].scale;
+                        // }
+
+                        // Update calculation inputs dynamically
                         this.calculationsData.forEach(calculation => {
-                            calculation.inputs = calculation.inputs.map(inputKey => inputKey === targetKey ? relatedKey : inputKey);
-                            // Update the explanation using find and replace
-                            calculation.explanation = calculation.explanation.replace(new RegExp(targetKey, 'g'), relatedKey);
+                            if (calculation.inputs.includes(targetKey)) {
+                                calculation.inputs = calculation.inputs.map(inputKey => inputKey === targetKey ? relatedKey : inputKey);
+                                console.log(`Updated calculation inputs for: ${calculation.title}`);
+                            }
                         });
-                        
-                        // Restore the state of previously open details elements
-                        this.$nextTick(() => {
-                            openDetailsIds.forEach(id => {
-                                const detail = document.getElementById(id);
-                                if (detail) {
-                                    detail.open = true;
-                                }
-                            });
-                        });
+
+                        // Recalculate with the updated values
                         this.updateCalculations();
+
+                        this.$nextTick(() => {
+                            const detailsElement = document.getElementById(`calculation-details-${relatedKey}`);
+                            detailsElement.open = true;
+                        });
+                    } else {
+                        console.error(`Related input key ${relatedKey} not found in inputs.`);
                     }
                 },
+                // applyRelatedInput(targetKey, relatedKey) {
+                //     if (this.inputs[relatedKey]) {
+                //         // Update target input with related input value
+                //         const openDetailsIds = ['calculation-details-' + relatedKey];
+                        
+                //         this.calculationsData.forEach(calculation => {
+                //             calculation.inputs = calculation.inputs.map(inputKey => inputKey === targetKey ? relatedKey : inputKey);
+                //             // Update the explanation using find and replace
+                //             calculation.explanation = calculation.explanation.replace(new RegExp(targetKey, 'g'), relatedKey);
+                //         });
+                        
+                //         // Restore the state of previously open details elements
+                //         this.$nextTick(() => {
+                //             openDetailsIds.forEach(id => {
+                //                 const detail = document.getElementById(id);
+                //                 if (detail) {
+                //                     detail.open = true;
+                //                 }
+                //             });
+                //         });
+                //         this.updateCalculations();
+                //     }
+                // },
                 updateCalculations() {
                     
                     this.calculationsData.forEach(calculation => {
