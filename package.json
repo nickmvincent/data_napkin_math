@@ -1,6 +1,7 @@
 {
   "name": "data_napkin_math",
   "version": "1.0.0",
+  "type": "module",
   "description": "A project for validating data napkin math scenarios",
   "main": "index.js",
   "scripts": {
