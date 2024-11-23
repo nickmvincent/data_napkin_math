@@ -306,8 +306,17 @@
                         }
                     });
                 }, humanReadable(value) {
+                    console.log(value);
                     if (value === 0) return '0';
-                    if (Math.abs(value) < 1) return value.toFixed(2);
+                    // if (1.0 > Math.abs(value) && Math.abs(value) >= 0.01) return value.toFixed(2);
+                    
+                    if (Math.abs(value) < 1) {
+                        console.log('small');
+                        let valueStr = value.toString();
+                        //return valueStr;
+                        let firstNonZeroIndex = valueStr.indexOf(valueStr.match(/[1-9]/));
+                        return value.toFixed(firstNonZeroIndex + 1);
+                    }
                     
                     const units = ['', 'thousand', 'million', 'billion', 'trillion'];
                     const order = Math.floor(Math.log10(Math.abs(value)) / 3);
