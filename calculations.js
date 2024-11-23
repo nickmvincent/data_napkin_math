@@ -58,9 +58,9 @@ export const calculationsData = [
     },
     {
         title: "Revenue Per Book",
-        description: "Estimate the revenue generated per book in a dataset.",
-        inputs: ["yearly_revenue__openai__dollars", "dataset_size__llama3__tokens", "total_books__books3__books", "average_length__book__words"],
-        calculate: (yearlyRevenue, totalTokens, totalBooks, wordsPerBook) => (yearlyRevenue / totalTokens) * (totalBooks * wordsPerBook),
+        description: "Estimate the revenue generated per book in a dataset. Assume that each book's share is proportionate to its overall token contribution.",
+        inputs: ["yearly_revenue__openai__dollars", "dataset_size__llama3__tokens", "training_detail__openai__words_per_token", "average_length__book__words"],
+        calculate: (yearlyRevenue, totalTokens, wordsPerToken, wordsPerBook) => (wordsPerBook / wordsPerToken) / totalTokens * (yearlyRevenue),
         result: {
             label: "Revenue Per Book",
             value: 0,
