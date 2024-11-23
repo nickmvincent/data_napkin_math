@@ -220,19 +220,6 @@
                         // Swap the target input's value with the related input's value
                         console.log(`Swapping ${targetKey} with ${relatedKey}`);
 
-                        
-                        
-                        // // Update the input value
-                        // this.inputs[targetKey].value = this.inputs[relatedKey].value;
-
-                        // // Update related properties if needed, like units, scale, etc.
-                        // if (this.inputs[relatedKey].units) {
-                        //     this.inputs[targetKey].units = this.inputs[relatedKey].units;
-                        // }
-                        // if (this.inputs[relatedKey].scale) {
-                        //     this.inputs[targetKey].scale = this.inputs[relatedKey].scale;
-                        // }
-
                         // Update calculation inputs dynamically
                         this.calculationsData.forEach(calculation => {
                             if (calculation.inputs.includes(targetKey)) {
@@ -306,12 +293,9 @@
                         }
                     });
                 }, humanReadable(value) {
-                    console.log(value);
                     if (value === 0) return '0';
-                    // if (1.0 > Math.abs(value) && Math.abs(value) >= 0.01) return value.toFixed(2);
                     
                     if (Math.abs(value) < 1) {
-                        console.log('small');
                         let valueStr = value.toString();
                         //return valueStr;
                         let firstNonZeroIndex = valueStr.indexOf(valueStr.match(/[1-9]/));
@@ -354,10 +338,7 @@
                             };
                             return acc;
                         }, {});
-                        // console.log('*', this.inputs)
-                        // console.log(this.inputs['yearly_revenue__openai__dollars'])
                         this.calculations = data.calculations.map(calculation => ({ ...calculation, result: { label: calculation.result.label, value: 0, rawValue: 0 } }));
-                        // console.log('**', this.calculations)
                         this.updateUnits();
                         this.updateCalculations();
                     } catch (e) {
