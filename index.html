@@ -42,7 +42,7 @@
 
         <div :class="['sidebar', { open: sidebarOpen }]">
             <div v-for="(input, key) in inputs" :key="key" class="mb-3">
-                <label :for="key" class="form-label">{{ input.nice_name || formatLabel(key) }} ({{ input.units }})</label>
+                <label :for="key" class="form-label">{{ input.nice_name || formatLabel(key) }} ({{ input.display_units }})</label>
                 <input type="number" :value="formatValue(input.value, input.scale)" @input="updateValue($event, key)"
                     :id="key" class="form-control">
                 <details>
@@ -128,7 +128,7 @@
                     <div v-if="Object.keys(inputs).length === 0">Loading inputs...</div>
                     <div v-else v-for="inputKey in calculation.inputs" :key="inputKey" class="mb-3">
                         <label :for="inputKey" class="form-label">{{ inputs[inputKey]?.nice_name ||
-                            formatLabel(inputKey) }} ({{ inputs[inputKey].units }})</label>
+                            formatLabel(inputKey) }} ({{ inputs[inputKey].display_units }})</label>
                         <input type="number" :value="formatValue(inputs[inputKey].value, inputs[inputKey].scale)"
                             @input="updateValue($event, inputKey)" :id="inputKey" class="form-control">
                         <details :id="'calculation-details-' + inputKey">
@@ -176,6 +176,8 @@
                         <ul>
                             <li><strong>Function:</strong> <pre>{{ calculation.calculate.toString() }}</pre></li>
                             <li><strong>Raw Value:</strong> {{ calculation.result.rawValue }}</li>
+                            <li v-if="calculation.unitDetails"><strong>Units:</strong> {{ calculation.unitDetails }}</li>
+                            
                         </ul>
                     </details>
                     <footer class="mt-4">
@@ -280,7 +282,9 @@
                             if (!inputValues.includes(null)) {
                                 try {
                                     const result = calculation.calculate(...inputValues);
+                                    //const derivedUnits = this.deriveUnits(inputKeys);
                                     calculation.result.value = this.humanReadable(result);
+                                    //calculation.result.unitDetails = derivedUnits;
                                     calculation.result.rawValue = result;
                                 } catch (error) {
                                     console.error('Error evaluating calculation:', error, 'Calculation:', calculation.title);
@@ -314,14 +318,13 @@
                     
                     return `${adjustedValue.toFixed(2)} ${unitName}`;
                 },
-                updateUnits() {
-                    for (const key in this.inputs) {
-                        if (this.inputs[key]) {
-                            const displayUnits = this.inputs[key].display_units || this.inputs[key].units;
-                            this.inputs[key].units = displayUnits;
-                        }
-                    }
-                },
+
+                // deriveUnits(inputKeys) {
+                //     return inputKeys
+                //         .map(key => this.inputs[key]?.units)
+                //         .filter(unit => unit && unit.trim() !== "")
+                //         .join(" * ");
+                // },
                 async loadDataFromGist() {
                     try {
                         const gistUrl = "data/data.yaml";
@@ -339,7 +342,6 @@
                             return acc;
                         }, {});
                         this.calculations = data.calculations.map(calculation => ({ ...calculation, result: { label: calculation.result.label, value: 0, rawValue: 0 } }));
-                        this.updateUnits();
                         this.updateCalculations();
                     } catch (e) {
                         console.error('Failed to load data from Gist:', e);

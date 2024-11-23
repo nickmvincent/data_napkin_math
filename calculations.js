@@ -7,6 +7,7 @@ export const calculationsData = [
         description: "If we distribute AI revenue to everyone in the world, how much will each person get?",
         inputs: ["yearly_revenue__openai__dollars", "group_size__world__people"],
         calculate: (yearlyRevenue, population) => yearlyRevenue / population,
+        unitDetails: "dollars / people",
         result: {
             label: "Per Person Revenue",
             value: 0,
