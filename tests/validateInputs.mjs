@@ -3,7 +3,7 @@ import path from 'path';
 import yaml from 'js-yaml';
 
 // Load the YAML file
-const filePath = path.resolve(process.cwd(), 'data/data.yaml');
+const filePath = path.resolve(process.cwd(), 'data/inputs.yaml');
 let data;
 
 try {

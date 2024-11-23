@@ -1,7 +1,4 @@
-// calculations.js
-
-// Calculations Data - with Functions Included
-export const calculationsData = [
+export const scenariosData = [
     {
         title: "Distributing AI Revenue",
         description: "If we distribute AI revenue to everyone in the world, how much will each person get?",
@@ -10,7 +7,6 @@ export const calculationsData = [
         unitDetails: "dollars / people",
         result: {
             label: "Per Person Revenue",
-            value: 0,
             units: "dollars"
         }
     },
@@ -21,7 +17,6 @@ export const calculationsData = [
         calculate: (tokens, wordsPerToken, freelanceRate) => tokens * wordsPerToken * freelanceRate,
         result: {
             label: "Dataset Cost",
-            value: 0,
             units: "dollars",
         }
     },
@@ -32,7 +27,6 @@ export const calculationsData = [
         calculate: (yearlyRevenue, totalTokens) => yearlyRevenue / totalTokens,
         result: {
             label: "Revenue Per Token",
-            value: 0,
             units: "dollars",
         }
     },
@@ -43,7 +37,6 @@ export const calculationsData = [
         calculate: (totalTokens, tokensPerContribution) => totalTokens / tokensPerContribution,
         result: {
             label: "Contributions",
-            value: 0,
             units: "documents",
         }
     },
@@ -54,7 +47,6 @@ export const calculationsData = [
         calculate: (yearlyRevenue, totalTokens, tokensPerContribution) => (yearlyRevenue / totalTokens) * tokensPerContribution,
         result: {
             label: "Revenue Per Contribution",
-            value: 0
         }
     },
     {
@@ -64,7 +56,6 @@ export const calculationsData = [
         calculate: (yearlyRevenue, totalTokens, wordsPerToken, wordsPerBook) => (wordsPerBook / wordsPerToken) / totalTokens * (yearlyRevenue),
         result: {
             label: "Revenue Per Book",
-            value: 0,
             unit: "dollars",
         }
     },
@@ -75,7 +66,6 @@ export const calculationsData = [
         calculate: (totalBooks, wordsPerBook, totalTokens) => (totalBooks * wordsPerBook) / totalTokens,
         result: {
             label: "Coverage Ratio",
-            value: 0
         }
     },
     {
@@ -85,7 +75,6 @@ export const calculationsData = [
         calculate: (dealValue, dailyActiveUsers) => dealValue / dailyActiveUsers,
         result: {
             label: "Value Per User",
-            value: 0
         }
     },
     {
@@ -95,7 +84,6 @@ export const calculationsData = [
         calculate: (wordsPerBook, freelanceRate) => wordsPerBook * freelanceRate,
         result: {
             label: "Cost Per Book",
-            value: 0
         }
     },
     {
@@ -105,7 +93,6 @@ export const calculationsData = [
         calculate: (totalBooks, wordsPerBook, freelanceRate) => totalBooks * wordsPerBook * freelanceRate,
         result: {
             label: "Total Freelance Cost",
-            value: 0
         }
     },
     {
@@ -115,7 +102,6 @@ export const calculationsData = [
         calculate: (dealValue, numberOfJournalists) => dealValue / numberOfJournalists,
         result: {
             label: "Revenue Per Journalist",
-            value: 0
         }
     }
 ];

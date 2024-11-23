@@ -9,7 +9,7 @@
     <script src="https://unpkg.com/vue@3"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.0.0/js-yaml.min.js"></script>
     <link rel="stylesheet" href="style.css">
-    <script type="module" src="./calculations.js"></script>
+    <script type="module" src="./scenarios.js"></script>
 </head>
 
 <body>
@@ -116,7 +116,7 @@
                 </p>
 
                 <!-- Calculation Cards -->
-                <div v-for="(calculation, index) in calculationsData" :key="index" class="card">
+                <div v-for="(calculation, index) in scenariosData" :key="index" class="card">
                     <header>
                         <h4>{{ calculation.title }}</h4>
                         <p>{{ calculation.description }}</p>
@@ -191,7 +191,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
     <script type="module">
-        import { calculationsData } from './calculations.js';
+        import { scenariosData } from './scenarios.js';
 
 
         const app = Vue.createApp({
@@ -199,7 +199,7 @@
                 return {
                     sidebarOpen: false,
                     inputs: {},
-                    calculationsData: calculationsData
+                    scenariosData: scenariosData
                 };
             },
             methods: {
@@ -223,7 +223,7 @@
                         console.log(`Swapping ${targetKey} with ${relatedKey}`);
 
                         // Update calculation inputs dynamically
-                        this.calculationsData.forEach(calculation => {
+                        this.scenariosData.forEach(calculation => {
                             if (calculation.inputs.includes(targetKey)) {
                                 calculation.inputs = calculation.inputs.map(inputKey => inputKey === targetKey ? relatedKey : inputKey);
                                 console.log(`Updated calculation inputs for: ${calculation.title}`);
@@ -246,7 +246,7 @@
                 //         // Update target input with related input value
                 //         const openDetailsIds = ['calculation-details-' + relatedKey];
                         
-                //         this.calculationsData.forEach(calculation => {
+                //         this.scenariosData.forEach(calculation => {
                 //             calculation.inputs = calculation.inputs.map(inputKey => inputKey === targetKey ? relatedKey : inputKey);
                 //             // Update the explanation using find and replace
                 //             calculation.explanation = calculation.explanation.replace(new RegExp(targetKey, 'g'), relatedKey);
@@ -266,7 +266,7 @@
                 // },
                 updateCalculations() {
                     
-                    this.calculationsData.forEach(calculation => {
+                    this.scenariosData.forEach(calculation => {
                         const inputKeys = calculation.inputs;
 
                         if (inputKeys) {
@@ -327,7 +327,7 @@
                 // },
                 async loadDataFromGist() {
                     try {
-                        const gistUrl = "data/data.yaml";
+                        const gistUrl = "data/inputs.yaml";
                         //const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/';
                         const response = await fetch(gistUrl);
                         if (!response.ok) throw new Error('Failed to load data from Gist');

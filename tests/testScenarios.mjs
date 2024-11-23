@@ -3,7 +3,7 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import fs from 'fs/promises';
 import jsyaml from 'js-yaml';
-import { calculationsData } from '../calculations.js';
+import { scenariosData } from '../scenarios.js';
 
 // Function to validate JavaScript-based calculations
 async function validateCalculations(filePath) {
@@ -30,7 +30,7 @@ async function validateCalculations(filePath) {
         }, {});
 
         // Validate each calculation for required fields and execute the calculations
-        calculationsData.forEach(calculation => {
+        scenariosData.forEach(calculation => {
             if (!calculation.title || !calculation.calculate || !Array.isArray(calculation.inputs)) {
                 throw new Error(`Invalid calculation entry: ${calculation.title || 'Unknown Title'}`);
             }
@@ -64,7 +64,7 @@ const argv = yargs(hideBin(process.argv))
         alias: 'f',
         type: 'string',
         description: 'Path to the local YAML input file to be validated',
-        default: 'data/data.yaml',
+        default: 'data/inputs.yaml',
     })
     .help()
     .argv;

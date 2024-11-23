@@ -7,7 +7,7 @@ The tool itself consists of a small website. A key aspect of this project that m
 [Visit the site!](https://nickmvincent.github.io/data_napkin_math/)
 
 ## Usage
-The web page loads default "input values" from a collaboratively edited YAML file. Each scenario is affected by these inputs, which the user can edit, enabling you to test different assumptions quickly. You can:
+The web page loads default *inputs* from a collaboratively edited database (currently stored in this repo). Each *scenario* is affected by these inputs, which the user can edit, enabling you to test different assumptions quickly. You can:
 
 - **Edit Inputs Directly**: Modify key input values to see how they impact various scenarios.
 - **Switch Between Related Variables**: Use the interface to swap inputs for related data (for instance, to swap out OpenAI's revenue for Anthropic's revenue as an input into some calculations).
@@ -15,14 +15,16 @@ The web page loads default "input values" from a collaboratively edited YAML fil
 - **Collaboratively produced**: Help us improve our inputs and scenarios! Inputs are loaded from a YAML file in the project GitHub repository: you can suggest additions and changes via GitHub or Google Sheets. (see below)
 
 ## Contributing
-There are three ways to contribute to Data Napkin Math:
+There are three ways to contribute to the inputs and scenarios presented in Data Napkin Math:
 
-1. **Pull Requests via GitHub**: Edit the `data/data.yaml` file and submit your changes.
-2. **Google Sheet Comments**: If you prefer, you can leave suggestions or feedback directly in our [public Google Drive folder (comment link)](https://drive.google.com/drive/folders/1_UKI4KXKeItuDDCmOtxx8cgmoh3weui5?usp=sharing).
-3. Just send us a note or open a GitHub issue with your thoughts.
+1. (Very low friction) **Note or Issue**: Just send us a note or open a GitHub issue with your thoughts.
+2. (Low friction) **Google Sheet Comments**: If you prefer, you can leave suggestions or feedback directly in our [public Google Drive folder (comment link)](https://drive.google.com/drive/folders/1_UKI4KXKeItuDDCmOtxx8cgmoh3weui5?usp=sharing).
+3 (More friction, but appreciated) **Pull Requests via GitHub**: Edit the `data/inputs.yaml` file and/or `calculations.js`, run `node test`, and then submit your changes as PR.
+
 
 For detailed guidelines, see the [Contributor Guide](https://github.com/nickmvincent/data_napkin_math/wiki/Contributor-Guide) in the [Wiki](https://github.com/nickmvincent/data_napkin_math/wiki).
 
+You are also more than welcome to contribute towards the development of the app. 
 
 ### Installation and Pre-reqs
 
@@ -34,33 +36,31 @@ cd data-napkin-math
 ```
 
 There are currently no pre-requisites required to run the app (just open index.html),
-but you will need either Node.js or Python to run tests (suggested after editing data.yaml).
+but you will need either Node.js and Python to run tests.
 
-- [Node.js](https://nodejs.org/) to run tests (`js-yaml`, `node-fetch`, `yargs`)
-- `npm install` to install dependencies, `npm test` to run tests. See `tests` for more.
-- You can also run tests using Python, which requires `pyyaml` and `requests`.
-- To convert `data.yaml` to `data.csv` using `scripts/yaml2csv.py`, only `pyyaml` is needed.
-
+Node:
+- Install [Node.js](https://nodejs.org/)
+- run `npm install` to install dependencies
+- run `npm test` or `npm run test` to run tests. See `tests/` for more.
 
 ### Running the Application
 To run the application, simply open `index.html` in your browser. No server setup is required. This may change in the future.
 
-### Updating the centralized databaes
+## How the inputs and scenarios are updated
 
 Currently, the shared data underlying this app is handled in a lightweight manner: all inputs
-and scenarios are loaded from `data.yaml` (currently stored in a Gist). This may change in the future
+and scenarios are loaded from `data/inputs.yaml` and `scenarios.js`. This may change in the future
 (suggestions welcome!).
 
-The current implementation requires manual approval:
+The current implementation requires manual approval to make changes:
 
-- a maintainer merges PRs and incorporates comments from Google sheets
-- the maintainer updates the gist (or points web app directly to the `data` folder on main branch)
-- the maintainer runs `python yaml2csv.py` to produce an updated CSV file that will be imported to Google sheets
+- a maintainer merges PRs and incorporates comments from Google Drive and GitHub issues
+- the maintainer runs `npm run export` to produce an updated files (found in the `export folder`) that can be shared via Google Drive.
 
 ## Directory Structure
 
 Directories:
-- `data/`: Contains the data file (`data.yaml`) that is used for calculations, as well as a csv copy.
+- `data/`: Contains the data file (`inputs.yaml`) with inputs.
 - `docs/`: Details about contributing to the project and the data schema.
 - `scripts/`: Scripts (currently just yaml2csv.py)
 - `tests`/: validate input data and scenario calculations
