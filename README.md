@@ -21,7 +21,7 @@ There are three ways to contribute to Data Napkin Math:
 2. **Google Sheet Comments**: If you prefer, you can leave suggestions or feedback directly in our [public Google Drive folder (comment link)](https://drive.google.com/drive/folders/1_UKI4KXKeItuDDCmOtxx8cgmoh3weui5?usp=sharing).
 3. Just send us a note or open a GitHub issue with your thoughts.
 
-For detailed guidelines, see [CONTRIBUTING.md](./docs/CONTRIBUTING.md).
+For detailed guidelines, see the [Contributor Guide](https://github.com/nickmvincent/data_napkin_math/wiki/Contributor-Guide) in the [Wiki](https://github.com/nickmvincent/data_napkin_math/wiki).
 
 
 ### Installation and Pre-reqs
