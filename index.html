@@ -308,10 +308,18 @@
                 }, humanReadable(value) {
                     if (value === 0) return '0';
                     if (Math.abs(value) < 1) return value.toFixed(2);
+                    
                     const units = ['', 'thousand', 'million', 'billion', 'trillion'];
                     const order = Math.floor(Math.log10(Math.abs(value)) / 3);
+                    
+                    if (order === 0) {
+                        return value.toFixed(2); // No need to add units if we're in the base range
+                    }
+
                     const unitName = units[order] || `10^${order * 3}`;
-                    return `${(value / Math.pow(10, 3 * order)).toFixed(2)} ${unitName}`;
+                    const adjustedValue = value / Math.pow(10, 3 * order);
+                    
+                    return `${adjustedValue.toFixed(2)} ${unitName}`;
                 },
                 updateUnits() {
                     for (const key in this.inputs) {
