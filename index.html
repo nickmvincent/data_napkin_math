@@ -16,7 +16,8 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <a class="navbar-brand" href="#headerContent">Data Napkin Math</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -42,7 +43,8 @@
 
         <div :class="['sidebar', { open: sidebarOpen }]">
             <div v-for="(input, key) in inputs" :key="key" class="mb-3">
-                <label :for="key" class="form-label">{{ input.nice_name || formatLabel(key) }} ({{ input.display_units }})</label>
+                <label :for="key" class="form-label">{{ input.nice_name || formatLabel(key) }} ({{ input.display_units
+                    }})</label>
                 <input type="number" :value="formatValue(input.value, input.scale)" @input="updateValue($event, key)"
                     :id="key" class="form-control">
                 <details>
@@ -63,12 +65,15 @@
         <div :class="['main-content', { shifted: sidebarOpen }]">
             <header class="header" id="headerContent">
                 <h1>Napkin Math for Training Data Value</h1>
-                <div class="col-content"><p class="clean-text">Napkin math, back of the envelope estimates, ballpark figures: this is a lightweight web-page for
-                    making order of magnitude estimates about
-                    important "data value" questions. How will the proceeds and other benefits of AI be
-                    distributed?
-                    
-                </p></div>
+                <div class="col-content">
+                    <p class="clean-text">Napkin math, back of the envelope estimates, ballpark figures: this is a
+                        lightweight web-page for
+                        making order of magnitude estimates about
+                        important "data value" questions. How will the proceeds and other benefits of AI be
+                        distributed?
+
+                    </p>
+                </div>
                 <details open id="aboutContent" class="col-content">
                     <summary>About this page</summary>
                     <div>
@@ -77,10 +82,11 @@
 
                             There are a number of open debates about making policy and setting norms around the use of
                             data
-                            for "AI" systems. Many of these questions involve some abstract moral arguments, but answering them may also
+                            for "AI" systems. Many of these questions involve some abstract moral arguments, but
+                            answering them may also
                             depend on some rough estimates of "what kind of numbers are we talking about". Will people
                             be getting $5000
-                            paychecks, or 5 cent pittances?                            
+                            paychecks, or 5 cent pittances?
                         </p>
                         <p>
                             This tool is interactive so you can edit any assumptions you want. Ultimately, the math here
@@ -92,8 +98,11 @@
                         <p>
                             To participate in discussion about what some reasonable default values should be, head to
                             the
-                            <a href="https://github.com/nickmvincent/data_napkin_math">GitHub page </a>where we host the underlying data or
-                            visit our public Google Drive folder <a href="https://drive.google.com/drive/folders/1_UKI4KXKeItuDDCmOtxx8cgmoh3weui5?usp=drive_link">(comment link)</a> and leave a
+                            <a href="https://github.com/nickmvincent/data_napkin_math">GitHub page </a>where we host the
+                            underlying data or
+                            visit our public Google Drive folder <a
+                                href="https://drive.google.com/drive/folders/1_UKI4KXKeItuDDCmOtxx8cgmoh3weui5?usp=drive_link">(comment
+                                link)</a> and leave a
                             comment.
                         </p>
                         <p>
@@ -152,18 +161,21 @@
                                     inputs[inputKey].units }}</li>
                                 <li v-if="inputs[inputKey] && inputs[inputKey].source_url"><strong>Source URL: </strong>
                                     <a :href="inputs[inputKey].source_url" target="_blank">{{
-                                        inputs[inputKey].source_url }}</a></li>
+                                        inputs[inputKey].source_url }}</a>
+                                </li>
 
                                 <li>
                                     <div v-if="inputs[inputKey].related_inputs && inputs[inputKey].related_inputs.length"
                                         class="related-inputs mt-2">
                                         <label class="form-label"><strong>Related Inputs:</strong></label>
-                                        <ul><li v-for="related in inputs[inputKey].related_inputs" :key="related"
-                                            class="d-flex align-items-center">
-                                            <span>{{ inputs[related]?.nice_name || formatLabel(related) }}</span>
-                                            <button @click="applyRelatedInput(inputKey, related)"
-                                                class="btn btn-sm btn-link">Use Value</button>
-                                        </li></ul>
+                                        <ul>
+                                            <li v-for="related in inputs[inputKey].related_inputs" :key="related"
+                                                class="d-flex align-items-center">
+                                                <span>{{ inputs[related]?.nice_name || formatLabel(related) }}</span>
+                                                <button @click="applyRelatedInput(inputKey, related)"
+                                                    class="btn btn-sm btn-link">Use Value</button>
+                                            </li>
+                                        </ul>
                                     </div>
                                 </li>
 
@@ -174,14 +186,18 @@
                     <details>
                         <summary>Show Calculation Details</summary>
                         <ul>
-                            <li><strong>Function:</strong> <pre>{{ calculation.calculate.toString() }}</pre></li>
+                            <li><strong>Function:</strong>
+                                <pre>{{ calculation.calculate.toString() }}</pre>
+                            </li>
                             <li><strong>Raw Value:</strong> {{ calculation.result.rawValue }}</li>
-                            <li v-if="calculation.unitDetails"><strong>Units:</strong> {{ calculation.unitDetails }}</li>
-                            
+                            <li v-if="calculation.unitDetails"><strong>Units:</strong> {{ calculation.unitDetails }}
+                            </li>
+
                         </ul>
                     </details>
                     <footer class="mt-4">
-                        <p>{{ calculation.result.label }}: <strong>{{ calculation.result.value }} {{calculation.result.units}}
+                        <p>{{ calculation.result.label }}: <strong>{{ calculation.result.value }}
+                                {{calculation.result.units}}
                             </strong></p>
                     </footer>
                 </div>
@@ -245,13 +261,13 @@
                 //     if (this.inputs[relatedKey]) {
                 //         // Update target input with related input value
                 //         const openDetailsIds = ['calculation-details-' + relatedKey];
-                        
+
                 //         this.scenariosData.forEach(calculation => {
                 //             calculation.inputs = calculation.inputs.map(inputKey => inputKey === targetKey ? relatedKey : inputKey);
                 //             // Update the explanation using find and replace
                 //             calculation.explanation = calculation.explanation.replace(new RegExp(targetKey, 'g'), relatedKey);
                 //         });
-                        
+
                 //         // Restore the state of previously open details elements
                 //         this.$nextTick(() => {
                 //             openDetailsIds.forEach(id => {
@@ -265,7 +281,7 @@
                 //     }
                 // },
                 updateCalculations() {
-                    
+
                     this.scenariosData.forEach(calculation => {
                         const inputKeys = calculation.inputs;
 
@@ -298,24 +314,24 @@
                     });
                 }, humanReadable(value) {
                     if (value === 0) return '0';
-                    
+
                     if (Math.abs(value) < 1) {
                         let valueStr = value.toString();
                         //return valueStr;
                         let firstNonZeroIndex = valueStr.indexOf(valueStr.match(/[1-9]/));
                         return value.toFixed(firstNonZeroIndex + 1);
                     }
-                    
+
                     const units = ['', 'thousand', 'million', 'billion', 'trillion'];
                     const order = Math.floor(Math.log10(Math.abs(value)) / 3);
-                    
+
                     if (order === 0) {
                         return value.toFixed(2); // No need to add units if we're in the base range
                     }
 
                     const unitName = units[order] || `10^${order * 3}`;
                     const adjustedValue = value / Math.pow(10, 3 * order);
-                    
+
                     return `${adjustedValue.toFixed(2)} ${unitName}`;
                 },
 
