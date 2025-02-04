@@ -3,18 +3,35 @@ inputs:
   variable_type: dataset_size
   entity: llama3
   units: tokens
+  phrase_for_card: "Llama 3's dataset size"
   nice_name: Total pre-training tokens (Llama 3)
+  value_description: Total tokens used to pre-training a model
   value: 15000000000000.0
   scale: 1e9
   display_units: billions of tokens
-  value_description: Total tokens used to pre-training a model
   key_assumption: > 
     We can use 15 trillion as a default value based on the assumption that most frontier models use roughly same pre-training size.
     15T is the number cited in Llama3 model card and close to the FineWeb size.
   source_url: https://github.com/meta-llama/llama3/blob/main/MODEL_CARD.md
   source_notes: Source is the Llama 3 model card. It describes total number of tokens for pre-training.
+
+- variable: dataset_size__olmo2__tokens
+  phrase_for_card: "Olmo 2's dataset size"
+  variable_type: dataset_size
+  entity: olmo2
+  units: tokens
+  nice_name: Total pre-training tokens (Olmo 2)
+  value: 5000000000000.0
+  scale: 1e9
+  display_units: billions of tokens
+  value_description: Total tokens used to pre-training a model
+  key_assumption: > 
+    ...
+  source_url: https://huggingface.co/allenai/OLMo-2-1124-7B
+  source_notes: Source is the Olmo 2 model card. It describes total number of tokens for pre-training.
   
 - variable: yearly_revenue__openai__dollars
+  phrase_for_card: "OpenAI's 2024 revenue"
   variable_type: yearly_revenue
   entity: openai
   units: dollars
@@ -31,6 +48,7 @@ inputs:
     - yearly_revenue__microsoft__dollars
 
 - variable: yearly_revenue__anthropic__dollars
+  phrase_for_card: "Anthropic's 2024 revenue"
   variable_type: yearly_revenue
   entity: anthropic
   units: dollars
@@ -47,6 +65,7 @@ inputs:
     - yearly_revenue__microsoft__dollars
 
 - variable: yearly_revenue__microsoft__dollars
+  phrase_for_card: "Microsoft's 2024 revenue"
   variable_type: yearly_revenue
   entity: microsoft
   units: dollars
@@ -63,6 +82,7 @@ inputs:
     - yearly_revenue__anthropic__dollars
 
 - variable: dataset_attribute__redpajama__tokens_per_contribution
+  phrase_for_card: "number of tokens in a document"
   variable_type: dataset_attribute
   entity: redpajama
   units: tokens_per_contribution
@@ -219,6 +239,7 @@ inputs:
   source_notes: Wikipedia article
 
 - variable: group_size__newscorp__employees
+  phrase_for_card: "number of News Corp employees"
   variable_type: group_size
   entity: newscorp
   units: employees
@@ -232,6 +253,7 @@ inputs:
   source_notes: Wikipedia article (primary source is sec.gov)
 
 - variable: group_size__world__people
+  phrase_for_card: "everyone in the world"
   variable_type: group_size
   entity: world
   units: people
@@ -243,6 +265,22 @@ inputs:
   key_assumption: Not specified
   source_url: https://www.worldometers.info/world-population/
   source_notes: Worldometer website
+
+- variable: group_size__usa__people
+  phrase_for_card: "everyone in the US"
+  variable_type: group_size
+  entity: usa
+  units: people
+  nice_name: Number of people in USA
+  value: 334900000
+  scale: 1e6
+  display_units: millions of people
+  value_description: Number of people in the USA
+  key_assumption: N/A
+  source_url: https://www.census.gov/popclock/
+  source_notes: US Census
+  related_inputs: 
+    - group_size__world__people
 
 # - variable: contribution_distribution__wikipedia__unknown
 #   variable_type: distribution
@@ -256,51 +294,3 @@ inputs:
 #   key_assumption: Not specified
 #   source_url: https://p2pmodels.eu/power-law-distribution-characterize-wiki-communities/
 #   source_notes: No additional notes.
-
-
-calculations:
-
-  - title: "Value per Reddit User"
-    description: "Estimate the value of the Reddit-Google deal per Reddit daily active user."
-    inputs:
-      - deal_value__reddit_google__dollars
-      - group_size_users__reddit__daily_active_users
-    result:
-      label: "Value per Reddit User"
-      units: dollars
-      value: 0
-    explanation: "(deal_value__reddit_google__dollars) / (group_size_users__reddit__daily_active_users)"
-
-  - title: "Freelance Cost per Book in Books3"
-    description: "Calculate the cost of paying freelance writers to create content equivalent to a book in the Books3 dataset, using high freelance rates."
-    inputs:
-      - average_length__book__words
-      - wage_data__generic_freelance_lower__dollars_per_word
-    result:
-      label: "Freelance Cost per Book"
-      units: dollars
-      value: 0
-    explanation: "average_length__book__words * wage_data__generic_freelance_lower__dollars_per_word"
-
-  - title: "Total Freelance Cost for Books3"
-    description: "Estimate the total cost to pay freelance writers to create content equivalent to all books in the Books3 dataset."
-    inputs:
-      - total_books__books3__books
-      - average_length__book__words
-      - wage_data__generic_freelance_lower__dollars_per_word
-    result:
-      label: "Total Freelance Cost for Books3"
-      units: dollars
-      value: 0
-    explanation: "total_books__books3__books * average_length__book__words * wage_data__generic_freelance_lower__dollars_per_word"
-
-  - title: "Revenue per WSJ Journalist"
-    description: "Estimate the revenue per journalist at WSJ based on News Corp's total revenue from their AI deal."
-    inputs:
-      - deal_value__newscorp__dollars
-      - group_size__wsj__journalists
-    result:
-      label: "Revenue per WSJ Journalist"
-      units: dollars
-      value: 0
-    explanation: "deal_value__newscorp__dollars / group_size__wsj__journalists"

@@ -1,7 +1,7 @@
 export const scenariosData = [
     {
         title: "Distributing AI Revenue",
-        description: "If we distribute AI revenue to everyone in the world, how much will each person get?",
+        description: "If we distribute AI revenue (say, {yearly_revenue__openai__dollars}) to some group of people (say, {group_size__world__people}), how much will each person get?",
         inputs: ["yearly_revenue__openai__dollars", "group_size__world__people"],
         calculate: (yearlyRevenue, population) => yearlyRevenue / population,
         unitDetails: "dollars / people",
@@ -12,7 +12,7 @@ export const scenariosData = [
     },
     {
         title: "Commissioning an LLM Dataset Cost Estimation",
-        description: "How much would it cost to pay for a brand new LLM-scale pre-training dataset assuming moderate freelance writing wages.",
+        description: "How much would it cost to pay for a brand new LLM-scale pre-training dataset (say, {dataset_size__llama3__tokens}) assuming moderate freelance writing wages (say, {wage_data__generic_freelance_higher__dollars_per_word})?",
         inputs: ["dataset_size__llama3__tokens", "training_detail__openai__words_per_token", "wage_data__generic_freelance_higher__dollars_per_word"],
         calculate: (tokens, wordsPerToken, freelanceRate) => tokens * wordsPerToken * freelanceRate,
         result: {
@@ -21,7 +21,7 @@ export const scenariosData = [
         }
     },
     {
-        title: "Revenue Per Token",
+        title: "Revenue and tokens",
         description: "Estimate the revenue generated per token in the dataset.",
         inputs: ["yearly_revenue__openai__dollars", "dataset_size__llama3__tokens"],
         calculate: (yearlyRevenue, totalTokens) => yearlyRevenue / totalTokens,

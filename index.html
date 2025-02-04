@@ -161,6 +161,15 @@
         border-bottom: 1px dashed #ccc;
         padding: 3px 0;
       }
+      /* Inline fill select styling */
+      .inline-select {
+        display: inline-block;
+        width: auto;
+        vertical-align: baseline;
+        margin: 0 2px;
+        font-size: 0.95rem;
+        padding: 2px 4px;
+      }
       /* Responsive adjustments */
       @media (max-width: 768px) {
         .main-container {
@@ -185,14 +194,8 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
       <div class="container-fluid">
         <a class="navbar-brand" href="#headerContent">Data Napkin Math</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -244,31 +247,19 @@
               <small class="text-muted"> ({{ input.display_units }})</small>
             </div>
             <div class="input-group input-group-sm">
-              <input
-                type="number"
-                class="form-control"
-                :value="formatValue(input.value, input.scale)"
-                @input="updateValue($event, key)" />
-              <button class="btn btn-outline-secondary" type="button" @click="adjustValue(key, 10)">
-                ×10
-              </button>
-              <button class="btn btn-outline-secondary" type="button" @click="adjustValue(key, 0.1)">
-                ×0.1
-              </button>
-              <button class="btn btn-outline-secondary" type="button" @click="resetValue(key)">
-                Reset
-              </button>
+              <input type="number" class="form-control"
+                     :value="formatValue(input.value, input.scale)"
+                     @input="updateValue($event, key)" />
+              <button class="btn btn-outline-secondary" type="button" @click="adjustValue(key, 10)">×10</button>
+              <button class="btn btn-outline-secondary" type="button" @click="adjustValue(key, 0.1)">×0.1</button>
+              <button class="btn btn-outline-secondary" type="button" @click="resetValue(key)">Reset</button>
             </div>
             <div class="mt-1">
-              <button class="btn btn-outline-secondary btn-sm" @click="showDetails(key)">
-                Inspect
-              </button>
+              <button class="btn btn-outline-secondary btn-sm" @click="showDetails(key)">Inspect</button>
             </div>
           </div>
-          <button
-            @click="loadDataFromGist"
-            class="btn btn-outline-primary btn-sm mt-3"
-            style="border-color: #10a37f; color: #10a37f;">
+          <button @click="loadDataFromGist" class="btn btn-outline-primary btn-sm mt-3"
+                  style="border-color: #10a37f; color: #10a37f;">
             Load Data from Gist
           </button>
         </div>
@@ -278,37 +269,51 @@
           <header id="headerContent">
             <h1>Napkin Math for Training Data Value</h1>
             <p>
-              Napkin math, back-of-the-envelope estimates, and ballpark figures – this interactive page explores order-of-magnitude estimates for important "data value" questions. How will the proceeds and benefits of AI be distributed?
+              Napkin math, back-of-the-envelope estimates, and ballpark figures – this interactive page explores order-of-magnitude estimates for important "data value" questions.
+              How will the proceeds and benefits of AI be distributed?
             </p>
           </header>
 
           <section id="napkinMath">
             <h2 style="margin-top: 40px; margin-bottom: 20px;">Scenarios</h2>
             <p style="font-size: 1.1rem; margin-bottom: 30px;">
-              Explore the various scenarios below. Modify input values and select variants to see how outcomes change.
+              Explore the various scenarios below. Modify input values and select fill options to see how outcomes change.
             </p>
 
             <!-- Calculation Cards (filtered by selectedScenario) -->
             <div v-for="(calculation, index) in filteredScenarios" :key="index" class="card">
               <header>
                 <h4>{{ calculation.title }}</h4>
-                <p>{{ calculation.description }}</p>
+                <!-- Process description template -->
+                <p>
+                  <template v-for="(segment, idx) in parseDescription(calculation.description)" :key="idx">
+                    <template v-if="segment.type === 'text'">
+                      {{ segment.text }}
+                    </template>
+                    <template v-else>
+                      <!-- Always show a sleek inline select -->
+                      <select class="form-select form-select-sm inline-select"
+                              v-model="fillSelections[segment.variable]"
+                              @change="onCardDropdownChange(segment.variable, $event.target.value)">
+                        <option v-for="option in getFillOptionsForType(segment.variable)" :key="option.variable" :value="option.variable">
+                          {{ option.text }}
+                        </option>
+                      </select>
+                    </template>
+                  </template>
+                </p>
                 <!-- Top Result Output Only -->
                 <div class="result-output">
                   {{ calculation.result.value }} {{ calculation.result.units }}
                 </div>
                 <div v-if="calculation.diagram">
-                  <button class="btn btn-link btn-sm" @click="toggleDiagram(index)">
-                    Toggle Diagram
-                  </button>
+                  <button class="btn btn-link btn-sm" @click="toggleDiagram(index)">Toggle Diagram</button>
                   <div v-if="calculation.showDiagram">
                     <img :src="calculation.diagram" alt="Diagram" style="max-width:100%; margin-bottom: 10px;" />
                   </div>
                 </div>
               </header>
-              <div v-if="Object.keys(inputs).length === 0">
-                Loading inputs...
-              </div>
+              <div v-if="Object.keys(inputs).length === 0">Loading inputs...</div>
               <!-- For each input used by the scenario -->
               <div v-else v-for="inputKey in calculation.inputs" :key="inputKey" class="mb-3">
                 <label class="form-label">
@@ -316,26 +321,17 @@
                   <small class="text-muted"> ({{ inputs[inputKey].display_units }})</small>
                 </label>
                 <div class="input-group">
-                  <input
-                    type="number"
-                    class="form-control"
-                    :value="formatValue(inputs[inputKey].value, inputs[inputKey].scale)"
-                    @input="updateValue($event, inputKey)" />
-                  <button class="btn btn-outline-secondary" type="button" @click="adjustValue(inputKey, 10)">
-                    ×10
-                  </button>
-                  <button class="btn btn-outline-secondary" type="button" @click="adjustValue(inputKey, 0.1)">
-                    ×0.1
-                  </button>
-                  <button class="btn btn-outline-secondary" type="button" @click="resetValue(inputKey)">
-                    Reset
-                  </button>
+                  <input type="number" class="form-control"
+                         :value="formatValue(inputs[inputKey].value, inputs[inputKey].scale)"
+                         @input="updateValue($event, inputKey)" />
+                  <button class="btn btn-outline-secondary" type="button" @click="adjustValue(inputKey, 10)">×10</button>
+                  <button class="btn btn-outline-secondary" type="button" @click="adjustValue(inputKey, 0.1)">×0.1</button>
+                  <button class="btn btn-outline-secondary" type="button" @click="resetValue(inputKey)">Reset</button>
                 </div>
-                <!-- If there are related variants, show a dropdown -->
                 <div v-if="inputs[inputKey].related_inputs && inputs[inputKey].related_inputs.length > 0" class="mt-2">
                   <select class="form-select form-select-sm"
-                    v-model="variants[inputKey]"
-                    @change="onCardDropdownChange(inputKey, variants[inputKey])">
+                          v-model="variants[inputKey]"
+                          @change="onCardDropdownChange(inputKey, $event.target.value)">
                     <option :value="inputKey">
                       {{ inputs[inputKey].nice_name || formatLabel(inputKey) }}
                     </option>
@@ -344,17 +340,11 @@
                     </option>
                   </select>
                 </div>
-                <!-- Button to open the inspector (right panel) for this input -->
-                <button class="btn btn-secondary btn-sm mt-2" @click="showDetails(inputKey)">
-                  Inspect This Input
-                </button>
+                <button class="btn btn-secondary btn-sm mt-2" @click="showDetails(inputKey)">Inspect This Input</button>
               </div>
-              
-              <!-- Calculation Details Toggle Button -->
               <button class="btn btn-outline-info btn-sm" @click="calculation.showCalcDetails = !calculation.showCalcDetails">
                 {{ calculation.showCalcDetails ? "Hide" : "Show" }} Calculation Details
               </button>
-              <!-- Calculation Details Section -->
               <div v-if="calculation.showCalcDetails" class="calc-details">
                 <strong>Calculation Function:</strong>
                 <pre>{{ calculation.calculate.toString() }}</pre>
@@ -366,7 +356,6 @@
             </div>
           </section>
 
-          <!-- About Section -->
           <section id="aboutContent" style="margin-top: 50px;">
             <details open>
               <summary style="font-size: 1.2rem; cursor: pointer;">About this page</summary>
@@ -389,11 +378,9 @@
           </section>
         </div>
 
-        <!-- Right Panel: Inspector (Fixed) with Hide Button and Log -->
+        <!-- Right Panel: Inspector (Fixed) with Hide Button and Change Log -->
         <div ref="inspectorPanel" :class="['right-panel', { hidden: !rightPanelOpen }]">
-          <button class="btn btn-outline-secondary btn-sm" @click="toggleRightPanel">
-            Hide Inspector
-          </button>
+          <button class="btn btn-outline-secondary btn-sm" @click="toggleRightPanel">Hide Inspector</button>
           <h5>Inspector</h5>
           <div v-if="selectedInputDetails">
             <h6>{{ selectedInputDetails.nice_name || formatLabel(selectedInputKey) }}</h6>
@@ -431,23 +418,22 @@
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
     <script type="module">
-      // Import scenariosData from your external module.
       import { scenariosData } from "./scenarios.js";
-
+    
       const app = Vue.createApp({
         data() {
           return {
             leftPanelOpen: false,
             rightPanelOpen: false,
             inputs: {},
-            // Initialize scenariosData from the imported module.
             scenariosData: [],
             selectedInputKey: null,
             selectedScenario: "All",
-            // Store the current variant for each input (if applicable)
             variants: {},
-            // Log of changes: key => array of log entries
-            logs: {}
+            logs: {},
+            // For inline fill, we store the selected variable key for each placeholder.
+            fillSelections: {},
+            activeFillVariable: null
           };
         },
         computed: {
@@ -455,7 +441,6 @@
             return this.selectedInputKey ? this.inputs[this.selectedInputKey] : null;
           },
           filteredScenarios() {
-            // If "All" is selected, show all scenarios; otherwise, filter by exact match.
             if (this.selectedScenario === "All") {
               return this.scenariosData;
             } else {
@@ -481,14 +466,12 @@
           updateValue(event, key) {
             const scale = this.inputs[key].scale || 1;
             const newVal = parseFloat(event.target.value) * scale;
-            // Log change if value is different
             if (this.inputs[key].value !== newVal) {
               this.inputs[key].value = newVal;
               this.logChange(key, newVal);
               this.updateCalculations();
             }
           },
-          // Custom adjustment: multiply current value by factor (e.g., 10 or 0.1)
           adjustValue(key, factor) {
             const currentVal = parseFloat(this.inputs[key].value) || 0;
             const newVal = currentVal * factor;
@@ -496,14 +479,12 @@
             this.logChange(key, newVal);
             this.updateCalculations();
           },
-          // Reset a variable to its default value.
           resetValue(key) {
             const defaultVal = this.inputs[key].default_value;
             this.inputs[key].value = defaultVal;
             this.logChange(key, defaultVal);
             this.updateCalculations();
           },
-          // Log a change for a given input.
           logChange(key, newValue) {
             if (!this.logs[key]) {
               this.logs[key] = [];
@@ -511,7 +492,6 @@
             const timestamp = new Date().toLocaleTimeString();
             this.logs[key].push({ time: timestamp, value: newValue });
           },
-          // When an input is clicked, show its details in the inspector and scroll inspector to top.
           showDetails(key) {
             this.selectedInputKey = key;
             this.rightPanelOpen = true;
@@ -521,23 +501,35 @@
               }
             });
           },
-          onCardDropdownChange(inputKey, newValue) {
-            this.applyCardVariantChange(inputKey, newValue);
+          onCardDropdownChange(variable, newValue) {
+            // When the inline select changes, update the fill selection...
+            this.fillSelections[variable] = newValue;
+            // ...and then update the effective inputs in all scenarios.
+            this.applyCardVariantChange(variable);
           },
-          applyCardVariantChange(inputKey, newValue) {
-            const possibleKeys = [inputKey].concat(this.inputs[inputKey].related_inputs || []);
-            this.scenariosData.forEach((calculation) => {
-              calculation.inputs = calculation.inputs.map((key) =>
-                possibleKeys.includes(key) ? newValue : key
-              );
+          applyCardVariantChange(variable) {
+            // For each scenario, rebuild the effective inputs from the originalInputs.
+            this.scenariosData.forEach((calc) => {
+              // If not already stored, preserve the original inputs.
+              if (!calc.originalInputs) {
+                calc.originalInputs = [...calc.inputs];
+              }
+              // Now rebuild calc.inputs: for each key in originalInputs, if the key matches the variable,
+              // then replace it with the current fill selection (if any).
+              calc.inputs = calc.originalInputs.map(key => {
+                if (key === variable && this.fillSelections[variable]) {
+                  return this.fillSelections[variable];
+                }
+                return key;
+              });
             });
             this.updateCalculations();
           },
           updateCalculations() {
-            this.scenariosData.forEach((calculation) => {
-              const inputKeys = calculation.inputs;
+            this.scenariosData.forEach((calc) => {
+              const inputKeys = calc.inputs;
               if (inputKeys) {
-                const inputValues = inputKeys.map((key) => {
+                const inputValues = inputKeys.map(key => {
                   if (this.inputs[key] !== undefined) {
                     return this.inputs[key].value;
                   } else {
@@ -546,25 +538,25 @@
                   }
                 });
                 if (!inputValues.includes(null)) {
-                  if (typeof calculation.calculate === "function") {
+                  if (typeof calc.calculate === "function") {
                     try {
-                      const result = calculation.calculate(...inputValues);
-                      calculation.result.value = this.humanReadable(result);
-                      calculation.result.rawValue = result;
+                      const result = calc.calculate(...inputValues);
+                      calc.result.value = this.humanReadable(result);
+                      calc.result.rawValue = result;
                     } catch (error) {
-                      console.error("Error evaluating calculation:", error, "Calculation:", calculation.title);
-                      calculation.result.value = "Error";
-                      calculation.result.rawValue = null;
+                      console.error("Error evaluating calculation:", error, "Calculation:", calc.title);
+                      calc.result.value = "Error";
+                      calc.result.rawValue = null;
                     }
                   } else {
-                    calculation.result.value = "N/A";
-                    calculation.result.rawValue = null;
+                    calc.result.value = "N/A";
+                    calc.result.rawValue = null;
                   }
                 } else {
-                  console.error(`Missing inputs for calculation: ${calculation.title}`);
+                  console.error(`Missing inputs for calculation: ${calc.title}`);
                 }
               } else {
-                console.error(`Input keys not found for calculation: ${calculation.title}`);
+                console.error(`Input keys not found for calculation: ${calc.title}`);
               }
             });
           },
@@ -584,7 +576,53 @@
             const adjustedValue = value / Math.pow(10, 3 * order);
             return `${adjustedValue.toFixed(2)} ${unitName}`;
           },
-          // Load only the inputs from the YAML file.
+          // Parse the description into segments.
+          parseDescription(desc) {
+            const segments = [];
+            let lastIndex = 0;
+            const regex = /\{([^}]+)\}/g;
+            let match;
+            while ((match = regex.exec(desc)) !== null) {
+              if (match.index > lastIndex) {
+                segments.push({ type: 'text', text: desc.slice(lastIndex, match.index) });
+              }
+              segments.push({ type: 'variable', variable: match[1] });
+              lastIndex = regex.lastIndex;
+            }
+            if (lastIndex < desc.length) {
+              segments.push({ type: 'text', text: desc.slice(lastIndex) });
+            }
+            return segments;
+          },
+          // Return fill options for a variable group (by variable_type). All inputs with the same variable_type are in the group.
+          getFillOptionsForType(variable) {
+            if (!this.inputs[variable]) return [];
+            const vt = this.inputs[variable].variable_type;
+            const options = Object.values(this.inputs)
+              .filter(input => input.variable_type === vt)
+              .map(input => ({
+                variable: input.variable,
+                text: input.phrase_for_card || input.variable
+              }));
+            const unique = {};
+            options.forEach(opt => {
+              unique[opt.text] = opt;
+            });
+            return Object.values(unique);
+          },
+          // Get the current fill text for a variable.
+          getFillTextFor(variable) {
+            const selectedVar = this.fillSelections[variable] || variable;
+            if (this.inputs[selectedVar] && this.inputs[selectedVar].phrase_for_card) {
+              return this.inputs[selectedVar].phrase_for_card;
+            }
+            return variable;
+          },
+          // Process the description template: return segments.
+          processDescription(desc) {
+            return this.parseDescription(desc);
+          },
+          // Load inputs from YAML and preprocess groups by variable_type.
           async loadDataFromGist() {
             try {
               const gistUrl = "data/inputs.yaml";
@@ -593,14 +631,16 @@
               const yamlText = await response.text();
               const data = jsyaml.load(yamlText);
               console.log("Data successfully loaded");
-              // Set up inputs
               this.inputs = data.inputs.reduce((acc, input) => {
                 acc[input.variable] = { ...input, default_value: input.value };
+                if (input.phrase_for_card) {
+                  this.fillSelections[input.variable] = input.variable; // default: use its own variable key
+                }
                 return acc;
               }, {});
-              // Initialize variant defaults (each input starts as itself)
+              // (No explicit related_inputs processing: grouping is by variable_type.)
               this.variants = {};
-              Object.keys(this.inputs).forEach((key) => {
+              Object.keys(this.inputs).forEach(key => {
                 this.variants[key] = key;
               });
               this.updateCalculations();
@@ -613,19 +653,20 @@
           }
         },
         mounted() {
-          // Initialize scenariosData from the imported module—preserving calculation functions.
-          this.scenariosData = scenariosData.map((calc) => ({
+          // Preserve calculation functions and store the original inputs for each scenario.
+          this.scenariosData = scenariosData.map(calc => ({
             ...calc,
             result: { label: calc.result.label, value: 0, rawValue: 0, units: calc.result.units },
             showDiagram: false,
-            showCalcDetails: false
+            showCalcDetails: false,
+            originalInputs: [...calc.inputs]
           }));
-          // Load inputs from YAML
           this.loadDataFromGist();
         }
       });
-
+    
       app.mount("#app");
     </script>
+    
   </body>
 </html>
