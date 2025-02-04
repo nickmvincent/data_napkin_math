@@ -51,12 +51,13 @@
       .main-container {
         display: flex;
         min-height: calc(100vh - 70px); /* subtract navbar height */
-        max-width: 1200px;
+        max-width: 1400px;
         margin: 0 auto;
+        width: 100%;
       }
-      /* Left Panel: Spreadsheet-like view of all inputs */
+      /* Left Panel: Increased width & balanced spacing */
       .left-panel {
-        width: 300px;
+        flex: 0 0 400px;
         padding: 20px;
         overflow-y: auto;
         background: #fff;
@@ -72,9 +73,9 @@
         padding: 20px 30px;
         background: #fdfdfd;
       }
-      /* Right Panel: Inspector */
+      /* Right Panel: Increased width & balanced spacing */
       .right-panel {
-        width: 300px;
+        flex: 0 0 400px;
         padding: 20px;
         overflow-y: auto;
         background: #fff;
@@ -97,7 +98,7 @@
         background: #fff;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
       }
-      /* Header styling for magazine feel */
+      /* Header styling for a magazine feel */
       header h1 {
         font-size: 2.8rem;
         margin-bottom: 10px;
@@ -106,7 +107,7 @@
         font-size: 1.2rem;
         line-height: 1.6;
       }
-      /* Input Group adjustments: Remove default spinner if desired */
+      /* Input Group adjustments: Remove default spinner */
       input[type=number]::-webkit-outer-spin-button,
       input[type=number]::-webkit-inner-spin-button {
         -webkit-appearance: none;
@@ -121,6 +122,22 @@
         padding-bottom: 8px;
         margin-bottom: 8px;
       }
+      /* Result output styling for cards */
+      .result-output {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #10a37f;
+        margin: 15px 0;
+        text-align: center;
+      }
+      /* Calculation details area styling */
+      .calc-details {
+        background: #f7f7f7;
+        padding: 10px;
+        border-radius: 4px;
+        margin-top: 10px;
+        font-size: 0.9rem;
+      }
       /* Responsive adjustments */
       @media (max-width: 768px) {
         .main-container {
@@ -128,6 +145,7 @@
         }
         .left-panel,
         .right-panel {
+          flex: 0 0 auto;
           width: 100%;
           border: none;
         }
@@ -237,9 +255,15 @@
               v-for="(calculation, index) in scenariosData"
               :key="index"
               class="card">
+              
+
               <header>
                 <h4>{{ calculation.title }}</h4>
                 <p>{{ calculation.description }}</p>
+                <!-- Top Result Output -->
+                <div class="result-output">
+                    {{ calculation.result.value }} {{ calculation.result.units }}
+                </div>
                 <div v-if="calculation.diagram">
                   <button class="btn btn-link btn-sm" @click="toggleDiagram(index)">
                     Toggle Diagram
@@ -249,6 +273,7 @@
                   </div>
                 </div>
               </header>
+
               <div v-if="Object.keys(inputs).length === 0">
                 Loading inputs...
               </div>
@@ -301,11 +326,25 @@
                   Inspect This Input
                 </button>
               </div>
-              <!-- Calculation Result -->
-              <div style="font-size: 1.1rem; margin-top: 10px;">
-                <strong>{{ calculation.result.label }}: </strong>
-                <span>{{ calculation.result.value }} {{ calculation.result.units }}</span>
+              
+              <!-- Calculation Details Toggle Button -->
+              <button class="btn btn-outline-info btn-sm" @click="calculation.showCalcDetails = !calculation.showCalcDetails">
+                {{ calculation.showCalcDetails ? "Hide" : "Show" }} Calculation Details
+              </button>
+              <!-- Calculation Details Section -->
+              <div v-if="calculation.showCalcDetails" class="calc-details">
+                <strong>Calculation Function:</strong>
+                <pre>{{ calculation.calculate.toString() }}</pre>
+                <strong>Raw Value:</strong> {{ calculation.result.rawValue }}<br />
+                <div v-if="calculation.unitDetails">
+                  <strong>Unit Details:</strong> {{ calculation.unitDetails }}
+                </div>
               </div>
+
+              <!-- Bottom Result Output -->
+              <!-- <div class="result-output">
+                {{ calculation.result.value }} {{ calculation.result.units }}
+              </div> -->
             </div>
           </section>
 
@@ -398,6 +437,7 @@
           },
           updateValue(event, key) {
             const scale = this.inputs[key].scale || 1;
+            // Ensure the value is parsed as a number.
             this.inputs[key].value = parseFloat(event.target.value) * scale;
             this.updateCalculations();
           },
@@ -507,8 +547,9 @@
           // Initialize scenariosData from the imported module—preserving calculation functions.
           this.scenariosData = scenariosData.map((calc) => ({
             ...calc,
-            result: { label: calc.result.label, value: 0, rawValue: 0 },
-            showDiagram: false
+            result: { label: calc.result.label, value: 0, rawValue: 0, units: calc.result.units },
+            showDiagram: false,
+            showCalcDetails: false
           }));
           // Load inputs from YAML
           this.loadDataFromGist();
