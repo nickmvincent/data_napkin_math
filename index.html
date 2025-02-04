@@ -75,7 +75,7 @@
         padding: 20px 30px;
         background: #fdfdfd;
       }
-      /* Right Panel: Fixed to the side, scrollable if needed */
+      /* Right Panel: Fixed to side, scrollable if needed */
       .right-panel {
         position: fixed;
         top: 70px;
@@ -144,6 +144,22 @@
         border-radius: 4px;
         margin-top: 10px;
         font-size: 0.9rem;
+      }
+      /* Change Log styling in inspector */
+      .change-log {
+        margin-top: 15px;
+        font-size: 0.9rem;
+      }
+      .change-log h6 {
+        margin-bottom: 5px;
+      }
+      .change-log ul {
+        list-style: none;
+        padding-left: 0;
+      }
+      .change-log li {
+        border-bottom: 1px dashed #ccc;
+        padding: 3px 0;
       }
       /* Responsive adjustments */
       @media (max-width: 768px) {
@@ -239,6 +255,9 @@
               <button class="btn btn-outline-secondary" type="button" @click="adjustValue(key, 0.1)">
                 ×0.1
               </button>
+              <button class="btn btn-outline-secondary" type="button" @click="resetValue(key)">
+                Reset
+              </button>
             </div>
             <div class="mt-1">
               <button class="btn btn-outline-secondary btn-sm" @click="showDetails(key)">
@@ -308,6 +327,9 @@
                   <button class="btn btn-outline-secondary" type="button" @click="adjustValue(inputKey, 0.1)">
                     ×0.1
                   </button>
+                  <button class="btn btn-outline-secondary" type="button" @click="resetValue(inputKey)">
+                    Reset
+                  </button>
                 </div>
                 <!-- If there are related variants, show a dropdown -->
                 <div v-if="inputs[inputKey].related_inputs && inputs[inputKey].related_inputs.length > 0" class="mt-2">
@@ -367,7 +389,7 @@
           </section>
         </div>
 
-        <!-- Right Panel: Inspector (Fixed) with Hide Button -->
+        <!-- Right Panel: Inspector (Fixed) with Hide Button and Log -->
         <div ref="inspectorPanel" :class="['right-panel', { hidden: !rightPanelOpen }]">
           <button class="btn btn-outline-secondary btn-sm" @click="toggleRightPanel">
             Hide Inspector
@@ -389,6 +411,15 @@
                 <a :href="selectedInputDetails.source_url" target="_blank">{{ selectedInputDetails.source_url }}</a>
               </li>
             </ul>
+            <!-- Change Log for this variable -->
+            <div v-if="logs[selectedInputKey] && logs[selectedInputKey].length" class="change-log">
+              <h6>Change Log:</h6>
+              <ul>
+                <li v-for="(entry, index) in logs[selectedInputKey]" :key="index">
+                  {{ entry.time }}: {{ entry.value }}
+                </li>
+              </ul>
+            </div>
           </div>
           <div v-else>
             <p>Click on an input (from the left panel or a scenario card) to inspect its details here.</p>
@@ -414,7 +445,9 @@
             selectedInputKey: null,
             selectedScenario: "All",
             // Store the current variant for each input (if applicable)
-            variants: {}
+            variants: {},
+            // Log of changes: key => array of log entries
+            logs: {}
           };
         },
         computed: {
@@ -422,7 +455,7 @@
             return this.selectedInputKey ? this.inputs[this.selectedInputKey] : null;
           },
           filteredScenarios() {
-            // If "All" is selected, show all scenarios; otherwise, filter by exact match of the scenario title.
+            // If "All" is selected, show all scenarios; otherwise, filter by exact match.
             if (this.selectedScenario === "All") {
               return this.scenariosData;
             } else {
@@ -447,14 +480,36 @@
           },
           updateValue(event, key) {
             const scale = this.inputs[key].scale || 1;
-            this.inputs[key].value = parseFloat(event.target.value) * scale;
-            this.updateCalculations();
+            const newVal = parseFloat(event.target.value) * scale;
+            // Log change if value is different
+            if (this.inputs[key].value !== newVal) {
+              this.inputs[key].value = newVal;
+              this.logChange(key, newVal);
+              this.updateCalculations();
+            }
           },
           // Custom adjustment: multiply current value by factor (e.g., 10 or 0.1)
           adjustValue(key, factor) {
             const currentVal = parseFloat(this.inputs[key].value) || 0;
-            this.inputs[key].value = currentVal * factor;
+            const newVal = currentVal * factor;
+            this.inputs[key].value = newVal;
+            this.logChange(key, newVal);
             this.updateCalculations();
+          },
+          // Reset a variable to its default value.
+          resetValue(key) {
+            const defaultVal = this.inputs[key].default_value;
+            this.inputs[key].value = defaultVal;
+            this.logChange(key, defaultVal);
+            this.updateCalculations();
+          },
+          // Log a change for a given input.
+          logChange(key, newValue) {
+            if (!this.logs[key]) {
+              this.logs[key] = [];
+            }
+            const timestamp = new Date().toLocaleTimeString();
+            this.logs[key].push({ time: timestamp, value: newValue });
           },
           // When an input is clicked, show its details in the inspector and scroll inspector to top.
           showDetails(key) {
