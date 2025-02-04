@@ -1,376 +1,521 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Include Google Fonts for a polished, newspaper-like feel -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Playfair+Display:wght@400;700&display=swap"
+      rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Data Napkin Math</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" />
+    <!-- Vue 3 -->
     <script src="https://unpkg.com/vue@3"></script>
+    <!-- js-yaml for YAML parsing -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.0.0/js-yaml.min.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <!-- Scenarios module (assumed to exist) -->
     <script type="module" src="./scenarios.js"></script>
-</head>
-
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#headerContent">Data Napkin Math</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#napkinMath">Scenarios</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#aboutContent">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="https://github.com/nickmvincent/data_napkin_math">GitHub</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-    <div id="app">
-        <button @click="toggleSidebar" class="btn btn-primary sidebar-toggle"
-            style="background-color: #10a37f; color: white; border: none; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
-            {{ sidebarOpen ? 'Hide' : 'Show' }} All Inputs
+    <style>
+      /* Overall Fonts & Colors */
+      body {
+        font-family: 'Merriweather', serif;
+        background-color: #fdfdfd;
+        color: #333;
+        margin: 0;
+        padding: 0;
+      }
+      h1, h2, h3, h4 {
+        font-family: 'Playfair Display', serif;
+      }
+      /* Fixed-top Navbar */
+      .navbar.fixed-top {
+        z-index: 1100;
+        border-bottom: 1px solid #ddd;
+      }
+      /* Top Toolbar */
+      .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        background: #fafafa;
+        border-bottom: 1px solid #ddd;
+      }
+      .toolbar button {
+        font-weight: 700;
+      }
+      /* Main Container using Flex */
+      .main-container {
+        display: flex;
+        min-height: calc(100vh - 70px); /* subtract navbar height */
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      /* Left Panel: Spreadsheet-like view of all inputs */
+      .left-panel {
+        width: 300px;
+        padding: 20px;
+        overflow-y: auto;
+        background: #fff;
+        border-right: 1px solid #ddd;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        text-align: left;
+      }
+      /* Main Content: Scenario Cards */
+      .main-content {
+        flex-grow: 1;
+        padding: 20px 30px;
+        background: #fdfdfd;
+      }
+      /* Right Panel: Inspector */
+      .right-panel {
+        width: 300px;
+        padding: 20px;
+        overflow-y: auto;
+        background: #fff;
+        border-left: 1px solid #ddd;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        text-align: left;
+      }
+      /* Hide panels when not toggled */
+      .hidden {
+        display: none;
+      }
+      /* Card styling for scenario cards */
+      .card {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 20px;
+        margin-bottom: 30px;
+        background: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      }
+      /* Header styling for magazine feel */
+      header h1 {
+        font-size: 2.8rem;
+        margin-bottom: 10px;
+      }
+      header p {
+        font-size: 1.2rem;
+        line-height: 1.6;
+      }
+      /* Input Group adjustments: Remove default spinner if desired */
+      input[type=number]::-webkit-outer-spin-button,
+      input[type=number]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input[type=number] {
+        -moz-appearance: textfield;
+      }
+      /* Left panel input rows */
+      .input-row {
+        border-bottom: 1px solid #eee;
+        padding-bottom: 8px;
+        margin-bottom: 8px;
+      }
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .main-container {
+          flex-direction: column;
+        }
+        .left-panel,
+        .right-panel {
+          width: 100%;
+          border: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Fixed-top Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#headerContent">Data Napkin Math</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
         </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#napkinMath">Scenarios</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#aboutContent">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="https://github.com/nickmvincent/data_napkin_math">GitHub</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
 
-        <div :class="['sidebar', { open: sidebarOpen }]">
-            <div v-for="(input, key) in inputs" :key="key" class="mb-3">
-                <label :for="key" class="form-label">{{ input.nice_name || formatLabel(key) }} ({{ input.display_units
-                    }})</label>
-                <input type="number" :value="formatValue(input.value, input.scale)" @input="updateValue($event, key)"
-                    :id="key" class="form-control">
-                <details>
-                    <summary>Show Input Details</summary>
-                    <ul>
-                        <li><strong>Raw Value:</strong> {{ inputs[key].value }}</li>
-                        <li v-if="input.description" class="input-info"><strong>Description:</strong> {{
-                            input.description }}</li>
-                        <li class="input-info"><strong>Source:</strong> <a :href="input.source_url" target="_blank">{{
-                                input.source_url }}</a></li>
-                    </ul>
-                </details>
+    <!-- Vue App Container (padded below the navbar) -->
+    <div id="app" style="padding-top: 70px;">
+      <!-- Top Toolbar with symmetric toggle buttons -->
+      <div class="toolbar">
+        <button class="btn btn-primary" @click="toggleLeftPanel">
+          {{ leftPanelOpen ? "Hide Inputs" : "Show Inputs" }}
+        </button>
+        <button class="btn btn-primary" @click="toggleRightPanel">
+          {{ rightPanelOpen ? "Hide Inspector" : "Show Inspector" }}
+        </button>
+      </div>
+
+      <!-- Main Flex Container: Left Panel, Main Content, Right Panel -->
+      <div class="main-container">
+        <!-- Left Panel: All Inputs (Spreadsheet-like view) -->
+        <div :class="['left-panel', { hidden: !leftPanelOpen }]">
+          <h5 style="margin-bottom: 20px;">All Inputs</h5>
+          <div
+            v-for="(input, key) in inputs"
+            :key="key"
+            class="input-row">
+            <div>
+              <strong>{{ input.nice_name || formatLabel(key) }}</strong>
+              <small class="text-muted"> ({{ input.display_units }})</small>
             </div>
-            <button @click="loadDataFromGist" class="btn btn-outline-primary mt-3"
-                style="border-color: #10a37f; color: #10a37f;">Load Data from Gist</button>
+            <div class="input-group input-group-sm">
+              <input
+                type="number"
+                class="form-control"
+                :value="formatValue(input.value, input.scale)"
+                @input="updateValue($event, key)" />
+              <button class="btn btn-outline-secondary" type="button" @click="adjustValue(key, 10)">
+                ×10
+              </button>
+              <button class="btn btn-outline-secondary" type="button" @click="adjustValue(key, 0.1)">
+                ×0.1
+              </button>
+            </div>
+            <div class="mt-1">
+              <button class="btn btn-outline-secondary btn-sm" @click="showDetails(key)">
+                Inspect
+              </button>
+            </div>
+          </div>
+          <button
+            @click="loadDataFromGist"
+            class="btn btn-outline-primary btn-sm mt-3"
+            style="border-color: #10a37f; color: #10a37f;">
+            Load Data from Gist
+          </button>
         </div>
 
-        <div :class="['main-content', { shifted: sidebarOpen }]">
-            <header class="header" id="headerContent">
-                <h1>Napkin Math for Training Data Value</h1>
-                <div class="col-content">
-                    <p class="clean-text">Napkin math, back of the envelope estimates, ballpark figures: this is a
-                        lightweight web-page for
-                        making order of magnitude estimates about
-                        important "data value" questions. How will the proceeds and other benefits of AI be
-                        distributed?
+        <!-- Main Content: Scenario Cards -->
+        <div class="main-content">
+          <header id="headerContent">
+            <h1>Napkin Math for Training Data Value</h1>
+            <p>
+              Napkin math, back-of-the-envelope estimates, and ballpark figures – this interactive page explores order-of-magnitude estimates for important "data value" questions. How will the proceeds and benefits of AI be distributed?
+            </p>
+          </header>
 
-                    </p>
+          <section id="napkinMath">
+            <h2 style="margin-top: 40px; margin-bottom: 20px;">Scenarios</h2>
+            <p style="font-size: 1.1rem; margin-bottom: 30px;">
+              Explore the various scenarios below. Modify input values and select variants to see how outcomes change.
+            </p>
+
+            <!-- Calculation Cards -->
+            <div
+              v-for="(calculation, index) in scenariosData"
+              :key="index"
+              class="card">
+              <header>
+                <h4>{{ calculation.title }}</h4>
+                <p>{{ calculation.description }}</p>
+                <div v-if="calculation.diagram">
+                  <button class="btn btn-link btn-sm" @click="toggleDiagram(index)">
+                    Toggle Diagram
+                  </button>
+                  <div v-if="calculation.showDiagram">
+                    <img :src="calculation.diagram" alt="Diagram" style="max-width:100%; margin-bottom: 10px;" />
+                  </div>
                 </div>
-                <details open id="aboutContent" class="col-content">
-                    <summary>About this page</summary>
-                    <div>
-                        <p>
-                            <b> This website is in a very early beta state! Head to GitHub to see some open issues</b>.
+              </header>
+              <div v-if="Object.keys(inputs).length === 0">
+                Loading inputs...
+              </div>
+              <!-- For each input used by the scenario -->
+              <div
+                v-else
+                v-for="inputKey in calculation.inputs"
+                :key="inputKey"
+                class="mb-3">
+                <label class="form-label">
+                  {{ inputs[inputKey]?.nice_name || formatLabel(inputKey) }}
+                  <small class="text-muted"> ({{ inputs[inputKey].display_units }})</small>
+                </label>
+                <div class="input-group">
+                  <input
+                    type="number"
+                    class="form-control"
+                    :value="formatValue(inputs[inputKey].value, inputs[inputKey].scale)"
+                    @input="updateValue($event, inputKey)" />
+                  <button class="btn btn-outline-secondary" type="button" @click="adjustValue(inputKey, 10)">
+                    ×10
+                  </button>
+                  <button class="btn btn-outline-secondary" type="button" @click="adjustValue(inputKey, 0.1)">
+                    ×0.1
+                  </button>
+                </div>
+                <!-- If there are related variants, show a dropdown -->
+                <div
+                  v-if="inputs[inputKey].related_inputs && inputs[inputKey].related_inputs.length > 0"
+                  class="mt-2">
+                  <select
+                    class="form-select form-select-sm"
+                    v-model="variants[inputKey]"
+                    @change="onCardDropdownChange(inputKey, variants[inputKey])">
+                    <option :value="inputKey">
+                      {{ inputs[inputKey].nice_name || formatLabel(inputKey) }}
+                    </option>
+                    <option
+                      v-for="relKey in inputs[inputKey].related_inputs"
+                      :key="relKey"
+                      :value="relKey">
+                      {{ inputs[relKey]?.nice_name || formatLabel(relKey) }}
+                    </option>
+                  </select>
+                </div>
+                <!-- Button to open the inspector (right panel) for this input -->
+                <button
+                  class="btn btn-secondary btn-sm mt-2"
+                  @click="showDetails(inputKey)">
+                  Inspect This Input
+                </button>
+              </div>
+              <!-- Calculation Result -->
+              <div style="font-size: 1.1rem; margin-top: 10px;">
+                <strong>{{ calculation.result.label }}: </strong>
+                <span>{{ calculation.result.value }} {{ calculation.result.units }}</span>
+              </div>
+            </div>
+          </section>
 
-                            There are a number of open debates about making policy and setting norms around the use of
-                            data
-                            for "AI" systems. Many of these questions involve some abstract moral arguments, but
-                            answering them may also
-                            depend on some rough estimates of "what kind of numbers are we talking about". Will people
-                            be getting $5000
-                            paychecks, or 5 cent pittances?
-                        </p>
-                        <p>
-                            This tool is interactive so you can edit any assumptions you want. Ultimately, the math here
-                            is
-                            mostly just arithmetic (with the potential to hook more elaborate ML training scenarios or
-                            agent-based
-                            models).
-                        </p>
-                        <p>
-                            To participate in discussion about what some reasonable default values should be, head to
-                            the
-                            <a href="https://github.com/nickmvincent/data_napkin_math">GitHub page </a>where we host the
-                            underlying data or
-                            visit our public Google Drive folder <a
-                                href="https://drive.google.com/drive/folders/1_UKI4KXKeItuDDCmOtxx8cgmoh3weui5?usp=drive_link">(comment
-                                link)</a> and leave a
-                            comment.
-                        </p>
-                        <p>
-                            There are two types of objects we use here: reported figures, aka the "inputs" (for
-                            instance,
-                            the number of tokens used to train a model or the reported revenue of an AI company) and
-                            equations. You can see all of these on the left sidebar.
-                            Anyone can contribute to this estimation process by updating a figure (for instance, when a
-                            new paper comes out), contesting an equation, or adding a new scenario.
-                        </p>
-                    </div>
-                </details>
-            </header>
-
-            <!-- Napkin Math Section -->
-            <section id="napkinMath">
-                <h2>Scenarios</h2>
-                <p>Below are our existing napkin math scenarios. For each scenario, you can play with the inputs
-                    to see how things might change. You can also see and edit all the assumptions in the sidebar.
+          <!-- About Section -->
+          <section id="aboutContent" style="margin-top: 50px;">
+            <details open>
+              <summary style="font-size: 1.2rem; cursor: pointer;">About this page</summary>
+              <div style="margin-top: 10px; line-height: 1.6;">
+                <p>
+                  <strong>This website is in an early beta state!</strong> Head over to our GitHub page for details and to contribute.
+                  There are many open debates about policy and norms around the use of data for AI systems – and often, back-of-the-envelope estimates
+                  like these are the starting point.
                 </p>
-
-                <!-- Calculation Cards -->
-                <div v-for="(calculation, index) in scenariosData" :key="index" class="card">
-                    <header>
-                        <h4>{{ calculation.title }}</h4>
-                        <p>{{ calculation.description }}</p>
-                        <details :id="'diagram-details-' + index" v-if="calculation.diagram">
-                            <summary>View Diagram</summary>
-                            <img :src="calculation.diagram" alt="Diagram" class="fixed-image mt-2 mb-2" />
-                        </details>
-                    </header>
-                    <div v-if="Object.keys(inputs).length === 0">Loading inputs...</div>
-                    <div v-else v-for="inputKey in calculation.inputs" :key="inputKey" class="mb-3">
-                        <label :for="inputKey" class="form-label">{{ inputs[inputKey]?.nice_name ||
-                            formatLabel(inputKey) }} ({{ inputs[inputKey].display_units }})</label>
-                        <input type="number" :value="formatValue(inputs[inputKey].value, inputs[inputKey].scale)"
-                            @input="updateValue($event, inputKey)" :id="inputKey" class="form-control">
-                        <details :id="'calculation-details-' + inputKey">
-                            <summary>Show Input Details</summary>
-                            <ul>
-                                <li><strong>Raw Value:</strong> {{ inputs[inputKey].value }}</li>
-                                <!-- Display raw value of input here -->
-                                <li v-if="inputs[inputKey].default_value"><strong>Default Value:</strong> {{
-                                    inputs[inputKey].default_value }}</li> <!-- Display default value -->
-                                <li v-if="inputs[inputKey] && inputs[inputKey].value_description"><strong>Value
-                                        Description:</strong> {{ inputs[inputKey].value_description }}</li>
-                                <li v-if="inputs[inputKey] && inputs[inputKey].variable_type"><strong>Variable
-                                        Type:</strong> {{ inputs[inputKey].variable_type }}</li>
-                                <li v-if="inputs[inputKey] && inputs[inputKey].confidence_in_number"><strong>Confidence
-                                        in Number:</strong> {{ inputs[inputKey].confidence_in_number }}</li>
-                                <li v-if="inputs[inputKey] && inputs[inputKey].key_assumption"><strong>Key
-                                        Assumption:</strong> {{ inputs[inputKey].key_assumption }}</li>
-                                <li v-if="inputs[inputKey] && inputs[inputKey].source_notes"><strong>Source
-                                        Notes:</strong> {{ inputs[inputKey].source_notes }}</li>
-                                <li v-if="inputs[inputKey] && inputs[inputKey].units"><strong>Units:</strong> {{
-                                    inputs[inputKey].units }}</li>
-                                <li v-if="inputs[inputKey] && inputs[inputKey].source_url"><strong>Source URL: </strong>
-                                    <a :href="inputs[inputKey].source_url" target="_blank">{{
-                                        inputs[inputKey].source_url }}</a>
-                                </li>
-
-                                <li>
-                                    <div v-if="inputs[inputKey].related_inputs && inputs[inputKey].related_inputs.length"
-                                        class="related-inputs mt-2">
-                                        <label class="form-label"><strong>Related Inputs:</strong></label>
-                                        <ul>
-                                            <li v-for="related in inputs[inputKey].related_inputs" :key="related"
-                                                class="d-flex align-items-center">
-                                                <span>{{ inputs[related]?.nice_name || formatLabel(related) }}</span>
-                                                <button @click="applyRelatedInput(inputKey, related)"
-                                                    class="btn btn-sm btn-link">Use Value</button>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li>
-
-                            </ul>
-                        </details>
-
-                    </div>
-                    <details>
-                        <summary>Show Calculation Details</summary>
-                        <ul>
-                            <li><strong>Function:</strong>
-                                <pre>{{ calculation.calculate.toString() }}</pre>
-                            </li>
-                            <li><strong>Raw Value:</strong> {{ calculation.result.rawValue }}</li>
-                            <li v-if="calculation.unitDetails"><strong>Units:</strong> {{ calculation.unitDetails }}
-                            </li>
-
-                        </ul>
-                    </details>
-                    <footer class="mt-4">
-                        <p>{{ calculation.result.label }}: <strong>{{ calculation.result.value }}
-                                {{calculation.result.units}}
-                            </strong></p>
-                    </footer>
-                </div>
-            </section>
+                <p>
+                  This interactive tool allows you to adjust assumptions and play with the numbers. The underlying math is simple arithmetic,
+                  yet it provides a framework to reason about order-of-magnitude estimates.
+                </p>
+                <p>
+                  To participate in the discussion regarding reasonable default values, check out the
+                  <a href="https://github.com/nickmvincent/data_napkin_math" target="_blank">GitHub page</a> or leave a comment in our public folder.
+                </p>
+              </div>
+            </details>
+          </section>
         </div>
+
+        <!-- Right Panel: Inspector for the last-clicked input -->
+        <div :class="['right-panel', { hidden: !rightPanelOpen }]">
+          <h5>Inspector</h5>
+          <div v-if="selectedInputDetails">
+            <h6>{{ selectedInputDetails.nice_name || formatLabel(selectedInputKey) }}</h6>
+            <p><em>({{ selectedInputDetails.display_units }})</em></p>
+            <ul class="list-unstyled" style="font-size: 0.95rem;">
+              <li><strong>Raw Value:</strong> {{ selectedInputDetails.value }}</li>
+              <li v-if="selectedInputDetails.default_value"><strong>Default Value:</strong> {{ selectedInputDetails.default_value }}</li>
+              <li v-if="selectedInputDetails.value_description"><strong>Description:</strong> {{ selectedInputDetails.value_description }}</li>
+              <li v-if="selectedInputDetails.variable_type"><strong>Variable Type:</strong> {{ selectedInputDetails.variable_type }}</li>
+              <li v-if="selectedInputDetails.key_assumption"><strong>Assumption:</strong> {{ selectedInputDetails.key_assumption }}</li>
+              <li v-if="selectedInputDetails.source_notes"><strong>Source Notes:</strong> {{ selectedInputDetails.source_notes }}</li>
+              <li v-if="selectedInputDetails.units"><strong>Units:</strong> {{ selectedInputDetails.units }}</li>
+              <li v-if="selectedInputDetails.source_url">
+                <strong>Source URL:</strong>
+                <a :href="selectedInputDetails.source_url" target="_blank">{{ selectedInputDetails.source_url }}</a>
+              </li>
+            </ul>
+          </div>
+          <div v-else>
+            <p>Click on an input (from the left panel or a scenario card) to inspect its details here.</p>
+          </div>
+        </div>
+      </div>
     </div>
 
+    <!-- Bootstrap JS Bundle -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
     <script type="module">
-        import { scenariosData } from './scenarios.js';
+      // Import scenariosData from your external module.
+      import { scenariosData } from "./scenarios.js";
 
-
-        const app = Vue.createApp({
-            data() {
-                return {
-                    sidebarOpen: false,
-                    inputs: {},
-                    scenariosData: scenariosData
-                };
-            },
-            methods: {
-                toggleSidebar() {
-                    this.sidebarOpen = !this.sidebarOpen;
-                },
-                formatLabel(key) {
-                    return key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-                },
-                formatValue(value, scale) {
-                    return scale ? value / scale : value;
-                },
-                updateValue(event, key) {
-                    const scale = this.inputs[key].scale || 1;
-                    this.inputs[key].value = event.target.value * scale;
-                    this.updateCalculations();
-                },
-                applyRelatedInput(targetKey, relatedKey) {
-                    if (this.inputs[relatedKey]) {
-                        // Swap the target input's value with the related input's value
-                        console.log(`Swapping ${targetKey} with ${relatedKey}`);
-
-                        // Update calculation inputs dynamically
-                        this.scenariosData.forEach(calculation => {
-                            if (calculation.inputs.includes(targetKey)) {
-                                calculation.inputs = calculation.inputs.map(inputKey => inputKey === targetKey ? relatedKey : inputKey);
-                                console.log(`Updated calculation inputs for: ${calculation.title}`);
-                            }
-                        });
-
-                        // Recalculate with the updated values
-                        this.updateCalculations();
-
-                        this.$nextTick(() => {
-                            const detailsElement = document.getElementById(`calculation-details-${relatedKey}`);
-                            detailsElement.open = true;
-                        });
-                    } else {
-                        console.error(`Related input key ${relatedKey} not found in inputs.`);
-                    }
-                },
-                // applyRelatedInput(targetKey, relatedKey) {
-                //     if (this.inputs[relatedKey]) {
-                //         // Update target input with related input value
-                //         const openDetailsIds = ['calculation-details-' + relatedKey];
-
-                //         this.scenariosData.forEach(calculation => {
-                //             calculation.inputs = calculation.inputs.map(inputKey => inputKey === targetKey ? relatedKey : inputKey);
-                //             // Update the explanation using find and replace
-                //             calculation.explanation = calculation.explanation.replace(new RegExp(targetKey, 'g'), relatedKey);
-                //         });
-
-                //         // Restore the state of previously open details elements
-                //         this.$nextTick(() => {
-                //             openDetailsIds.forEach(id => {
-                //                 const detail = document.getElementById(id);
-                //                 if (detail) {
-                //                     detail.open = true;
-                //                 }
-                //             });
-                //         });
-                //         this.updateCalculations();
-                //     }
-                // },
-                updateCalculations() {
-
-                    this.scenariosData.forEach(calculation => {
-                        const inputKeys = calculation.inputs;
-
-                        if (inputKeys) {
-                            const inputValues = inputKeys.map(key => {
-                                if (this.inputs[key]) {
-                                    return this.inputs[key].value;
-                                } else {
-                                    console.error(`Missing input value for key: ${key}`);
-                                    return null;
-                                }
-                            });
-
-                            if (!inputValues.includes(null)) {
-                                try {
-                                    const result = calculation.calculate(...inputValues);
-                                    //const derivedUnits = this.deriveUnits(inputKeys);
-                                    calculation.result.value = this.humanReadable(result);
-                                    //calculation.result.unitDetails = derivedUnits;
-                                    calculation.result.rawValue = result;
-                                } catch (error) {
-                                    console.error('Error evaluating calculation:', error, 'Calculation:', calculation.title);
-                                }
-                            } else {
-                                console.error(`Missing inputs for calculation: ${calculation.title}`);
-                            }
-                        } else {
-                            console.error(`Input keys not found for calculation: ${calculation.title}`);
-                        }
-                    });
-                }, humanReadable(value) {
-                    if (value === 0) return '0';
-
-                    if (Math.abs(value) < 1) {
-                        let valueStr = value.toString();
-                        //return valueStr;
-                        let firstNonZeroIndex = valueStr.indexOf(valueStr.match(/[1-9]/));
-                        return value.toFixed(firstNonZeroIndex + 1);
-                    }
-
-                    const units = ['', 'thousand', 'million', 'billion', 'trillion'];
-                    const order = Math.floor(Math.log10(Math.abs(value)) / 3);
-
-                    if (order === 0) {
-                        return value.toFixed(2); // No need to add units if we're in the base range
-                    }
-
-                    const unitName = units[order] || `10^${order * 3}`;
-                    const adjustedValue = value / Math.pow(10, 3 * order);
-
-                    return `${adjustedValue.toFixed(2)} ${unitName}`;
-                },
-
-                // deriveUnits(inputKeys) {
-                //     return inputKeys
-                //         .map(key => this.inputs[key]?.units)
-                //         .filter(unit => unit && unit.trim() !== "")
-                //         .join(" * ");
-                // },
-                async loadDataFromGist() {
+      const app = Vue.createApp({
+        data() {
+          return {
+            leftPanelOpen: false,
+            rightPanelOpen: false,
+            inputs: {},
+            // Initialize scenariosData from the imported module.
+            scenariosData: [],
+            selectedInputKey: null,
+            // Store the current variant for each input (if applicable)
+            variants: {}
+          };
+        },
+        computed: {
+          selectedInputDetails() {
+            return this.selectedInputKey ? this.inputs[this.selectedInputKey] : null;
+          }
+        },
+        methods: {
+          toggleLeftPanel() {
+            this.leftPanelOpen = !this.leftPanelOpen;
+          },
+          toggleRightPanel() {
+            this.rightPanelOpen = !this.rightPanelOpen;
+          },
+          formatLabel(key) {
+            return key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase());
+          },
+          formatValue(value, scale) {
+            return scale ? value / scale : value;
+          },
+          updateValue(event, key) {
+            const scale = this.inputs[key].scale || 1;
+            this.inputs[key].value = parseFloat(event.target.value) * scale;
+            this.updateCalculations();
+          },
+          // Custom adjustment: multiply current value by factor (e.g., 10 or 0.1)
+          adjustValue(key, factor) {
+            const currentVal = parseFloat(this.inputs[key].value) || 0;
+            this.inputs[key].value = currentVal * factor;
+            this.updateCalculations();
+          },
+          // When an input is clicked, show its details in the inspector.
+          showDetails(key) {
+            this.selectedInputKey = key;
+            this.rightPanelOpen = true;
+          },
+          onCardDropdownChange(inputKey, newValue) {
+            this.applyCardVariantChange(inputKey, newValue);
+          },
+          applyCardVariantChange(inputKey, newValue) {
+            const possibleKeys = [inputKey].concat(this.inputs[inputKey].related_inputs || []);
+            this.scenariosData.forEach((calculation) => {
+              calculation.inputs = calculation.inputs.map((key) =>
+                possibleKeys.includes(key) ? newValue : key
+              );
+            });
+            this.updateCalculations();
+          },
+          updateCalculations() {
+            this.scenariosData.forEach((calculation) => {
+              const inputKeys = calculation.inputs;
+              if (inputKeys) {
+                const inputValues = inputKeys.map((key) => {
+                  if (this.inputs[key] !== undefined) {
+                    return this.inputs[key].value;
+                  } else {
+                    console.error(`Missing input value for key: ${key}`);
+                    return null;
+                  }
+                });
+                if (!inputValues.includes(null)) {
+                  if (typeof calculation.calculate === "function") {
                     try {
-                        const gistUrl = "data/inputs.yaml";
-                        //const gistUrl = 'https://gist.githubusercontent.com/nickmvincent/2c3e4ca38272b1d6b3041dd856e6cab7/raw/';
-                        const response = await fetch(gistUrl);
-                        if (!response.ok) throw new Error('Failed to load data from Gist');
-                        const yamlText = await response.text();
-                        const data = jsyaml.load(yamlText);
-                        console.log('Data successfully loaded');
-                        this.inputs = data.inputs.reduce((acc, input) => {
-                            acc[input.variable] = {
-                                ...input,
-                                default_value: input.value // Store the default value
-                            };
-                            return acc;
-                        }, {});
-                        this.calculations = data.calculations.map(calculation => ({ ...calculation, result: { label: calculation.result.label, value: 0, rawValue: 0 } }));
-                        this.updateCalculations();
-                    } catch (e) {
-                        console.error('Failed to load data from Gist:', e);
+                      const result = calculation.calculate(...inputValues);
+                      calculation.result.value = this.humanReadable(result);
+                      calculation.result.rawValue = result;
+                    } catch (error) {
+                      console.error("Error evaluating calculation:", error, "Calculation:", calculation.title);
+                      calculation.result.value = "Error";
+                      calculation.result.rawValue = null;
                     }
+                  } else {
+                    calculation.result.value = "N/A";
+                    calculation.result.rawValue = null;
+                  }
+                } else {
+                  console.error(`Missing inputs for calculation: ${calculation.title}`);
                 }
-            },
-            mounted() {
-                this.loadDataFromGist();
+              } else {
+                console.error(`Input keys not found for calculation: ${calculation.title}`);
+              }
+            });
+          },
+          humanReadable(value) {
+            if (value === 0) return "0";
+            if (Math.abs(value) < 1) {
+              let valueStr = value.toString();
+              let firstNonZeroIndex = valueStr.indexOf(valueStr.match(/[1-9]/));
+              return value.toFixed(firstNonZeroIndex + 1);
             }
-        });
+            const units = ["", "thousand", "million", "billion", "trillion"];
+            const order = Math.floor(Math.log10(Math.abs(value)) / 3);
+            if (order === 0) {
+              return value.toFixed(2);
+            }
+            const unitName = units[order] || `10^${order * 3}`;
+            const adjustedValue = value / Math.pow(10, 3 * order);
+            return `${adjustedValue.toFixed(2)} ${unitName}`;
+          },
+          // Load only the inputs from the YAML file.
+          async loadDataFromGist() {
+            try {
+              const gistUrl = "data/inputs.yaml";
+              const response = await fetch(gistUrl);
+              if (!response.ok) throw new Error("Failed to load data from Gist");
+              const yamlText = await response.text();
+              const data = jsyaml.load(yamlText);
+              console.log("Data successfully loaded");
+              // Set up inputs
+              this.inputs = data.inputs.reduce((acc, input) => {
+                acc[input.variable] = { ...input, default_value: input.value };
+                return acc;
+              }, {});
+              // Initialize variant defaults (each input starts as itself)
+              this.variants = {};
+              Object.keys(this.inputs).forEach((key) => {
+                this.variants[key] = key;
+              });
+              this.updateCalculations();
+            } catch (e) {
+              console.error("Failed to load data from Gist:", e);
+            }
+          },
+          toggleDiagram(index) {
+            this.scenariosData[index].showDiagram = !this.scenariosData[index].showDiagram;
+          }
+        },
+        mounted() {
+          // Initialize scenariosData from the imported module—preserving calculation functions.
+          this.scenariosData = scenariosData.map((calc) => ({
+            ...calc,
+            result: { label: calc.result.label, value: 0, rawValue: 0 },
+            showDiagram: false
+          }));
+          // Load inputs from YAML
+          this.loadDataFromGist();
+        }
+      });
 
-        app.mount('#app');
+      app.mount("#app");
     </script>
-</body>
-
+  </body>
 </html>
