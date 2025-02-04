@@ -55,11 +55,13 @@
         margin: 0 auto;
         width: 100%;
       }
-      /* Left Panel: Increased width & balanced spacing */
+      /* Left Panel: Constrained height & scrollable */
       .left-panel {
         flex: 0 0 400px;
         padding: 20px;
+        height: calc(100vh - 70px);
         overflow-y: auto;
+        scroll-behavior: smooth;
         background: #fff;
         border-right: 1px solid #ddd;
         display: flex;
@@ -67,17 +69,22 @@
         gap: 15px;
         text-align: left;
       }
-      /* Main Content: Scenario Cards */
+      /* Main Content: Scenario Cards (with right margin when inspector is open) */
       .main-content {
         flex-grow: 1;
         padding: 20px 30px;
         background: #fdfdfd;
       }
-      /* Right Panel: Increased width & balanced spacing */
+      /* Right Panel: Fixed to the side, scrollable if needed */
       .right-panel {
-        flex: 0 0 400px;
+        position: fixed;
+        top: 70px;
+        right: 0;
+        bottom: 0;
+        width: 400px;
         padding: 20px;
         overflow-y: auto;
+        scroll-behavior: smooth;
         background: #fff;
         border-left: 1px solid #ddd;
         display: flex;
@@ -145,9 +152,14 @@
         }
         .left-panel,
         .right-panel {
+          position: relative;
           flex: 0 0 auto;
           width: 100%;
           border: none;
+          height: auto;
+        }
+        .right-panel {
+          margin-top: 20px;
         }
       }
     </style>
@@ -195,15 +207,22 @@
         </button>
       </div>
 
-      <!-- Main Flex Container: Left Panel, Main Content, Right Panel -->
+      <!-- Dropdown Select for Scenarios -->
+      <div class="container my-3">
+        <select class="form-select" v-model="selectedScenario">
+          <option value="All">All Scenarios</option>
+          <option v-for="scenario in scenariosData" :key="scenario.title" :value="scenario.title">
+            {{ scenario.title }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Main Flex Container: Left Panel & Main Content -->
       <div class="main-container">
         <!-- Left Panel: All Inputs (Spreadsheet-like view) -->
         <div :class="['left-panel', { hidden: !leftPanelOpen }]">
           <h5 style="margin-bottom: 20px;">All Inputs</h5>
-          <div
-            v-for="(input, key) in inputs"
-            :key="key"
-            class="input-row">
+          <div v-for="(input, key) in inputs" :key="key" class="input-row">
             <div>
               <strong>{{ input.nice_name || formatLabel(key) }}</strong>
               <small class="text-muted"> ({{ input.display_units }})</small>
@@ -236,7 +255,7 @@
         </div>
 
         <!-- Main Content: Scenario Cards -->
-        <div class="main-content">
+        <div class="main-content" :style="{ marginRight: rightPanelOpen ? '400px' : '0' }">
           <header id="headerContent">
             <h1>Napkin Math for Training Data Value</h1>
             <p>
@@ -250,19 +269,14 @@
               Explore the various scenarios below. Modify input values and select variants to see how outcomes change.
             </p>
 
-            <!-- Calculation Cards -->
-            <div
-              v-for="(calculation, index) in scenariosData"
-              :key="index"
-              class="card">
-              
-
+            <!-- Calculation Cards (filtered by selectedScenario) -->
+            <div v-for="(calculation, index) in filteredScenarios" :key="index" class="card">
               <header>
                 <h4>{{ calculation.title }}</h4>
                 <p>{{ calculation.description }}</p>
-                <!-- Top Result Output -->
+                <!-- Top Result Output Only -->
                 <div class="result-output">
-                    {{ calculation.result.value }} {{ calculation.result.units }}
+                  {{ calculation.result.value }} {{ calculation.result.units }}
                 </div>
                 <div v-if="calculation.diagram">
                   <button class="btn btn-link btn-sm" @click="toggleDiagram(index)">
@@ -273,16 +287,11 @@
                   </div>
                 </div>
               </header>
-
               <div v-if="Object.keys(inputs).length === 0">
                 Loading inputs...
               </div>
               <!-- For each input used by the scenario -->
-              <div
-                v-else
-                v-for="inputKey in calculation.inputs"
-                :key="inputKey"
-                class="mb-3">
+              <div v-else v-for="inputKey in calculation.inputs" :key="inputKey" class="mb-3">
                 <label class="form-label">
                   {{ inputs[inputKey]?.nice_name || formatLabel(inputKey) }}
                   <small class="text-muted"> ({{ inputs[inputKey].display_units }})</small>
@@ -301,28 +310,20 @@
                   </button>
                 </div>
                 <!-- If there are related variants, show a dropdown -->
-                <div
-                  v-if="inputs[inputKey].related_inputs && inputs[inputKey].related_inputs.length > 0"
-                  class="mt-2">
-                  <select
-                    class="form-select form-select-sm"
+                <div v-if="inputs[inputKey].related_inputs && inputs[inputKey].related_inputs.length > 0" class="mt-2">
+                  <select class="form-select form-select-sm"
                     v-model="variants[inputKey]"
                     @change="onCardDropdownChange(inputKey, variants[inputKey])">
                     <option :value="inputKey">
                       {{ inputs[inputKey].nice_name || formatLabel(inputKey) }}
                     </option>
-                    <option
-                      v-for="relKey in inputs[inputKey].related_inputs"
-                      :key="relKey"
-                      :value="relKey">
+                    <option v-for="relKey in inputs[inputKey].related_inputs" :key="relKey" :value="relKey">
                       {{ inputs[relKey]?.nice_name || formatLabel(relKey) }}
                     </option>
                   </select>
                 </div>
                 <!-- Button to open the inspector (right panel) for this input -->
-                <button
-                  class="btn btn-secondary btn-sm mt-2"
-                  @click="showDetails(inputKey)">
+                <button class="btn btn-secondary btn-sm mt-2" @click="showDetails(inputKey)">
                   Inspect This Input
                 </button>
               </div>
@@ -340,11 +341,6 @@
                   <strong>Unit Details:</strong> {{ calculation.unitDetails }}
                 </div>
               </div>
-
-              <!-- Bottom Result Output -->
-              <!-- <div class="result-output">
-                {{ calculation.result.value }} {{ calculation.result.units }}
-              </div> -->
             </div>
           </section>
 
@@ -371,8 +367,11 @@
           </section>
         </div>
 
-        <!-- Right Panel: Inspector for the last-clicked input -->
-        <div :class="['right-panel', { hidden: !rightPanelOpen }]">
+        <!-- Right Panel: Inspector (Fixed) with Hide Button -->
+        <div ref="inspectorPanel" :class="['right-panel', { hidden: !rightPanelOpen }]">
+          <button class="btn btn-outline-secondary btn-sm" @click="toggleRightPanel">
+            Hide Inspector
+          </button>
           <h5>Inspector</h5>
           <div v-if="selectedInputDetails">
             <h6>{{ selectedInputDetails.nice_name || formatLabel(selectedInputKey) }}</h6>
@@ -413,6 +412,7 @@
             // Initialize scenariosData from the imported module.
             scenariosData: [],
             selectedInputKey: null,
+            selectedScenario: "All",
             // Store the current variant for each input (if applicable)
             variants: {}
           };
@@ -420,6 +420,16 @@
         computed: {
           selectedInputDetails() {
             return this.selectedInputKey ? this.inputs[this.selectedInputKey] : null;
+          },
+          filteredScenarios() {
+            // If "All" is selected, show all scenarios; otherwise, filter by exact match of the scenario title.
+            if (this.selectedScenario === "All") {
+              return this.scenariosData;
+            } else {
+              return this.scenariosData.filter(
+                (scenario) => scenario.title === this.selectedScenario
+              );
+            }
           }
         },
         methods: {
@@ -437,7 +447,6 @@
           },
           updateValue(event, key) {
             const scale = this.inputs[key].scale || 1;
-            // Ensure the value is parsed as a number.
             this.inputs[key].value = parseFloat(event.target.value) * scale;
             this.updateCalculations();
           },
@@ -447,10 +456,15 @@
             this.inputs[key].value = currentVal * factor;
             this.updateCalculations();
           },
-          // When an input is clicked, show its details in the inspector.
+          // When an input is clicked, show its details in the inspector and scroll inspector to top.
           showDetails(key) {
             this.selectedInputKey = key;
             this.rightPanelOpen = true;
+            this.$nextTick(() => {
+              if (this.$refs.inspectorPanel) {
+                this.$refs.inspectorPanel.scrollTop = 0;
+              }
+            });
           },
           onCardDropdownChange(inputKey, newValue) {
             this.applyCardVariantChange(inputKey, newValue);
