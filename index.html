@@ -99,7 +99,7 @@
       padding: 20px;
       margin-bottom: 30px;
       background: #fff;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
     /* Header styling for a magazine feel */
     header h1 {
@@ -164,22 +164,45 @@
       vertical-align: baseline;
       margin: 0 2px;
       font-size: 0.95rem;
-      padding: 2px 25px 2px 5px;
       border: 1px solid #ccc;
       border-radius: 3px;
+      padding: 2px 25px 2px 5px;
       background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="gray"><path d="M2 4l4 4 4-4"/></svg>') no-repeat right 5px center;
       cursor: pointer;
       appearance: none;
       -webkit-appearance: none;
       -moz-appearance: none;
     }
+    /* Category Selector (tiles) */
+    .category-selector {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .category-tile {
+      padding: 8px 16px;
+      border: 2px solid #10a37f;
+      border-radius: 4px;
+      background: #fff;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, transform 0.2s;
+    }
+    .category-tile:hover {
+      transform: scale(1.03);
+    }
+    .category-tile.selected {
+      background: #10a37f;
+      color: #fff;
+      border-color: #10a37f;
+      font-weight: bold;
+      box-shadow: 0 2px 8px rgba(16, 163, 127, 0.5);
+    }
     /* Responsive adjustments */
     @media (max-width: 768px) {
       .main-container {
         flex-direction: column;
       }
-      .left-panel,
-      .right-panel {
+      .left-panel, .right-panel {
         position: relative;
         flex: 0 0 auto;
         width: 100%;
@@ -229,14 +252,16 @@
       </button>
     </div>
 
-    <!-- Dropdown Select for Scenarios -->
+    <!-- Category Selector for Scenarios -->
     <div class="container my-3">
-      <select class="form-select" v-model="selectedScenario">
-        <option value="All">All Scenarios</option>
-        <option v-for="scenario in scenariosData" :key="scenario.title" :value="scenario.title">
-          {{ scenario.title }}
-        </option>
-      </select>
+      <div class="category-selector">
+        <div v-for="cat in uniqueCategories" :key="cat"
+             class="category-tile"
+             :class="{ selected: selectedScenario === cat }"
+             @click="toggleCategory(cat)">
+          {{ cat }}
+        </div>
+      </div>
     </div>
 
     <!-- Main Flex Container: Left Panel & Main Content -->
@@ -287,14 +312,13 @@
           <div v-for="(calc, index) in filteredScenarios" :key="index" class="card">
             <header>
               <h4>{{ calc.title }}</h4>
-              <!-- Process description template: render inline select for each placeholder -->
+              <!-- Render description with inline select for each placeholder -->
               <p>
                 <template v-for="(segment, idx) in parseDescription(calc.description)" :key="idx">
                   <template v-if="segment.type === 'text'">
                     {{ segment.text }}
                   </template>
                   <template v-else>
-                    <!-- Always show a sleek inline select -->
                     <select class="form-select form-select-sm inline-select"
                             v-model="fillSelections[segment.variable]"
                             @change="onCardDropdownChange(segment.variable, $event.target.value)">
@@ -434,9 +458,9 @@
         filteredScenarios() {
           return this.selectedScenario === "All"
             ? this.scenariosData
-            : this.scenariosData.filter(scenario => scenario.title === this.selectedScenario);
+            : this.scenariosData.filter(scenario => scenario.category === this.selectedScenario);
         },
-        // Group inputs by variable_type for efficient lookup.
+        // Group inputs by variable_type.
         inputsByType() {
           return Object.values(this.inputs).reduce((groups, input) => {
             if (!groups[input.variable_type]) {
@@ -445,6 +469,13 @@
             groups[input.variable_type].push(input);
             return groups;
           }, {});
+        },
+        // Compute unique categories from scenarios.
+        uniqueCategories() {
+          const cats = this.scenariosData
+            .filter(scenario => scenario.category)
+            .map(scenario => scenario.category);
+          return ["All", ...new Set(cats)];
         }
       },
       methods: {
@@ -453,6 +484,9 @@
         },
         toggleRightPanel() {
           this.rightPanelOpen = !this.rightPanelOpen;
+        },
+        toggleCategory(cat) {
+          this.selectedScenario = (this.selectedScenario === cat) ? "All" : cat;
         },
         formatLabel(key) {
           return key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase());
@@ -499,18 +533,17 @@
           });
         },
         onCardDropdownChange(variable, newValue) {
-          // Update the fill selection for the placeholder.
           this.fillSelections[variable] = newValue;
           this.applyCardVariantChange();
         },
-        // Rebuild all scenarios' effective inputs based on their originalInputs and the current fillSelections.
         applyCardVariantChange() {
           this.scenariosData.forEach((calc) => {
-            if (calc.originalInputs) {
-              calc.inputs = calc.originalInputs.map(key => {
-                return this.fillSelections[key] || key;
-              });
+            if (!calc.originalInputs) {
+              calc.originalInputs = [...calc.inputs];
             }
+            calc.inputs = calc.originalInputs.map(key => {
+              return this.fillSelections[key] || key;
+            });
           });
           this.updateCalculations();
         },
@@ -565,7 +598,6 @@
           const adjustedValue = value / Math.pow(10, 3 * order);
           return `${adjustedValue.toFixed(2)} ${unitName}`;
         },
-        // Parse the description into segments (text and variable placeholders).
         parseDescription(desc) {
           const segments = [];
           let lastIndex = 0;
@@ -583,7 +615,6 @@
           }
           return segments;
         },
-        // Return fill options for a variable group based on variable_type.
         getFillOptionsForType(variable) {
           if (!this.inputs[variable]) return [];
           const vt = this.inputs[variable].variable_type;
@@ -592,18 +623,15 @@
             text: input.phrase_for_card || input.variable
           }));
         },
-        // Get the current fill text for a variable.
         getFillTextFor(variable) {
           const selectedVar = this.fillSelections[variable] || variable;
           return this.inputs[selectedVar] && this.inputs[selectedVar].phrase_for_card
             ? this.inputs[selectedVar].phrase_for_card
             : variable;
         },
-        // Process the description template: return segments.
         processDescription(desc) {
           return this.parseDescription(desc);
         },
-        // Load inputs from YAML and group by variable_type.
         async loadDataFromGist() {
           try {
             const gistUrl = "data/inputs.yaml";

@@ -34,6 +34,17 @@ export const scenariosData = [
         },
         category: "Paying for new labour"
     },
+    {
+        title: "Producing an expert evaluation set",
+        description: "How much would it cost to pay for an eval dataset (say, {dataset_size__hle__questions}) assuming moderate expert hourly wages (say, {wage_data__phd__dollars_per_question})?",
+        inputs: ["dataset_size__hle__questions", "wage_data__phd__dollars_per_question"],
+        calculate: (questions, rate) => questions * rate,
+        result: {
+            label: "Dataset Cost",
+            units: "dollars",
+        },
+        category: "Paying for new labour"
+    },
 
     // {
     //     title: "Commissioning dataset components",

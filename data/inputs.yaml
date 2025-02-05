@@ -29,6 +29,21 @@ inputs:
     ...
   source_url: https://huggingface.co/allenai/OLMo-2-1124-7B
   source_notes: Source is the Olmo 2 model card. It describes total number of tokens for pre-training.
+
+- variable: dataset_size__hle__questions
+  phrase_for_card: "HLE's dataset size"
+  variable_type: dataset_size
+  entity: HLE
+  units: questions
+  nice_name: Total questions (HLE)
+  value: 3000
+  scale: 1
+  display_units: questions
+  value_description: Total questions in Humanity's last examn
+  key_assumption: > 
+    ...
+  source_url: #todo
+  source_notes: #todo
   
 - variable: yearly_revenue__openai__dollars
   phrase_for_card: "OpenAI's 2024 revenue"
@@ -154,6 +169,20 @@ inputs:
   key_assumption: Rate estimate based on market conditions
   source_url: https://www.clearvoice.com/resources/how-much-to-pay-a-freelance-writer/
   source_notes: Survey by ClearVoice, a company
+
+- variable: wage_data__phd__dollars_per_question
+  phrase_for_card: "Wage data for a PhD to spend 2-3 hour writing a question"
+  variable_type: wage_data
+  entity: phd
+  units: dollars_per_question
+  nice_name: "PhD rate per question"
+  value: 300
+  scale: 1
+  display_units: dollars per question
+  value_description: PhD rate per question
+  key_assumption: #todo
+  source_url: #todo
+  source_notes: #todo
 
 - variable: deal_group_size__reddit__daily_active_users
   variable_type: deal_group_size
