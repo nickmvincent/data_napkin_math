@@ -43,9 +43,6 @@ inputs:
   key_assumption: Assuming all 2024 OpenAI revenue is from LLMs
   source_url: https://www.bloomberg.com/news/articles/2024-06-12/openai-doubles-annualized-revenue-to-3-4-billion-information
   source_notes: business news coverage of openai
-  related_inputs:
-    - yearly_revenue__anthropic__dollars
-    - yearly_revenue__microsoft__dollars
 
 - variable: yearly_revenue__anthropic__dollars
   phrase_for_card: "Anthropic's 2024 revenue"
@@ -60,9 +57,6 @@ inputs:
   key_assumption: assuming all 2024 Anthropic revenue is from LLMs
   source_url: https://www.pymnts.com/artificial-intelligence-2/2024/anthropic-revenue-reportedly-set-to-jump-to-1-billion-this-year/
   source_notes: business news coverage of anthropic
-  related_inputs:
-    - yearly_revenue__openai__dollars
-    - yearly_revenue__microsoft__dollars
 
 - variable: yearly_revenue__microsoft__dollars
   phrase_for_card: "Microsoft's 2024 revenue"
@@ -77,9 +71,6 @@ inputs:
   key_assumption: assuming all 2024 Microsoft revenue is from LLMs. Major stretch (for now)
   source_url: https://www.geekwire.com/2024/microsoft-beats-expectations-with-nearly-25b-in-quarterly-profits-as-ai-revenue-boosts-cloud-growth/
   source_notes: business news coverage
-  related_inputs:
-    - yearly_revenue__openai__dollars
-    - yearly_revenue__anthropic__dollars
 
 - variable: dataset_attribute__redpajama__tokens_per_contribution
   phrase_for_card: "number of tokens in a document"
@@ -96,6 +87,7 @@ inputs:
   source_notes: RedPajama readme reports a ratio of documents to tokens (after dedupe). We use the English figures (20.5T tokens / 14.5B documents)
 
 - variable: total_books__books3__books
+  phrase_for_card: "Book in books3"
   variable_type: dataset
   entity: books3
   units: books
@@ -109,6 +101,7 @@ inputs:
   source_notes: Entry in the AIAAIC repository.
 
 - variable: average_length__book__words
+  phrase_for_card: "Average number of words per book"
   variable_type: dataset
   entity: book
   units: words
@@ -135,6 +128,7 @@ inputs:
   source_notes: OpenAI Tokenizer
 
 - variable: wage_data__generic_freelance_lower__dollars_per_word
+  phrase_for_card: "Freelance rate per word (low)"
   variable_type: wage_data
   entity: generic_freelance_lower
   units: dollars_per_word
@@ -148,6 +142,7 @@ inputs:
   source_notes: Survey by ClearVoice, a company
 
 - variable: wage_data__generic_freelance_higher__dollars_per_word
+  phrase_for_card: "Freelance rate per word (high)"
   variable_type: wage_data
   entity: generic_freelance_higher
   units: dollars_per_word
@@ -160,8 +155,8 @@ inputs:
   source_url: https://www.clearvoice.com/resources/how-much-to-pay-a-freelance-writer/
   source_notes: Survey by ClearVoice, a company
 
-- variable: group_size_users__reddit__daily_active_users
-  variable_type: group_size
+- variable: deal_group_size__reddit__daily_active_users
+  variable_type: deal_group_size
   entity: reddit
   units: daily_active_users
   nice_name: Number of Reddit daily active users
@@ -200,7 +195,7 @@ inputs:
   source_notes: news coverage of deal
 
 - variable: deal_value__newscorp__dollars
-  variable_type: deal_data
+  variable_type: deal_value
   entity: newscorp
   units: dollars
   nice_name: Value of the News Corp deal
@@ -212,8 +207,8 @@ inputs:
   source_url: https://www.nytimes.com/2024/05/22/business/media/openai-news-corp-content-deal.html
   source_notes: notes here
 
-- variable: group_size__taylorandfrancis__articles
-  variable_type: group_size
+- variable: deal_group_size__taylorandfrancis__articles
+  variable_type: deal_group_size
   entity: taylorandfrancis
   units: articles
   nice_name: Number of Taylor and Francis Articles
@@ -225,8 +220,8 @@ inputs:
   source_url: https://www.tandfonline.com/#:~:text=Advanced%20search.%205%2C291%2C000+%20articles.%20Find%20a%20journal.
   source_notes: T&F search engine
 
-- variable: group_size__wsj__journalists
-  variable_type: group_size
+- variable: deal_group_size__wsj__journalists
+  variable_type: deal_group_size
   entity: wsj
   units: journalists
   nice_name: Number of WSJ journalists
@@ -238,9 +233,9 @@ inputs:
   source_url: https://en.wikipedia.org/wiki/The_Wall_Street_Journal
   source_notes: Wikipedia article
 
-- variable: group_size__newscorp__employees
+- variable: deal_group_size__newscorp__employees
   phrase_for_card: "number of News Corp employees"
-  variable_type: group_size
+  variable_type: deal_group_size
   entity: newscorp
   units: employees
   nice_name: Number of News Corp employees
@@ -279,8 +274,6 @@ inputs:
   key_assumption: N/A
   source_url: https://www.census.gov/popclock/
   source_notes: US Census
-  related_inputs: 
-    - group_size__world__people
 
 # - variable: contribution_distribution__wikipedia__unknown
 #   variable_type: distribution
