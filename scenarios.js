@@ -8,7 +8,8 @@ export const scenariosData = [
         result: {
             label: "Per Person Revenue",
             units: "dollars"
-        }
+        },
+        category: "Distributing money"
     },
     {
         title: "Distributing Money from Data Deals",
@@ -19,7 +20,8 @@ export const scenariosData = [
         result: {
             label: "Per Person Revenue",
             units: "dollars"
-        }
+        },
+        category: "Distributing money"
     },
     {
         title: "Commissioning New Datasets",
@@ -29,37 +31,21 @@ export const scenariosData = [
         result: {
             label: "Dataset Cost",
             units: "dollars",
-        }
+        },
+        category: "Paying for new labour"
     },
-    
-    {
-        title: "Revenue Per Contribution",
-        description: "Estimate the revenue generated per contribution based on tokens.",
-        inputs: ["yearly_revenue__openai__dollars", "dataset_size__llama3__tokens", "dataset_attribute__redpajama__tokens_per_contribution"],
-        calculate: (yearlyRevenue, totalTokens, tokensPerContribution) => (yearlyRevenue / totalTokens) * tokensPerContribution,
-        result: {
-            label: "Revenue Per Contribution",
-        }
-    },
-    {
-        title: "Revenue Per Book",
-        description: "Estimate the revenue generated per book in a dataset. Assume that each book's share is proportionate to its overall token contribution.",
-        inputs: ["yearly_revenue__openai__dollars", "dataset_size__llama3__tokens", "training_detail__openai__words_per_token", "average_length__book__words"],
-        calculate: (yearlyRevenue, totalTokens, wordsPerToken, wordsPerBook) => (wordsPerBook / wordsPerToken) / totalTokens * (yearlyRevenue),
-        result: {
-            label: "Revenue Per Book",
-            unit: "dollars",
-        }
-    },
-    {
-        title: "Dataset Coverage Ratio",
-        description: "Calculate the coverage ratio of books in a dataset.",
-        inputs: ["total_books__books3__books", "average_length__book__words", "dataset_size__llama3__tokens"],
-        calculate: (totalBooks, wordsPerBook, totalTokens) => (totalBooks * wordsPerBook) / totalTokens,
-        result: {
-            label: "Coverage Ratio",
-        }
-    },
+
+    // {
+    //     title: "Commissioning dataset components",
+    //     description: "How much would it cost to pay for a major components of traininng (say, {dataset_size__llama3__tokens}) assuming moderate freelance writing wages (say, {wage_data__generic_freelance_higher__dollars_per_word})?",
+    //     inputs: ["dataset_size__llama3__tokens", "training_detail__openai__words_per_token", "wage_data__generic_freelance_higher__dollars_per_word"],
+    //     calculate: (tokens, wordsPerToken, freelanceRate) => tokens * wordsPerToken * freelanceRate,
+    //     result: {
+    //         label: "Dataset Cost",
+    //         units: "dollars",
+    //     },
+    //     category: "Paying for new labour"
+    // },
     
     {
         title: "Freelance Cost Per Book",
@@ -107,6 +93,35 @@ export const scenariosData = [
         result: {
             label: "Contributions",
             units: "documents",
+        }
+    },
+    {
+        title: "For reference: Revenue Per Contribution",
+        description: "Estimate the revenue generated per contribution based on tokens.",
+        inputs: ["yearly_revenue__openai__dollars", "dataset_size__llama3__tokens", "dataset_attribute__redpajama__tokens_per_contribution"],
+        calculate: (yearlyRevenue, totalTokens, tokensPerContribution) => (yearlyRevenue / totalTokens) * tokensPerContribution,
+        result: {
+            label: "Revenue Per Contribution",
+        }
+    },
+    {
+        title: "For reference: Revenue Per Book",
+        description: "Estimate the revenue generated per book in a dataset. Assume that each book's share is proportionate to its overall token contribution.",
+        inputs: ["yearly_revenue__openai__dollars", "dataset_size__llama3__tokens", "training_detail__openai__words_per_token", "average_length__book__words"],
+        calculate: (yearlyRevenue, totalTokens, wordsPerToken, wordsPerBook) => (wordsPerBook / wordsPerToken) / totalTokens * (yearlyRevenue),
+        result: {
+            label: "Revenue Per Book",
+            unit: "dollars",
+        }
+    },
+
+    {
+        title: "For reference: Dataset Coverage Ratio",
+        description: "Calculate the coverage ratio of books in a dataset.",
+        inputs: ["total_books__books3__books", "average_length__book__words", "dataset_size__llama3__tokens"],
+        calculate: (totalBooks, wordsPerBook, totalTokens) => (totalBooks * wordsPerBook) / totalTokens,
+        result: {
+            label: "Coverage Ratio",
         }
     },
 ];
