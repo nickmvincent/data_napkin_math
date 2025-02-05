@@ -54,7 +54,8 @@ export const scenariosData = [
         calculate: (wordsPerBook, freelanceRate) => wordsPerBook * freelanceRate,
         result: {
             label: "Cost Per Book",
-        }
+        },
+        category: "Misc"
     },
     {
         title: "Total Freelance Cost for Books",
@@ -63,7 +64,8 @@ export const scenariosData = [
         calculate: (totalBooks, wordsPerBook, freelanceRate) => totalBooks * wordsPerBook * freelanceRate,
         result: {
             label: "Total Freelance Cost",
-        }
+        },
+        category: "Misc"
     },
     // {
     //     title: "Revenue Per WSJ Journalist",
@@ -83,7 +85,8 @@ export const scenariosData = [
         result: {
             label: "Revenue Per Token",
             units: "dollars",
-        }
+        },
+        category: "Misc"
     },
     {
         title: "For reference: Number of Contributions in a 'Dataset'",
@@ -93,7 +96,8 @@ export const scenariosData = [
         result: {
             label: "Contributions",
             units: "documents",
-        }
+        },
+        category: "Misc"
     },
     {
         title: "For reference: Revenue Per Contribution",
@@ -102,7 +106,8 @@ export const scenariosData = [
         calculate: (yearlyRevenue, totalTokens, tokensPerContribution) => (yearlyRevenue / totalTokens) * tokensPerContribution,
         result: {
             label: "Revenue Per Contribution",
-        }
+        },
+        category: "Misc"
     },
     {
         title: "For reference: Revenue Per Book",
@@ -112,7 +117,8 @@ export const scenariosData = [
         result: {
             label: "Revenue Per Book",
             unit: "dollars",
-        }
+        },
+        category: "Misc"
     },
 
     {
@@ -122,6 +128,7 @@ export const scenariosData = [
         calculate: (totalBooks, wordsPerBook, totalTokens) => (totalBooks * wordsPerBook) / totalTokens,
         result: {
             label: "Coverage Ratio",
-        }
+        },
+        category: "Misc"
     },
 ];
