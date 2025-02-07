@@ -66,12 +66,13 @@
       text-align: left;
     }
     /* Main Content: Scenario Cards (with right margin when inspector is open) */
+    /* Note: on mobile we override the margin (see media query) */
     .main-content {
       flex-grow: 1;
       padding: 20px 30px;
       background: #fdfdfd;
     }
-    /* Right Panel: Fixed to side, scrollable if needed */
+    /* Right Panel: Fixed to side, scrollable if needed (desktop only) */
     .right-panel {
       position: fixed;
       top: 70px;
@@ -212,6 +213,10 @@
       .right-panel {
         margin-top: 20px;
       }
+      /* Hide the inline right panel on mobile since we use a modal instead */
+      .right-panel {
+        display: none !important;
+      }
     }
   </style>
 </head>
@@ -248,7 +253,7 @@
         {{ leftPanelOpen ? "Hide Inputs" : "Show Inputs" }}
       </button>
       <button class="btn btn-primary" @click="toggleRightPanel">
-        {{ rightPanelOpen ? "Hide Inspector" : "Show Inspector" }}
+        {{ inspectorButtonText }}
       </button>
     </div>
 
@@ -293,7 +298,8 @@
       </div>
 
       <!-- Main Content: Scenario Cards -->
-      <div class="main-content" :style="{ marginRight: rightPanelOpen ? '400px' : '0' }">
+      <!-- Note: we only reserve space for the right panel on desktop -->
+      <div class="main-content" :style="{ marginRight: (!isMobile && rightPanelOpen) ? '400px' : '0' }">
         <header id="headerContent">
           <h1>Napkin Math for Training Data Value</h1>
           <p>
@@ -312,7 +318,7 @@
           <div v-for="(calc, index) in filteredScenarios" :key="index" class="card">
             <header>
               <h4>{{ calc.title }}</h4>
-              <!-- Render description with inline select for each placeholder -->
+              <!-- Process description template with inline select for each placeholder -->
               <p>
                 <template v-for="(segment, idx) in parseDescription(calc.description)" :key="idx">
                   <template v-if="segment.type === 'text'">
@@ -394,8 +400,9 @@
         </section>
       </div>
 
-      <!-- Right Panel: Inspector (Fixed) with Hide Button and Change Log -->
-      <div ref="inspectorPanel" :class="['right-panel', { hidden: !rightPanelOpen }]">
+      <!-- Right Panel: Inspector (Fixed) for Desktop -->
+      <!-- (On mobile this panel is hidden via CSS; see media query) -->
+      <div ref="inspectorPanel" :class="['right-panel', { hidden: !rightPanelOpen }]" id="desktopInspector">
         <button class="btn btn-outline-secondary btn-sm" @click="toggleRightPanel">Hide Inspector</button>
         <h5>Inspector</h5>
         <div v-if="selectedInputDetails">
@@ -427,6 +434,53 @@
           <p>Click on an input (from the left panel or a scenario card) to inspect its details here.</p>
         </div>
       </div>
+
+      <!-- Mobile Inspector Modal -->
+      <div class="modal fade" id="inspectorModal" tabindex="-1" aria-labelledby="inspectorModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen-sm-down">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="inspectorModalLabel">Inspector</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                      @click="toggleRightPanel"></button>
+            </div>
+            <div class="modal-body">
+              <div v-if="selectedInputDetails">
+                <h6>{{ selectedInputDetails.nice_name || formatLabel(selectedInputKey) }}</h6>
+                <p><em>({{ selectedInputDetails.display_units }})</em></p>
+                <ul class="list-unstyled" style="font-size: 0.95rem;">
+                  <li><strong>Raw Value:</strong> {{ selectedInputDetails.value }}</li>
+                  <li v-if="selectedInputDetails.default_value"><strong>Default Value:</strong> {{ selectedInputDetails.default_value }}</li>
+                  <li v-if="selectedInputDetails.value_description"><strong>Description:</strong> {{ selectedInputDetails.value_description }}</li>
+                  <li v-if="selectedInputDetails.variable_type"><strong>Variable Type:</strong> {{ selectedInputDetails.variable_type }}</li>
+                  <li v-if="selectedInputDetails.key_assumption"><strong>Assumption:</strong> {{ selectedInputDetails.key_assumption }}</li>
+                  <li v-if="selectedInputDetails.source_notes"><strong>Source Notes:</strong> {{ selectedInputDetails.source_notes }}</li>
+                  <li v-if="selectedInputDetails.units"><strong>Units:</strong> {{ selectedInputDetails.units }}</li>
+                  <li v-if="selectedInputDetails.source_url">
+                    <strong>Source URL:</strong>
+                    <a :href="selectedInputDetails.source_url" target="_blank">{{ selectedInputDetails.source_url }}</a>
+                  </li>
+                </ul>
+                <div v-if="logs[selectedInputKey] && logs[selectedInputKey].length" class="change-log">
+                  <h6>Change Log:</h6>
+                  <ul>
+                    <li v-for="(entry, index) in logs[selectedInputKey]" :key="index">
+                      {{ entry.time }}: {{ entry.value }}
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div v-else>
+                <p>Click on an input (from the left panel or a scenario card) to inspect its details here.</p>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                      @click="toggleRightPanel">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -448,7 +502,10 @@
           logs: {},
           // For inline fill, store the selected variable for each placeholder.
           fillSelections: {},
-          activeFillVariable: null
+          activeFillVariable: null,
+          // New reactive properties for mobile handling:
+          isMobile: window.innerWidth < 768,
+          mobileInspectorOpen: false
         };
       },
       computed: {
@@ -476,6 +533,13 @@
             .filter(scenario => scenario.category)
             .map(scenario => scenario.category);
           return ["All", ...new Set(cats)];
+        },
+        // Change inspector button text based on mobile/desktop and open state.
+        inspectorButtonText() {
+          if (this.isMobile) {
+            return this.mobileInspectorOpen ? "Hide Inspector" : "Show Inspector";
+          }
+          return this.rightPanelOpen ? "Hide Inspector" : "Show Inspector";
         }
       },
       methods: {
@@ -483,7 +547,13 @@
           this.leftPanelOpen = !this.leftPanelOpen;
         },
         toggleRightPanel() {
-          this.rightPanelOpen = !this.rightPanelOpen;
+          if (this.isMobile) {
+            const modalEl = document.getElementById("inspectorModal");
+            const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+            modal.toggle();
+          } else {
+            this.rightPanelOpen = !this.rightPanelOpen;
+          }
         },
         toggleCategory(cat) {
           this.selectedScenario = (this.selectedScenario === cat) ? "All" : cat;
@@ -525,12 +595,18 @@
         },
         showDetails(key) {
           this.selectedInputKey = key;
-          this.rightPanelOpen = true;
-          this.$nextTick(() => {
-            if (this.$refs.inspectorPanel) {
-              this.$refs.inspectorPanel.scrollTop = 0;
-            }
-          });
+          if (this.isMobile) {
+            const modalEl = document.getElementById("inspectorModal");
+            const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+            modal.show();
+          } else {
+            this.rightPanelOpen = true;
+            this.$nextTick(() => {
+              if (this.$refs.inspectorPanel) {
+                this.$refs.inspectorPanel.scrollTop = 0;
+              }
+            });
+          }
         },
         onCardDropdownChange(variable, newValue) {
           this.fillSelections[variable] = newValue;
@@ -598,6 +674,7 @@
           const adjustedValue = value / Math.pow(10, 3 * order);
           return `${adjustedValue.toFixed(2)} ${unitName}`;
         },
+        // Parse the description into segments (text and variable placeholders).
         parseDescription(desc) {
           const segments = [];
           let lastIndex = 0;
@@ -615,6 +692,7 @@
           }
           return segments;
         },
+        // Return fill options for a variable group (by variable_type).
         getFillOptionsForType(variable) {
           if (!this.inputs[variable]) return [];
           const vt = this.inputs[variable].variable_type;
@@ -670,6 +748,16 @@
           originalInputs: [...calc.inputs]
         }));
         this.loadDataFromGist();
+
+        // Update mobile flag on window resize.
+        window.addEventListener('resize', () => {
+          this.isMobile = window.innerWidth < 768;
+        });
+
+        // Set up event listeners on the inspector modal to track its open/close state.
+        const modalEl = document.getElementById('inspectorModal');
+        modalEl.addEventListener('shown.bs.modal', () => { this.mobileInspectorOpen = true; });
+        modalEl.addEventListener('hidden.bs.modal', () => { this.mobileInspectorOpen = false; });
       }
     });
 
