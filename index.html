@@ -291,10 +291,10 @@
             <button class="btn btn-outline-secondary btn-sm" @click="showDetails(key)">Inspect</button>
           </div>
         </div>
-        <button @click="loadDataFromGist" class="btn btn-outline-primary btn-sm mt-3"
+        <!-- <button @click="loadData" class="btn btn-outline-primary btn-sm mt-3"
                 style="border-color: #10a37f; color: #10a37f;">
           Load Data from Gist
-        </button>
+        </button> -->
       </div>
 
       <!-- Main Content: Scenario Cards -->
@@ -710,7 +710,7 @@
         processDescription(desc) {
           return this.parseDescription(desc);
         },
-        async loadDataFromGist() {
+        async loadData() {
           try {
             const gistUrl = "data/inputs.yaml";
             const response = await fetch(gistUrl);
@@ -747,7 +747,7 @@
           showCalcDetails: false,
           originalInputs: [...calc.inputs]
         }));
-        this.loadDataFromGist();
+        this.loadData();
 
         // Update mobile flag on window resize.
         window.addEventListener('resize', () => {
