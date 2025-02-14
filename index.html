@@ -698,7 +698,7 @@
           const vt = this.inputs[variable].variable_type;
           return this.inputsByType[vt].map(input => ({
             variable: input.variable,
-            text: input.phrase_for_card || input.variable
+            text: input.phrase_for_card || input.nice_name
           }));
         },
         getFillTextFor(variable) {

@@ -130,6 +130,7 @@ inputs:
   source_notes: No additional notes.
 
 - variable: training_detail__openai__words_per_token
+  phrase_for_card: "Average words per token"
   variable_type: training_detail
   entity: openai
   units: words_per_token
@@ -185,6 +186,7 @@ inputs:
   source_notes: #todo
 
 - variable: deal_group_size__reddit__daily_active_users
+  phrase_for_card: Reddit's daily active users
   variable_type: deal_group_size
   entity: reddit
   units: daily_active_users
@@ -195,9 +197,10 @@ inputs:
   value_description: Number of Reddit daily active users
   key_assumption: None
   source_url: https://backlinko.com/reddit-users
-  source_notes: article about # of reddit users
+  source_notes: article about number of reddit users
 
 - variable: deal_value__reddit_google__dollars
+  phrase_for_card: Payment made to Reddit by Google in 2024
   variable_type: deal_value
   entity: reddit_google
   units: dollars
@@ -211,6 +214,7 @@ inputs:
   source_notes: CBS news coverage
 
 - variable: deal_value__taylorandfrancis_microsoft__dollars
+  phrase_for_card: Value of the 2024 Taylor and Francis <> Microsoft deal
   variable_type: deal_value
   entity: taylorandfrancis_microsoft
   units: dollars
@@ -224,6 +228,7 @@ inputs:
   source_notes: news coverage of deal
 
 - variable: deal_value__newscorp__dollars
+  phrase_for_card: Value of the 2024 OpenAI <> Newscorp deal
   variable_type: deal_value
   entity: newscorp
   units: dollars
@@ -237,6 +242,7 @@ inputs:
   source_notes: notes here
 
 - variable: deal_group_size__taylorandfrancis__articles
+  phrase_for_card: Number of Taylor and Francis Articles
   variable_type: deal_group_size
   entity: taylorandfrancis
   units: articles
@@ -250,6 +256,7 @@ inputs:
   source_notes: T&F search engine
 
 - variable: deal_group_size__wsj__journalists
+  phrase_for_card: Number of WSJ journalists
   variable_type: deal_group_size
   entity: wsj
   units: journalists
