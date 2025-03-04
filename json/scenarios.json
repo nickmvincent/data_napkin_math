@@ -1,0 +1,177 @@
+[
+  {
+    "title": "Distributing AI Company Revenue Broadly",
+    "description": "If we distribute AI revenue (say, {yearly_revenue__openai__dollars}) to some group of people (say, {group_size__world__people}), how much will each person get?",
+    "inputs": [
+      "yearly_revenue__openai__dollars",
+      "group_size__world__people"
+    ],
+    "calculate": "yearlyRevenue / population",
+    "unitDetails": "dollars / people",
+    "result": {
+      "label": "Per Person Revenue",
+      "units": "dollars"
+    },
+    "category": "Distributing money"
+  },
+  {
+    "title": "Distributing Money from Data Deals",
+    "description": "If we distribute the payments from recent data deal (say, {deal_value__reddit_google__dollars}) to some group of people (say, {deal_group_size__reddit__daily_active_users}), how much will each person get?",
+    "inputs": [
+      "deal_value__reddit_google__dollars",
+      "deal_group_size__reddit__daily_active_users"
+    ],
+    "calculate": "dealValue / dailyActiveUsers",
+    "unitDetails": "dollars / people",
+    "result": {
+      "label": "Per Person Revenue",
+      "units": "dollars"
+    },
+    "category": "Distributing money"
+  },
+  {
+    "title": "Commissioning New Datasets",
+    "description": "How much would it cost to pay for a brand new LLM-scale pre-training dataset (say, {dataset_size__llama3__tokens}) assuming moderate freelance writing wages (say, {wage_data__generic_freelance_higher__dollars_per_word})?",
+    "inputs": [
+      "dataset_size__llama3__tokens",
+      "training_detail__openai__words_per_token",
+      "wage_data__generic_freelance_higher__dollars_per_word"
+    ],
+    "calculate": "tokens * wordsPerToken * freelanceRate",
+    "result": {
+      "label": "Dataset Cost",
+      "units": "dollars"
+    },
+    "category": "Paying for new labour"
+  },
+  {
+    "title": "Producing an expert evaluation set",
+    "description": "How much would it cost to pay for an eval dataset (say, {dataset_size__hle__questions}) assuming moderate expert hourly wages (say, {wage_data__phd__dollars_per_question})?",
+    "inputs": [
+      "dataset_size__hle__questions",
+      "wage_data__phd__dollars_per_question"
+    ],
+    "calculate": "questions * rate",
+    "result": {
+      "label": "Dataset Cost",
+      "units": "dollars"
+    },
+    "category": "Paying for new labour"
+  },
+  {
+    "title": "StackipediaXiv: Detailed Visits Required for Target Tokens",
+    "description": "Calculate the number of visits required to generate a target number of tokens. This calculation is broken into two steps:\n1. Determine how many high-quality documents are needed: (target tokens ÷ tokens per document).\n2. Determine how many visits are required to produce one document: (visitors per contribution × contributions per document).\nMultiply these together to get the total required visits.",
+    "inputs": [
+      "target_metric__stackipedia__tokens",
+      "dataset_attribute__stackipedia__tokens_per_document",
+      "conversion_rate__stackipedia__visitors_per_contribution",
+      "conversion_rate__stackipedia__contributions_per_document"
+    ],
+    "calculate": "(targetTokens / tokensPerDocument) * visitorsPerContribution * contributionsPerDocument",
+    "unitDetails": "visits",
+    "result": {
+      "label": "Required Visits",
+      "units": "visits"
+    },
+    "category": "StackipediaXiv Metrics"
+  },
+  {
+    "title": "Freelance Cost Per Book",
+    "description": "Calculate the cost of commissioning a book based on freelance rates.",
+    "inputs": [
+      "average_length__book__words",
+      "wage_data__generic_freelance_lower__dollars_per_word"
+    ],
+    "calculate": "wordsPerBook * freelanceRate",
+    "result": {
+      "label": "Cost Per Book"
+    },
+    "category": "Misc"
+  },
+  {
+    "title": "Total Freelance Cost for Books",
+    "description": "Estimate the total freelance cost for all books in the dataset.",
+    "inputs": [
+      "total_books__books3__books",
+      "average_length__book__words",
+      "wage_data__generic_freelance_lower__dollars_per_word"
+    ],
+    "calculate": "totalBooks * wordsPerBook * freelanceRate",
+    "result": {
+      "label": "Total Freelance Cost"
+    },
+    "category": "Misc"
+  },
+  {
+    "title": "For reference: Revenue and tokens",
+    "description": "Estimate the revenue generated per token in the dataset (divide {yearly_revenue__openai__dollars} by {dataset_size__llama3__tokens}).",
+    "inputs": [
+      "yearly_revenue__openai__dollars",
+      "dataset_size__llama3__tokens"
+    ],
+    "calculate": "yearlyRevenue / totalTokens",
+    "result": {
+      "label": "Revenue Per Token",
+      "units": "dollars"
+    },
+    "category": "Misc"
+  },
+  {
+    "title": "For reference: Number of Contributions in a 'Dataset'",
+    "description": "Calculate the number of distinct contributions based on tokens.",
+    "inputs": [
+      "dataset_size__llama3__tokens",
+      "dataset_attribute__redpajama__tokens_per_contribution"
+    ],
+    "calculate": "totalTokens / tokensPerContribution",
+    "result": {
+      "label": "Contributions",
+      "units": "documents"
+    },
+    "category": "Misc"
+  },
+  {
+    "title": "For reference: Revenue Per Contribution",
+    "description": "Estimate the revenue generated per contribution based on tokens.",
+    "inputs": [
+      "yearly_revenue__openai__dollars",
+      "dataset_size__llama3__tokens",
+      "dataset_attribute__redpajama__tokens_per_contribution"
+    ],
+    "calculate": "(yearlyRevenue / totalTokens) * tokensPerContribution",
+    "result": {
+      "label": "Revenue Per Contribution"
+    },
+    "category": "Misc"
+  },
+  {
+    "title": "For reference: Revenue Per Book",
+    "description": "Estimate the revenue generated per book in a dataset. Assume that each book's share is proportionate to its overall token contribution.",
+    "inputs": [
+      "yearly_revenue__openai__dollars",
+      "dataset_size__llama3__tokens",
+      "training_detail__openai__words_per_token",
+      "average_length__book__words"
+    ],
+    "calculate": "(wordsPerBook / wordsPerToken) / totalTokens * (yearlyRevenue)",
+    "result": {
+      "label": "Revenue Per Book",
+      "unit": "dollars"
+    },
+    "category": "Misc"
+  },
+  {
+    "title": "For reference: Dataset Coverage Ratio",
+    "description": "Calculate the coverage ratio of books in a dataset.",
+    "inputs": [
+      "total_books__books3__books",
+      "average_length__book__words",
+      "dataset_size__llama3__tokens"
+    ],
+    "calculate": "(totalBooks * wordsPerBook) / totalTokens",
+    "result": {
+      "label": "Coverage Ratio"
+    },
+    "category": "Misc"
+  }
+]

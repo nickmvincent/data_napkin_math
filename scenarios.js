@@ -46,18 +46,29 @@ export const scenariosData = [
         category: "Paying for new labour"
     },
 
-    // {
-    //     title: "Commissioning dataset components",
-    //     description: "How much would it cost to pay for a major components of traininng (say, {dataset_size__llama3__tokens}) assuming moderate freelance writing wages (say, {wage_data__generic_freelance_higher__dollars_per_word})?",
-    //     inputs: ["dataset_size__llama3__tokens", "training_detail__openai__words_per_token", "wage_data__generic_freelance_higher__dollars_per_word"],
-    //     calculate: (tokens, wordsPerToken, freelanceRate) => tokens * wordsPerToken * freelanceRate,
-    //     result: {
-    //         label: "Dataset Cost",
-    //         units: "dollars",
-    //     },
-    //     category: "Paying for new labour"
-    // },
-    
+    {
+        title: "StackipediaXiv: Detailed Visits Required for Target Tokens",
+        description:
+            "Calculate the number of visits required to generate a target number of tokens. " +
+            "This calculation is broken into two steps:\n" +
+            "1. Determine how many high-quality documents are needed: (target tokens ÷ tokens per document).\n" +
+            "2. Determine how many visits are required to produce one document: (visitors per contribution × contributions per document).\n" +
+            "Multiply these together to get the total required visits.",
+        inputs: [
+            "target_metric__stackipedia__tokens",
+            "dataset_attribute__stackipedia__tokens_per_document",
+            "conversion_rate__stackipedia__visitors_per_contribution",
+            "conversion_rate__stackipedia__contributions_per_document"
+        ],
+        calculate: (targetTokens, tokensPerDocument, visitorsPerContribution, contributionsPerDocument) =>
+            (targetTokens / tokensPerDocument) * visitorsPerContribution * contributionsPerDocument,
+        unitDetails: "visits",
+        result: {
+            label: "Required Visits",
+            units: "visits"
+        },
+        category: "StackipediaXiv Metrics"
+    },
     {
         title: "Freelance Cost Per Book",
         description: "Calculate the cost of commissioning a book based on freelance rates.",
@@ -106,7 +117,7 @@ export const scenariosData = [
         calculate: (totalTokens, tokensPerContribution) => totalTokens / tokensPerContribution,
         result: {
             label: "Contributions",
-            units: "documents",
+            units: "documents"
         },
         category: "Misc"
     },
@@ -127,7 +138,7 @@ export const scenariosData = [
         calculate: (yearlyRevenue, totalTokens, wordsPerToken, wordsPerBook) => (wordsPerBook / wordsPerToken) / totalTokens * (yearlyRevenue),
         result: {
             label: "Revenue Per Book",
-            unit: "dollars",
+            unit: "dollars"
         },
         category: "Misc"
     },
@@ -138,8 +149,9 @@ export const scenariosData = [
         inputs: ["total_books__books3__books", "average_length__book__words", "dataset_size__llama3__tokens"],
         calculate: (totalBooks, wordsPerBook, totalTokens) => (totalBooks * wordsPerBook) / totalTokens,
         result: {
-            label: "Coverage Ratio",
+            label: "Coverage Ratio"
         },
         category: "Misc"
-    },
+    }
+
 ];

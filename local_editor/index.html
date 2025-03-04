@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Local JSON CRUD App with File System Access</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    header {
+      margin-bottom: 20px;
+    }
+    nav a {
+      margin-right: 15px;
+      text-decoration: none;
+      color: blue;
+      cursor: pointer;
+    }
+    .section {
+      display: none;
+    }
+    .active {
+      display: block;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
+    form {
+      margin-top: 20px;
+      border: 1px solid #ccc;
+      padding: 15px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input[type="text"],
+    input[type="number"],
+    textarea {
+      width: 100%;
+      padding: 6px;
+      margin-top: 4px;
+    }
+    .actions button {
+      margin-right: 5px;
+    }
+    .controls {
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Local JSON CRUD App</h1>
+    <div class="controls">
+      <button id="select-dir">Select JSON Directory</button>
+      <span id="dir-info"></span>
+    </div>
+    <nav>
+      <a id="nav-inputs">Inputs</a>
+      <a id="nav-scenarios">Scenarios</a>
+    </nav>
+  </header>
+
+  <!-- Section for Inputs -->
+  <div id="inputs-section" class="section active">
+    <h2>Inputs</h2>
+    <button id="add-input">Add New Input</button>
+    <table id="inputs-table">
+      <thead>
+        <tr>
+          <th>Variable</th>
+          <th>Nice Name</th>
+          <th>Value</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Inputs will be inserted here -->
+      </tbody>
+    </table>
+    <!-- Input Form (hidden by default) -->
+    <form id="input-form" style="display:none;">
+      <h3 id="input-form-title">Add New Input</h3>
+      <label>Variable:
+        <input type="text" id="input-variable" required>
+      </label>
+      <label>Variable Type:
+        <input type="text" id="input-variable_type">
+      </label>
+      <label>Entity:
+        <input type="text" id="input-entity">
+      </label>
+      <label>Units:
+        <input type="text" id="input-units">
+      </label>
+      <label>Phrase for Card:
+        <input type="text" id="input-phrase_for_card">
+      </label>
+      <label>Nice Name:
+        <input type="text" id="input-nice_name">
+      </label>
+      <label>Value Description:
+        <textarea id="input-value_description"></textarea>
+      </label>
+      <label>Value:
+        <input type="number" step="any" id="input-value" required>
+      </label>
+      <label>Scale:
+        <input type="number" step="any" id="input-scale" value="1">
+      </label>
+      <label>Display Units:
+        <input type="text" id="input-display_units">
+      </label>
+      <label>Key Assumption:
+        <textarea id="input-key_assumption"></textarea>
+      </label>
+      <label>Source URL:
+        <input type="text" id="input-source_url">
+      </label>
+      <label>Source Notes:
+        <textarea id="input-source_notes"></textarea>
+      </label>
+      <button type="submit">Save</button>
+      <button type="button" id="cancel-input">Cancel</button>
+    </form>
+  </div>
+
+  <!-- Section for Scenarios -->
+  <div id="scenarios-section" class="section">
+    <h2>Scenarios</h2>
+    <button id="add-scenario">Add New Scenario</button>
+    <table id="scenarios-table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Category</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Scenarios will be inserted here -->
+      </tbody>
+    </table>
+    <!-- Scenario Form (hidden by default) -->
+    <form id="scenario-form" style="display:none;">
+      <h3 id="scenario-form-title">Add New Scenario</h3>
+      <label>Title:
+        <input type="text" id="scenario-title" required>
+      </label>
+      <label>Description:
+        <textarea id="scenario-description"></textarea>
+      </label>
+      <label>Inputs (comma separated):
+        <input type="text" id="scenario-inputs">
+      </label>
+      <label>Calculate Expression:
+        <input type="text" id="scenario-calculate">
+      </label>
+      <label>Unit Details:
+        <input type="text" id="scenario-unitDetails">
+      </label>
+      <label>Result Label:
+        <input type="text" id="scenario-result_label">
+      </label>
+      <label>Result Units:
+        <input type="text" id="scenario-result_units">
+      </label>
+      <label>Category:
+        <input type="text" id="scenario-category">
+      </label>
+      <button type="submit">Save</button>
+      <button type="button" id="cancel-scenario">Cancel</button>
+    </form>
+  </div>
+
+  <script>
+    // --- Global Variables & Sample Data ---
+    let jsonDirHandle = null;
+    let inputsData = [];
+    let scenariosData = [];
+    // When editing, track index (-1 for new)
+    let currentInputIndex = -1;
+    let currentScenarioIndex = -1;
+
+    const sampleInputs = {
+      inputs: [
+        {
+          "variable": "dataset_size__llama3__tokens",
+          "variable_type": "dataset_size",
+          "entity": "llama3",
+          "units": "tokens",
+          "phrase_for_card": "Llama 3's dataset size",
+          "nice_name": "Total pre-training tokens (Llama 3)",
+          "value_description": "Total tokens used to pre-training a model",
+          "value": 15000000000000.0,
+          "scale": 1e9,
+          "display_units": "billions of tokens",
+          "key_assumption": "We can use 15 trillion as a default value based on similar models.",
+          "source_url": "https://github.com/meta-llama/llama3/blob/main/MODEL_CARD.md",
+          "source_notes": "Llama 3 model card info."
+        }
+      ]
+    };
+
+    const sampleScenarios = [
+      {
+        "title": "Distributing AI Company Revenue Broadly",
+        "description": "If we distribute AI revenue (say, {yearly_revenue__openai__dollars}) to some group (say, {group_size__world__people}), how much will each person get?",
+        "inputs": [
+          "yearly_revenue__openai__dollars",
+          "group_size__world__people"
+        ],
+        "calculate": "yearlyRevenue / population",
+        "unitDetails": "dollars / people",
+        "result": {
+          "label": "Per Person Revenue",
+          "units": "dollars"
+        },
+        "category": "Distributing money"
+      }
+    ];
+
+    // --- File System Access API Functions ---
+    async function selectDirectory() {
+      try {
+        jsonDirHandle = await window.showDirectoryPicker();
+        document.getElementById('dir-info').textContent = `Directory selected: ${jsonDirHandle.name}`;
+        await loadDataFromDirectory();
+      } catch (err) {
+        console.error("Directory selection canceled or failed:", err);
+      }
+    }
+
+    async function loadDataFromDirectory() {
+      // Load inputs.json
+      try {
+        const inputsHandle = await jsonDirHandle.getFileHandle("inputs.json", { create: false });
+        const inputsFile = await inputsHandle.getFile();
+        const inputsText = await inputsFile.text();
+        const inputsJson = JSON.parse(inputsText);
+        inputsData = inputsJson.inputs || [];
+      } catch (err) {
+        console.warn("Could not load inputs.json; using sample data.", err);
+        inputsData = sampleInputs.inputs;
+      }
+      // Load scenarios.json
+      try {
+        const scenariosHandle = await jsonDirHandle.getFileHandle("scenarios.json", { create: false });
+        const scenariosFile = await scenariosHandle.getFile();
+        const scenariosText = await scenariosFile.text();
+        scenariosData = JSON.parse(scenariosText);
+      } catch (err) {
+        console.warn("Could not load scenarios.json; using sample data.", err);
+        scenariosData = sampleScenarios;
+      }
+      renderInputsTable();
+      renderScenariosTable();
+    }
+
+    async function saveDataToDirectory() {
+      if (!jsonDirHandle) {
+        alert("Please select a JSON directory first.");
+        return;
+      }
+      // Save inputs.json
+      try {
+        const inputsHandle = await jsonDirHandle.getFileHandle("inputs.json", { create: true });
+        const writable = await inputsHandle.createWritable();
+        await writable.write(JSON.stringify({ inputs: inputsData }, null, 2));
+        await writable.close();
+      } catch (err) {
+        console.error("Error saving inputs.json:", err);
+      }
+      // Save scenarios.json
+      try {
+        const scenariosHandle = await jsonDirHandle.getFileHandle("scenarios.json", { create: true });
+        const writable = await scenariosHandle.createWritable();
+        await writable.write(JSON.stringify(scenariosData, null, 2));
+        await writable.close();
+      } catch (err) {
+        console.error("Error saving scenarios.json:", err);
+      }
+    }
+
+    // --- Rendering Functions ---
+    function renderInputsTable() {
+      const tbody = document.querySelector('#inputs-table tbody');
+      tbody.innerHTML = '';
+      inputsData.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${item.variable}</td>
+          <td>${item.nice_name}</td>
+          <td>${item.value}</td>
+          <td class="actions">
+            <button onclick="editInput(${index})">Edit</button>
+            <button onclick="deleteInput(${index})">Delete</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderScenariosTable() {
+      const tbody = document.querySelector('#scenarios-table tbody');
+      tbody.innerHTML = '';
+      scenariosData.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${item.title}</td>
+          <td>${item.category}</td>
+          <td class="actions">
+            <button onclick="editScenario(${index})">Edit</button>
+            <button onclick="deleteScenario(${index})">Delete</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // --- CRUD for Inputs ---
+    document.getElementById('add-input').addEventListener('click', () => {
+      currentInputIndex = -1;
+      document.getElementById('input-form-title').textContent = "Add New Input";
+      document.getElementById('input-form').reset();
+      document.getElementById('input-form').style.display = 'block';
+    });
+
+    document.getElementById('cancel-input').addEventListener('click', () => {
+      document.getElementById('input-form').style.display = 'none';
+    });
+
+    document.getElementById('input-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const newItem = {
+        variable: document.getElementById('input-variable').value.trim(),
+        variable_type: document.getElementById('input-variable_type').value.trim(),
+        entity: document.getElementById('input-entity').value.trim(),
+        units: document.getElementById('input-units').value.trim(),
+        phrase_for_card: document.getElementById('input-phrase_for_card').value.trim(),
+        nice_name: document.getElementById('input-nice_name').value.trim(),
+        value_description: document.getElementById('input-value_description').value.trim(),
+        value: parseFloat(document.getElementById('input-value').value),
+        scale: parseFloat(document.getElementById('input-scale').value),
+        display_units: document.getElementById('input-display_units').value.trim(),
+        key_assumption: document.getElementById('input-key_assumption').value.trim(),
+        source_url: document.getElementById('input-source_url').value.trim(),
+        source_notes: document.getElementById('input-source_notes').value.trim()
+      };
+      if (currentInputIndex === -1) {
+        inputsData.push(newItem);
+      } else {
+        inputsData[currentInputIndex] = newItem;
+      }
+      await saveDataToDirectory();
+      renderInputsTable();
+      document.getElementById('input-form').style.display = 'none';
+    });
+
+    function editInput(index) {
+      currentInputIndex = index;
+      const item = inputsData[index];
+      document.getElementById('input-form-title').textContent = "Edit Input";
+      document.getElementById('input-variable').value = item.variable;
+      document.getElementById('input-variable_type').value = item.variable_type;
+      document.getElementById('input-entity').value = item.entity;
+      document.getElementById('input-units').value = item.units;
+      document.getElementById('input-phrase_for_card').value = item.phrase_for_card;
+      document.getElementById('input-nice_name').value = item.nice_name;
+      document.getElementById('input-value_description').value = item.value_description;
+      document.getElementById('input-value').value = item.value;
+      document.getElementById('input-scale').value = item.scale;
+      document.getElementById('input-display_units').value = item.display_units;
+      document.getElementById('input-key_assumption').value = item.key_assumption;
+      document.getElementById('input-source_url').value = item.source_url;
+      document.getElementById('input-source_notes').value = item.source_notes;
+      document.getElementById('input-form').style.display = 'block';
+    }
+
+    async function deleteInput(index) {
+      if (confirm("Are you sure you want to delete this input?")) {
+        inputsData.splice(index, 1);
+        await saveDataToDirectory();
+        renderInputsTable();
+      }
+    }
+
+    // --- CRUD for Scenarios ---
+    document.getElementById('add-scenario').addEventListener('click', () => {
+      currentScenarioIndex = -1;
+      document.getElementById('scenario-form-title').textContent = "Add New Scenario";
+      document.getElementById('scenario-form').reset();
+      document.getElementById('scenario-form').style.display = 'block';
+    });
+
+    document.getElementById('cancel-scenario').addEventListener('click', () => {
+      document.getElementById('scenario-form').style.display = 'none';
+    });
+
+    document.getElementById('scenario-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const newScenario = {
+        title: document.getElementById('scenario-title').value.trim(),
+        description: document.getElementById('scenario-description').value.trim(),
+        inputs: document.getElementById('scenario-inputs').value.split(',').map(s => s.trim()).filter(s => s),
+        calculate: document.getElementById('scenario-calculate').value.trim(),
+        unitDetails: document.getElementById('scenario-unitDetails').value.trim(),
+        result: {
+          label: document.getElementById('scenario-result_label').value.trim(),
+          units: document.getElementById('scenario-result_units').value.trim()
+        },
+        category: document.getElementById('scenario-category').value.trim()
+      };
+      if (currentScenarioIndex === -1) {
+        scenariosData.push(newScenario);
+      } else {
+        scenariosData[currentScenarioIndex] = newScenario;
+      }
+      await saveDataToDirectory();
+      renderScenariosTable();
+      document.getElementById('scenario-form').style.display = 'none';
+    });
+
+    function editScenario(index) {
+      currentScenarioIndex = index;
+      const item = scenariosData[index];
+      document.getElementById('scenario-form-title').textContent = "Edit Scenario";
+      document.getElementById('scenario-title').value = item.title;
+      document.getElementById('scenario-description').value = item.description;
+      document.getElementById('scenario-inputs').value = item.inputs.join(', ');
+      document.getElementById('scenario-calculate').value = item.calculate;
+      document.getElementById('scenario-unitDetails').value = item.unitDetails;
+      document.getElementById('scenario-result_label').value = item.result.label;
+      document.getElementById('scenario-result_units').value = item.result.units;
+      document.getElementById('scenario-category').value = item.category;
+      document.getElementById('scenario-form').style.display = 'block';
+    }
+
+    async function deleteScenario(index) {
+      if (confirm("Are you sure you want to delete this scenario?")) {
+        scenariosData.splice(index, 1);
+        await saveDataToDirectory();
+        renderScenariosTable();
+      }
+    }
+
+    // --- Navigation ---
+    document.getElementById('nav-inputs').addEventListener('click', () => {
+      document.getElementById('inputs-section').classList.add('active');
+      document.getElementById('scenarios-section').classList.remove('active');
+    });
+    document.getElementById('nav-scenarios').addEventListener('click', () => {
+      document.getElementById('scenarios-section').classList.add('active');
+      document.getElementById('inputs-section').classList.remove('active');
+    });
+
+    // --- Initialize Directory Selection ---
+    document.getElementById('select-dir').addEventListener('click', selectDirectory);
+  </script>
+</body>
+</html>
