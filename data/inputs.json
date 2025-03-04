@@ -329,6 +329,66 @@
       "key_assumption": "N/A",
       "source_url": "https://www.census.gov/popclock/",
       "source_notes": "US Census"
+    },
+    {
+      "variable": "target_metric__stackipedia__tokens",
+      "phrase_for_card": "Target tokens for Stackipedia",
+      "variable_type": "target_metric",
+      "entity": "stackipedia",
+      "units": "tokens",
+      "nice_name": "Target Number of Tokens (Stackipedia)",
+      "value": 1000000000,
+      "scale": 1000000000,
+      "display_units": "billions of tokens",
+      "value_description": "The desired total number of tokens to be generated for high-quality content on Stackipedia.",
+      "key_assumption": "Assumes a target scale based on projected platform growth.",
+      "source_url": "https://example.com/stackipedia-target-tokens",
+      "source_notes": "Placeholder source for target metric."
+    },
+    {
+      "variable": "dataset_attribute__stackipedia__tokens_per_document",
+      "phrase_for_card": "Tokens per document (Stackipedia)",
+      "variable_type": "dataset_attribute",
+      "entity": "stackipedia",
+      "units": "tokens/document",
+      "nice_name": "Average Tokens per Document (Stackipedia)",
+      "value": 1500,
+      "scale": 1,
+      "display_units": "tokens per document",
+      "value_description": "Average number of tokens found in a high-quality document on Stackipedia.",
+      "key_assumption": "Assumes a typical document length based on current platform content.",
+      "source_url": "https://example.com/stackipedia-document-length",
+      "source_notes": "Estimated from current platform analytics."
+    },
+    {
+      "variable": "conversion_rate__stackipedia__visitors_per_contribution",
+      "phrase_for_card": "Visitors per contribution (Stackipedia)",
+      "variable_type": "conversion_rate",
+      "entity": "stackipedia",
+      "units": "visitors/contribution",
+      "nice_name": "Average Visitors per Contribution (Stackipedia)",
+      "value": 50,
+      "scale": 1,
+      "display_units": "visitors per contribution",
+      "value_description": "The average number of visitors required to yield one contribution on Stackipedia.",
+      "key_assumption": "Derived from preliminary engagement data on the platform.",
+      "source_url": "https://example.com/stackipedia-engagement",
+      "source_notes": "Based on early user behavior analysis."
+    },
+    {
+      "variable": "conversion_rate__stackipedia__contributions_per_document",
+      "phrase_for_card": "Contributions per document (Stackipedia)",
+      "variable_type": "conversion_rate",
+      "entity": "stackipedia",
+      "units": "contributions/document",
+      "nice_name": "Average Contributions per Document (Stackipedia)",
+      "value": 2,
+      "scale": 1,
+      "display_units": "contributions per document",
+      "value_description": "Average number of contributions required to form one complete document on Stackipedia.",
+      "key_assumption": "Assumes that multiple contributions are aggregated to create a final document.",
+      "source_url": "https://example.com/stackipedia-content-aggregation",
+      "source_notes": "Based on current content creation models."
     }
   ]
 }

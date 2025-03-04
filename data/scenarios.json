@@ -6,7 +6,7 @@
       "yearly_revenue__openai__dollars",
       "group_size__world__people"
     ],
-    "calculate": "yearlyRevenue / population",
+    "calculate": "(yearlyRevenue, population) => { return yearlyRevenue / population; }",
     "unitDetails": "dollars / people",
     "result": {
       "label": "Per Person Revenue",
@@ -21,7 +21,7 @@
       "deal_value__reddit_google__dollars",
       "deal_group_size__reddit__daily_active_users"
     ],
-    "calculate": "dealValue / dailyActiveUsers",
+    "calculate": "(dealValue, dailyActiveUsers) => { return dealValue / dailyActiveUsers; }",
     "unitDetails": "dollars / people",
     "result": {
       "label": "Per Person Revenue",
@@ -37,7 +37,7 @@
       "training_detail__openai__words_per_token",
       "wage_data__generic_freelance_higher__dollars_per_word"
     ],
-    "calculate": "tokens * wordsPerToken * freelanceRate",
+    "calculate": "(tokens, wordsPerToken, freelanceRate) => { return tokens * wordsPerToken * freelanceRate; }",
     "result": {
       "label": "Dataset Cost",
       "units": "dollars"
@@ -51,30 +51,14 @@
       "dataset_size__hle__questions",
       "wage_data__phd__dollars_per_question"
     ],
-    "calculate": "questions * rate",
+    "calculate": "(questions, rate) => { return questions * rate; }",
     "result": {
       "label": "Dataset Cost",
       "units": "dollars"
     },
     "category": "Paying for new labour"
   },
-  {
-    "title": "StackipediaXiv: Detailed Visits Required for Target Tokens",
-    "description": "Calculate the number of visits required to generate a target number of tokens. This calculation is broken into two steps:\n1. Determine how many high-quality documents are needed: (target tokens ÷ tokens per document).\n2. Determine how many visits are required to produce one document: (visitors per contribution × contributions per document).\nMultiply these together to get the total required visits.",
-    "inputs": [
-      "target_metric__stackipedia__tokens",
-      "dataset_attribute__stackipedia__tokens_per_document",
-      "conversion_rate__stackipedia__visitors_per_contribution",
-      "conversion_rate__stackipedia__contributions_per_document"
-    ],
-    "calculate": "(targetTokens / tokensPerDocument) * visitorsPerContribution * contributionsPerDocument",
-    "unitDetails": "visits",
-    "result": {
-      "label": "Required Visits",
-      "units": "visits"
-    },
-    "category": "StackipediaXiv Metrics"
-  },
+  
   {
     "title": "Freelance Cost Per Book",
     "description": "Calculate the cost of commissioning a book based on freelance rates.",
@@ -82,7 +66,7 @@
       "average_length__book__words",
       "wage_data__generic_freelance_lower__dollars_per_word"
     ],
-    "calculate": "wordsPerBook * freelanceRate",
+    "calculate": "(wordsPerBook, freelanceRate) => { return wordsPerBook * freelanceRate; }",
     "result": {
       "label": "Cost Per Book"
     },
@@ -96,7 +80,7 @@
       "average_length__book__words",
       "wage_data__generic_freelance_lower__dollars_per_word"
     ],
-    "calculate": "totalBooks * wordsPerBook * freelanceRate",
+    "calculate": "(totalBooks, wordsPerBook, freelanceRate) => { return totalBooks * wordsPerBook * freelanceRate; }",
     "result": {
       "label": "Total Freelance Cost"
     },
@@ -109,7 +93,7 @@
       "yearly_revenue__openai__dollars",
       "dataset_size__llama3__tokens"
     ],
-    "calculate": "yearlyRevenue / totalTokens",
+    "calculate": "(yearlyRevenue, totalTokens) => { return yearlyRevenue / totalTokens; }",
     "result": {
       "label": "Revenue Per Token",
       "units": "dollars"
@@ -123,7 +107,7 @@
       "dataset_size__llama3__tokens",
       "dataset_attribute__redpajama__tokens_per_contribution"
     ],
-    "calculate": "totalTokens / tokensPerContribution",
+    "calculate": "(totalTokens, tokensPerContribution) => { return totalTokens / tokensPerContribution; }",
     "result": {
       "label": "Contributions",
       "units": "documents"
@@ -138,7 +122,7 @@
       "dataset_size__llama3__tokens",
       "dataset_attribute__redpajama__tokens_per_contribution"
     ],
-    "calculate": "(yearlyRevenue / totalTokens) * tokensPerContribution",
+    "calculate": "(yearlyRevenue, totalTokens, tokensPerContribution) => { return (yearlyRevenue / totalTokens) * tokensPerContribution; }",
     "result": {
       "label": "Revenue Per Contribution"
     },
@@ -153,7 +137,7 @@
       "training_detail__openai__words_per_token",
       "average_length__book__words"
     ],
-    "calculate": "(wordsPerBook / wordsPerToken) / totalTokens * (yearlyRevenue)",
+    "calculate": "(yearlyRevenue, totalTokens, wordsPerToken, wordsPerBook) => { return (wordsPerBook / wordsPerToken) / totalTokens * yearlyRevenue; }",
     "result": {
       "label": "Revenue Per Book",
       "unit": "dollars"
@@ -168,7 +152,7 @@
       "average_length__book__words",
       "dataset_size__llama3__tokens"
     ],
-    "calculate": "(totalBooks * wordsPerBook) / totalTokens",
+    "calculate": "(totalBooks, wordsPerBook, totalTokens) => { return (totalBooks * wordsPerBook) / totalTokens; }",
     "result": {
       "label": "Coverage Ratio"
     },

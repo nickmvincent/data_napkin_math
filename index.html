@@ -10,10 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" />
   <!-- Vue 3 -->
   <script src="https://unpkg.com/vue@3"></script>
-  <!-- js-yaml for YAML parsing -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.0.0/js-yaml.min.js"></script>
-  <!-- Scenarios module (assumed to exist) -->
-  <script type="module" src="./scenarios.js"></script>
+  <!-- We no longer need js-yaml or scenarios.js -->
   <style>
     /* Overall Fonts & Colors */
     body {
@@ -46,7 +43,7 @@
     /* Main Container using Flex */
     .main-container {
       display: flex;
-      min-height: calc(100vh - 70px); /* subtract navbar height */
+      min-height: calc(100vh - 70px);
       max-width: 1400px;
       margin: 0 auto;
       width: 100%;
@@ -65,14 +62,13 @@
       gap: 15px;
       text-align: left;
     }
-    /* Main Content: Scenario Cards (with right margin when inspector is open) */
-    /* Note: on mobile we override the margin (see media query) */
+    /* Main Content: Scenario Cards */
     .main-content {
       flex-grow: 1;
       padding: 20px 30px;
       background: #fdfdfd;
     }
-    /* Right Panel: Fixed to side, scrollable if needed (desktop only) */
+    /* Right Panel: Fixed to side, scrollable (desktop only) */
     .right-panel {
       position: fixed;
       top: 70px;
@@ -89,7 +85,6 @@
       gap: 15px;
       text-align: left;
     }
-    /* Hide panels when not toggled */
     .hidden {
       display: none;
     }
@@ -102,7 +97,6 @@
       background: #fff;
       box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
-    /* Header styling for a magazine feel */
     header h1 {
       font-size: 2.8rem;
       margin-bottom: 10px;
@@ -111,7 +105,6 @@
       font-size: 1.2rem;
       line-height: 1.6;
     }
-    /* Remove default number input spinners */
     input[type=number]::-webkit-outer-spin-button,
     input[type=number]::-webkit-inner-spin-button {
       -webkit-appearance: none;
@@ -120,13 +113,11 @@
     input[type=number] {
       -moz-appearance: textfield;
     }
-    /* Left panel input rows */
     .input-row {
       border-bottom: 1px solid #eee;
       padding-bottom: 8px;
       margin-bottom: 8px;
     }
-    /* Result output styling for cards */
     .result-output {
       font-size: 1.8rem;
       font-weight: bold;
@@ -134,7 +125,6 @@
       margin: 15px 0;
       text-align: center;
     }
-    /* Calculation details area styling */
     .calc-details {
       background: #f7f7f7;
       padding: 10px;
@@ -142,7 +132,6 @@
       margin-top: 10px;
       font-size: 0.9rem;
     }
-    /* Change Log styling in inspector */
     .change-log {
       margin-top: 15px;
       font-size: 0.9rem;
@@ -158,7 +147,6 @@
       border-bottom: 1px dashed #ccc;
       padding: 3px 0;
     }
-    /* Inline fill select styling */
     .inline-select {
       display: inline-block;
       width: auto;
@@ -174,7 +162,6 @@
       -webkit-appearance: none;
       -moz-appearance: none;
     }
-    /* Category Selector (tiles) */
     .category-selector {
       display: flex;
       flex-wrap: wrap;
@@ -198,7 +185,6 @@
       font-weight: bold;
       box-shadow: 0 2px 8px rgba(16, 163, 127, 0.5);
     }
-    /* Responsive adjustments */
     @media (max-width: 768px) {
       .main-container {
         flex-direction: column;
@@ -213,7 +199,6 @@
       .right-panel {
         margin-top: 20px;
       }
-      /* Hide the inline right panel on mobile since we use a modal instead */
       .right-panel {
         display: none !important;
       }
@@ -247,7 +232,7 @@
 
   <!-- Vue App Container (padded below the navbar) -->
   <div id="app" style="padding-top: 70px;">
-    <!-- Top Toolbar with symmetric toggle buttons -->
+    <!-- Top Toolbar -->
     <div class="toolbar">
       <button class="btn btn-primary" @click="toggleLeftPanel">
         {{ leftPanelOpen ? "Hide Inputs" : "Show Inputs" }}
@@ -271,7 +256,7 @@
 
     <!-- Main Flex Container: Left Panel & Main Content -->
     <div class="main-container">
-      <!-- Left Panel: All Inputs (Spreadsheet-like view) -->
+      <!-- Left Panel: All Inputs -->
       <div :class="['left-panel', { hidden: !leftPanelOpen }]">
         <h5 style="margin-bottom: 20px;">All Inputs</h5>
         <div v-for="(input, key) in inputs" :key="key" class="input-row">
@@ -291,14 +276,9 @@
             <button class="btn btn-outline-secondary btn-sm" @click="showDetails(key)">Inspect</button>
           </div>
         </div>
-        <!-- <button @click="loadData" class="btn btn-outline-primary btn-sm mt-3"
-                style="border-color: #10a37f; color: #10a37f;">
-          Load Data from Gist
-        </button> -->
       </div>
 
       <!-- Main Content: Scenario Cards -->
-      <!-- Note: we only reserve space for the right panel on desktop -->
       <div class="main-content" :style="{ marginRight: (!isMobile && rightPanelOpen) ? '400px' : '0' }">
         <header id="headerContent">
           <h1>Napkin Math for Training Data Value</h1>
@@ -314,11 +294,9 @@
           <p style="font-size: 1.1rem; margin-bottom: 30px;">
             Explore the various scenarios below. Modify input values and choose fill options to see how outcomes change.
           </p>
-          <!-- Calculation Cards (filtered by selectedScenario) -->
           <div v-for="(calc, index) in filteredScenarios" :key="index" class="card">
             <header>
               <h4>{{ calc.title }}</h4>
-              <!-- Process description template with inline select for each placeholder -->
               <p>
                 <template v-for="(segment, idx) in parseDescription(calc.description)" :key="idx">
                   <template v-if="segment.type === 'text'">
@@ -336,7 +314,6 @@
                   </template>
                 </template>
               </p>
-              <!-- Top Result Output Only -->
               <div class="result-output">
                 {{ calc.result.value }} {{ calc.result.units }}
               </div>
@@ -348,7 +325,6 @@
               </div>
             </header>
             <div v-if="Object.keys(inputs).length === 0">Loading inputs...</div>
-            <!-- For each input used by the scenario -->
             <div v-else v-for="inputKey in calc.inputs" :key="inputKey" class="mb-3">
               <label class="form-label">
                 {{ inputs[inputKey]?.nice_name || formatLabel(inputKey) }}
@@ -400,8 +376,7 @@
         </section>
       </div>
 
-      <!-- Right Panel: Inspector (Fixed) for Desktop -->
-      <!-- (On mobile this panel is hidden via CSS; see media query) -->
+      <!-- Right Panel: Inspector for Desktop -->
       <div ref="inspectorPanel" :class="['right-panel', { hidden: !rightPanelOpen }]" id="desktopInspector">
         <button class="btn btn-outline-secondary btn-sm" @click="toggleRightPanel">Hide Inspector</button>
         <h5>Inspector</h5>
@@ -487,8 +462,6 @@
   <!-- Bootstrap JS Bundle -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
   <script type="module">
-    import { scenariosData } from "./scenarios.js";
-
     const app = Vue.createApp({
       data() {
         return {
@@ -500,10 +473,8 @@
           selectedScenario: "All",
           variants: {},
           logs: {},
-          // For inline fill, store the selected variable for each placeholder.
           fillSelections: {},
           activeFillVariable: null,
-          // New reactive properties for mobile handling:
           isMobile: window.innerWidth < 768,
           mobileInspectorOpen: false
         };
@@ -517,7 +488,6 @@
             ? this.scenariosData
             : this.scenariosData.filter(scenario => scenario.category === this.selectedScenario);
         },
-        // Group inputs by variable_type.
         inputsByType() {
           return Object.values(this.inputs).reduce((groups, input) => {
             if (!groups[input.variable_type]) {
@@ -527,14 +497,12 @@
             return groups;
           }, {});
         },
-        // Compute unique categories from scenarios.
         uniqueCategories() {
           const cats = this.scenariosData
             .filter(scenario => scenario.category)
             .map(scenario => scenario.category);
           return ["All", ...new Set(cats)];
         },
-        // Change inspector button text based on mobile/desktop and open state.
         inspectorButtonText() {
           if (this.isMobile) {
             return this.mobileInspectorOpen ? "Hide Inspector" : "Show Inspector";
@@ -674,7 +642,6 @@
           const adjustedValue = value / Math.pow(10, 3 * order);
           return `${adjustedValue.toFixed(2)} ${unitName}`;
         },
-        // Parse the description into segments (text and variable placeholders).
         parseDescription(desc) {
           const segments = [];
           let lastIndex = 0;
@@ -692,7 +659,6 @@
           }
           return segments;
         },
-        // Return fill options for a variable group (by variable_type).
         getFillOptionsForType(variable) {
           if (!this.inputs[variable]) return [];
           const vt = this.inputs[variable].variable_type;
@@ -712,11 +678,10 @@
         },
         async loadData() {
           try {
-            const gistUrl = "data/inputs.yaml";
-            const response = await fetch(gistUrl);
-            if (!response.ok) throw new Error("Failed to load data from Gist");
-            const yamlText = await response.text();
-            const data = jsyaml.load(yamlText);
+            const dataUrl = "data/inputs.json";
+            const response = await fetch(dataUrl);
+            if (!response.ok) throw new Error("Failed to load data from JSON");
+            const data = await response.json();
             console.log("Data successfully loaded");
             this.inputs = data.inputs.reduce((acc, input) => {
               acc[input.variable] = { ...input, default_value: input.value };
@@ -731,7 +696,7 @@
             });
             this.updateCalculations();
           } catch (e) {
-            console.error("Failed to load data from Gist:", e);
+            console.error("Failed to load data from JSON:", e);
           }
         },
         toggleDiagram(index) {
@@ -739,22 +704,43 @@
         }
       },
       mounted() {
-        // Initialize scenariosData from the imported module—preserving calculation functions and original inputs.
-        this.scenariosData = scenariosData.map(calc => ({
-          ...calc,
-          result: { label: calc.result.label, value: 0, rawValue: 0, units: calc.result.units },
-          showDiagram: false,
-          showCalcDetails: false,
-          originalInputs: [...calc.inputs]
-        }));
+        // Load scenarios from JSON and convert the calculate strings into functions
+        fetch("data/scenarios.json")
+          .then(response => response.json())
+          .then(data => {
+            // Allow only characters we expect in a simple arrow function.
+            const safeFunctionPattern = /^[\(\)\w\s,=\>\+\-\*\/\.\?\:\%\!\&\|\{\};]+$/;
+            this.scenariosData = data.map(calc => {
+              if (typeof calc.calculate === "string" && calc.calculate.includes("=>")) {
+                if (safeFunctionPattern.test(calc.calculate)) {
+                  // Evaluate the full arrow function.
+                  calc.calculate = eval("(" + calc.calculate + ")");
+                } else {
+                  console.error("Unsafe calculation function detected:", calc.calculate);
+                  calc.calculate = function() { return NaN; };
+                }
+              } else {
+                console.error("Calculate function not in expected arrow function format:", calc.calculate);
+                calc.calculate = function() { return NaN; };
+              }
+              return {
+                ...calc,
+                result: { label: calc.result.label, value: 0, rawValue: 0, units: calc.result.units },
+                showDiagram: false,
+                showCalcDetails: false,
+                originalInputs: [...calc.inputs]
+              };
+            });
+            this.updateCalculations();
+          })
+          .catch(err => console.error("Failed to load scenarios:", err));
+
         this.loadData();
 
-        // Update mobile flag on window resize.
         window.addEventListener('resize', () => {
           this.isMobile = window.innerWidth < 768;
         });
 
-        // Set up event listeners on the inspector modal to track its open/close state.
         const modalEl = document.getElementById('inspectorModal');
         modalEl.addEventListener('shown.bs.modal', () => { this.mobileInspectorOpen = true; });
         modalEl.addEventListener('hidden.bs.modal', () => { this.mobileInspectorOpen = false; });
