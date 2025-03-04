@@ -6,7 +6,10 @@
       "yearly_revenue__openai__dollars",
       "group_size__world__people"
     ],
-    "calculate": "(yearlyRevenue, population) => { return yearlyRevenue / population; }",
+    "calculateType": "operations",
+    "operations": [
+      { "func": "divide", "args": ["{yearly_revenue__openai__dollars}", "{group_size__world__people}"] }
+    ],
     "unitDetails": "dollars / people",
     "result": {
       "label": "Per Person Revenue",
@@ -21,7 +24,10 @@
       "deal_value__reddit_google__dollars",
       "deal_group_size__reddit__daily_active_users"
     ],
-    "calculate": "(dealValue, dailyActiveUsers) => { return dealValue / dailyActiveUsers; }",
+    "calculateType": "operations",
+    "operations": [
+      { "func": "divide", "args": ["{deal_value__reddit_google__dollars}", "{deal_group_size__reddit__daily_active_users}"] }
+    ],
     "unitDetails": "dollars / people",
     "result": {
       "label": "Per Person Revenue",
@@ -37,7 +43,11 @@
       "training_detail__openai__words_per_token",
       "wage_data__generic_freelance_higher__dollars_per_word"
     ],
-    "calculate": "(tokens, wordsPerToken, freelanceRate) => { return tokens * wordsPerToken * freelanceRate; }",
+    "calculateType": "operations",
+    "operations": [
+      { "func": "multiply", "args": ["{dataset_size__llama3__tokens}", "{training_detail__openai__words_per_token}"], "name": "total_words" },
+      { "func": "multiply", "args": ["{total_words}", "{wage_data__generic_freelance_higher__dollars_per_word}"] }
+    ],
     "result": {
       "label": "Dataset Cost",
       "units": "dollars"
@@ -51,14 +61,16 @@
       "dataset_size__hle__questions",
       "wage_data__phd__dollars_per_question"
     ],
-    "calculate": "(questions, rate) => { return questions * rate; }",
+    "calculateType": "operations",
+    "operations": [
+      { "func": "multiply", "args": ["{dataset_size__hle__questions}", "{wage_data__phd__dollars_per_question}"] }
+    ],
     "result": {
       "label": "Dataset Cost",
       "units": "dollars"
     },
     "category": "Paying for new labour"
   },
-  
   {
     "title": "Freelance Cost Per Book",
     "description": "Calculate the cost of commissioning a book based on freelance rates.",
@@ -66,9 +78,13 @@
       "average_length__book__words",
       "wage_data__generic_freelance_lower__dollars_per_word"
     ],
-    "calculate": "(wordsPerBook, freelanceRate) => { return wordsPerBook * freelanceRate; }",
+    "calculateType": "operations",
+    "operations": [
+      { "func": "multiply", "args": ["{average_length__book__words}", "{wage_data__generic_freelance_lower__dollars_per_word}"] }
+    ],
     "result": {
-      "label": "Cost Per Book"
+      "label": "Cost Per Book",
+      "units": "dollars"
     },
     "category": "Misc"
   },
@@ -80,9 +96,14 @@
       "average_length__book__words",
       "wage_data__generic_freelance_lower__dollars_per_word"
     ],
-    "calculate": "(totalBooks, wordsPerBook, freelanceRate) => { return totalBooks * wordsPerBook * freelanceRate; }",
+    "calculateType": "operations",
+    "operations": [
+      { "func": "multiply", "args": ["{total_books__books3__books}", "{average_length__book__words}"], "name": "total_words" },
+      { "func": "multiply", "args": ["{total_words}", "{wage_data__generic_freelance_lower__dollars_per_word}"] }
+    ],
     "result": {
-      "label": "Total Freelance Cost"
+      "label": "Total Freelance Cost",
+      "units": "dollars"
     },
     "category": "Misc"
   },
@@ -93,7 +114,10 @@
       "yearly_revenue__openai__dollars",
       "dataset_size__llama3__tokens"
     ],
-    "calculate": "(yearlyRevenue, totalTokens) => { return yearlyRevenue / totalTokens; }",
+    "calculateType": "operations",
+    "operations": [
+      { "func": "divide", "args": ["{yearly_revenue__openai__dollars}", "{dataset_size__llama3__tokens}"] }
+    ],
     "result": {
       "label": "Revenue Per Token",
       "units": "dollars"
@@ -107,7 +131,10 @@
       "dataset_size__llama3__tokens",
       "dataset_attribute__redpajama__tokens_per_contribution"
     ],
-    "calculate": "(totalTokens, tokensPerContribution) => { return totalTokens / tokensPerContribution; }",
+    "calculateType": "operations",
+    "operations": [
+      { "func": "divide", "args": ["{dataset_size__llama3__tokens}", "{dataset_attribute__redpajama__tokens_per_contribution}"] }
+    ],
     "result": {
       "label": "Contributions",
       "units": "documents"
@@ -122,9 +149,14 @@
       "dataset_size__llama3__tokens",
       "dataset_attribute__redpajama__tokens_per_contribution"
     ],
-    "calculate": "(yearlyRevenue, totalTokens, tokensPerContribution) => { return (yearlyRevenue / totalTokens) * tokensPerContribution; }",
+    "calculateType": "operations",
+    "operations": [
+      { "func": "divide", "args": ["{yearly_revenue__openai__dollars}", "{dataset_size__llama3__tokens}"], "name": "revenue_per_token" },
+      { "func": "multiply", "args": ["{revenue_per_token}", "{dataset_attribute__redpajama__tokens_per_contribution}"] }
+    ],
     "result": {
-      "label": "Revenue Per Contribution"
+      "label": "Revenue Per Contribution",
+      "units": "dollars"
     },
     "category": "Misc"
   },
@@ -137,10 +169,15 @@
       "training_detail__openai__words_per_token",
       "average_length__book__words"
     ],
-    "calculate": "(yearlyRevenue, totalTokens, wordsPerToken, wordsPerBook) => { return (wordsPerBook / wordsPerToken) / totalTokens * yearlyRevenue; }",
+    "calculateType": "operations",
+    "operations": [
+      { "func": "divide", "args": ["{average_length__book__words}", "{training_detail__openai__words_per_token}"], "name": "tokens_per_book" },
+      { "func": "divide", "args": ["{tokens_per_book}", "{dataset_size__llama3__tokens}"], "name": "proportion_of_dataset" },
+      { "func": "multiply", "args": ["{proportion_of_dataset}", "{yearly_revenue__openai__dollars}"] }
+    ],
     "result": {
       "label": "Revenue Per Book",
-      "unit": "dollars"
+      "units": "dollars"
     },
     "category": "Misc"
   },
@@ -152,9 +189,14 @@
       "average_length__book__words",
       "dataset_size__llama3__tokens"
     ],
-    "calculate": "(totalBooks, wordsPerBook, totalTokens) => { return (totalBooks * wordsPerBook) / totalTokens; }",
+    "calculateType": "operations",
+    "operations": [
+      { "func": "multiply", "args": ["{total_books__books3__books}", "{average_length__book__words}"], "name": "total_words" },
+      { "func": "divide", "args": ["{total_words}", "{dataset_size__llama3__tokens}"] }
+    ],
     "result": {
-      "label": "Coverage Ratio"
+      "label": "Coverage Ratio",
+      "units": ""
     },
     "category": "Misc"
   }
