@@ -822,9 +822,7 @@
           console.error("Unsupported calculation format");
           return function () { return NaN; };
         },
-        // Get calculation details for display
-        // Get calculation details for display
-        // Get calculation details for display with enhanced mathematical notation
+        // Get calculation details with both single-line and multi-line pasteable formulas
         getCalcDetails(calc) {
           if (!calc.calculate) return "No calculation defined";
 
@@ -834,11 +832,25 @@
             const steps = [];
             let lastResult = "result";
 
+            // For single-line formula
+            let singleLineFormula = "";
+
+            // For multi-line console code
+            const pasteableSteps = [];
+            const variableValues = {};
+
+            // Initialize input values for formula
+            calc.inputs.forEach((inputVar) => {
+              if (this.inputs[inputVar]) {
+                variableValues[inputVar] = this.inputs[inputVar].value;
+              }
+            });
+
             // Process each operation and format it for display
             operations.forEach((op, index) => {
               const funcName = op.func || 'unknown';
 
-              // Format arguments with variable names when possible
+              // Format arguments with variable names when possible (for display)
               const formattedArgs = (op.args || []).map(arg => {
                 if (arg === 'result') {
                   return lastResult;
@@ -854,44 +866,151 @@
                 return arg;
               });
 
+              // Get actual values for single-line formula (replace with actual numbers)
+              const actualValues = (op.args || []).map(arg => {
+                if (arg === 'result') {
+                  // Use the previous formula part
+                  return singleLineFormula;
+                }
+
+                if (typeof arg === 'string' && arg.match(/^\{([^}]+)\}$/)) {
+                  const varName = arg.slice(1, -1);
+
+                  // Look for this variable in our inputs
+                  if (variableValues[varName] !== undefined) {
+                    return variableValues[varName];
+                  }
+
+                  // If it's a numerical index (for legacy support)
+                  const index = parseInt(varName);
+                  if (!isNaN(index) && index >= 0 && index < calc.inputs.length) {
+                    const inputVar = calc.inputs[index];
+                    return variableValues[inputVar];
+                  }
+
+                  return 0; // Fallback
+                }
+
+                return arg; // For literal values
+              });
+
+              // Get variable names for multi-line formula
+              const argVarNames = (op.args || []).map(arg => {
+                if (arg === 'result') {
+                  return "result";
+                }
+
+                if (typeof arg === 'string' && arg.match(/^\{([^}]+)\}$/)) {
+                  const varName = arg.slice(1, -1);
+                  return varName;
+                }
+
+                return arg; // For literal values
+              });
+
               // Create the step description based on operation type
               let stepDesc = '';
               const resultName = op.name ? this.formatVariableName(op.name) : (index === operations.length - 1 ? "Result" : `Step ${index + 1}`);
+              let operationName = op.name || (index === operations.length - 1 ? "result" : `step${index + 1}`);
+
+              // Create formulas for this step
+              let singleLineStep = "";
+              let multiLineStep = "";
 
               switch (funcName) {
                 case 'add':
                   stepDesc = `${resultName} = ${formattedArgs[0]} + ${formattedArgs[1]}`;
+                  singleLineStep = `(${actualValues[0]} + ${actualValues[1]})`;
+                  multiLineStep = `${argVarNames[0]} + ${argVarNames[1]}`;
                   break;
                 case 'subtract':
                   stepDesc = `${resultName} = ${formattedArgs[0]} - ${formattedArgs[1]}`;
+                  singleLineStep = `(${actualValues[0]} - ${actualValues[1]})`;
+                  multiLineStep = `${argVarNames[0]} - ${argVarNames[1]}`;
                   break;
                 case 'multiply':
                   stepDesc = `${resultName} = ${formattedArgs[0]} × ${formattedArgs[1]}`;
+                  singleLineStep = `(${actualValues[0]} * ${actualValues[1]})`;
+                  multiLineStep = `${argVarNames[0]} * ${argVarNames[1]}`;
                   break;
                 case 'divide':
                   stepDesc = `${resultName} = ${formattedArgs[0]} ÷ ${formattedArgs[1]}`;
+                  singleLineStep = `(${actualValues[0]} / ${actualValues[1]})`;
+                  multiLineStep = `${argVarNames[0]} / ${argVarNames[1]}`;
                   break;
                 case 'power':
                   stepDesc = `${resultName} = ${formattedArgs[0]}^${formattedArgs[1]}`;
+                  singleLineStep = `Math.pow(${actualValues[0]}, ${actualValues[1]})`;
+                  multiLineStep = `Math.pow(${argVarNames[0]}, ${argVarNames[1]})`;
                   break;
                 case 'sqrt':
                   stepDesc = `${resultName} = √${formattedArgs[0]}`;
+                  singleLineStep = `Math.sqrt(${actualValues[0]})`;
+                  multiLineStep = `Math.sqrt(${argVarNames[0]})`;
                   break;
                 case 'percent':
                   stepDesc = `${resultName} = ${formattedArgs[0]} × ${formattedArgs[1]}%`;
+                  singleLineStep = `(${actualValues[0]} * ${actualValues[1]} / 100)`;
+                  multiLineStep = `${argVarNames[0]} * ${argVarNames[1]} / 100`;
                   break;
                 case 'percentOf':
                   stepDesc = `${resultName} = ${formattedArgs[0]} ÷ ${formattedArgs[1]} × 100%`;
+                  singleLineStep = `(${actualValues[0]} / ${actualValues[1]} * 100)`;
+                  multiLineStep = `${argVarNames[0]} / ${argVarNames[1]} * 100`;
                   break;
                 default:
                   stepDesc = `${resultName} = ${funcName}(${formattedArgs.join(', ')})`;
+                  singleLineStep = `${funcName}(${actualValues.join(', ')})`;
+                  multiLineStep = `${funcName}(${argVarNames.join(', ')})`;
               }
 
               steps.push(stepDesc);
+              singleLineFormula = singleLineStep;
+              pasteableSteps.push(`const ${operationName} = ${multiLineStep};`);
+
+              // Save name for reference in subsequent steps
               lastResult = resultName;
+
+              // If this operation has a name, store its value for later operations
+              if (op.name) {
+                try {
+                  // Try to calculate the actual value
+                  let value = eval(singleLineStep);
+                  variableValues[op.name] = value;
+                } catch (e) {
+                  console.warn("Could not evaluate step value for", op.name);
+                }
+              }
             });
 
-            return steps.join('\n');
+            // Build a complete pasteable code block for console
+            let fullPasteableCode = "";
+
+            // First, define all input variables
+            Object.entries(variableValues).forEach(([varName, value]) => {
+              if (calc.inputs.includes(varName)) {
+                fullPasteableCode += `const ${varName} = ${value};\n`;
+              }
+            });
+
+            // Then add each calculation step
+            pasteableSteps.forEach((step) => {
+              fullPasteableCode += step + "\n";
+            });
+
+            // Add a console.log of the final result
+            fullPasteableCode += "console.log(result); // Final answer";
+
+            // Clean up single line formula for Google
+            // Remove any nested parentheses that aren't needed
+            singleLineFormula = singleLineFormula.replace(/\(\(([^()]*)\)\)/g, "($1)");
+
+            // Return the formatted steps and add both pasteable formulas
+            return steps.join('\n') +
+              '\n\n' +
+              'Google-friendly formula: ' + singleLineFormula +
+              '\n\n' +
+              'Console code:\n' + fullPasteableCode;
           }
 
           // For legacy function string
@@ -919,7 +1038,6 @@
             .map(word => word.charAt(0).toUpperCase() + word.slice(1))
             .join(' ');
         },
-
         // Error display to users
         showErrorMessage(message) {
           // Create error alert element
