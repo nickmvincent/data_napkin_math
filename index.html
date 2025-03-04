@@ -253,6 +253,47 @@
       .right-panel {
         display: none !important;
       }
+
+      .calc-details {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin-top: 15px;
+        font-size: 0.95rem;
+        border: 1px solid #e9ecef;
+      }
+
+      .calculation-steps {
+        margin: 10px 0;
+        padding: 10px;
+        background-color: #fff;
+        border-radius: 4px;
+        border-left: 3px solid #10a37f;
+      }
+
+      .calculation-steps pre {
+        font-family: 'Merriweather', serif;
+        font-size: 1rem;
+        white-space: pre-wrap;
+        margin: 0;
+        line-height: 1.6;
+      }
+
+      .calc-details table {
+        background-color: #fff;
+        font-size: 0.9rem;
+      }
+
+      .calc-details table th {
+        background-color: #f0f0f0;
+      }
+
+      /* For mathematical symbols */
+      .math-symbol {
+        font-family: 'Times New Roman', serif;
+        font-weight: normal;
+        margin: 0 2px;
+      }
     }
   </style>
 </head>
@@ -403,11 +444,37 @@
               {{ calc.showCalcDetails ? "Hide" : "Show" }} Calculation Details
             </button>
             <div v-if="calc.showCalcDetails" class="calc-details">
-              <strong>Calculation:</strong>
-              <pre>{{ getCalcDetails(calc) }}</pre>
-              <strong>Raw Value:</strong> {{ calc.result.rawValue }}<br />
-              <div v-if="calc.unitDetails">
+              <strong>Calculation Steps:</strong>
+              <div class="calculation-steps">
+                <pre v-html="getCalcDetails(calc)"></pre>
+              </div>
+
+              <div class="mt-3">
+                <strong>Raw Value:</strong> {{ calc.result.rawValue }}
+              </div>
+
+              <div v-if="calc.unitDetails" class="mt-2">
                 <strong>Unit Details:</strong> {{ calc.unitDetails }}
+              </div>
+
+              <div class="mt-3">
+                <strong>Variables:</strong>
+                <table class="table table-sm table-bordered mt-2">
+                  <thead>
+                    <tr>
+                      <th>Variable</th>
+                      <th>Value</th>
+                      <th>Units</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="inputKey in calc.inputs" :key="inputKey">
+                      <td>{{ formatVariableName(inputKey) }}</td>
+                      <td>{{ humanReadable(inputs[inputKey].value) }}</td>
+                      <td>{{ inputs[inputKey].display_units }}</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
@@ -757,27 +824,74 @@
         },
         // Get calculation details for display
         // Get calculation details for display
+        // Get calculation details for display with enhanced mathematical notation
         getCalcDetails(calc) {
           if (!calc.calculate) return "No calculation defined";
 
           // For operation-based calculations
           if (calc.calculate.operations) {
-            return calc.calculate.operations.map(op => {
+            const operations = calc.calculate.operations;
+            const steps = [];
+            let lastResult = "result";
+
+            // Process each operation and format it for display
+            operations.forEach((op, index) => {
               const funcName = op.func || 'unknown';
 
               // Format arguments with variable names when possible
               const formattedArgs = (op.args || []).map(arg => {
+                if (arg === 'result') {
+                  return lastResult;
+                }
+
                 if (typeof arg === 'string' && arg.match(/^\{([^}]+)\}$/)) {
                   // Extract variable name from {varName} format
-                  return arg.slice(1, -1);
+                  const varName = arg.slice(1, -1);
+                  // Format variable names to be more readable
+                  return this.formatVariableName(varName);
                 }
-                return arg;
-              }).join(', ');
 
-              // Include the operation name if available
-              const opName = op.name ? `${op.name} = ` : '';
-              return `${opName}${funcName}(${formattedArgs})`;
-            }).join(' → ');
+                return arg;
+              });
+
+              // Create the step description based on operation type
+              let stepDesc = '';
+              const resultName = op.name ? this.formatVariableName(op.name) : (index === operations.length - 1 ? "Result" : `Step ${index + 1}`);
+
+              switch (funcName) {
+                case 'add':
+                  stepDesc = `${resultName} = ${formattedArgs[0]} + ${formattedArgs[1]}`;
+                  break;
+                case 'subtract':
+                  stepDesc = `${resultName} = ${formattedArgs[0]} - ${formattedArgs[1]}`;
+                  break;
+                case 'multiply':
+                  stepDesc = `${resultName} = ${formattedArgs[0]} × ${formattedArgs[1]}`;
+                  break;
+                case 'divide':
+                  stepDesc = `${resultName} = ${formattedArgs[0]} ÷ ${formattedArgs[1]}`;
+                  break;
+                case 'power':
+                  stepDesc = `${resultName} = ${formattedArgs[0]}^${formattedArgs[1]}`;
+                  break;
+                case 'sqrt':
+                  stepDesc = `${resultName} = √${formattedArgs[0]}`;
+                  break;
+                case 'percent':
+                  stepDesc = `${resultName} = ${formattedArgs[0]} × ${formattedArgs[1]}%`;
+                  break;
+                case 'percentOf':
+                  stepDesc = `${resultName} = ${formattedArgs[0]} ÷ ${formattedArgs[1]} × 100%`;
+                  break;
+                default:
+                  stepDesc = `${resultName} = ${funcName}(${formattedArgs.join(', ')})`;
+              }
+
+              steps.push(stepDesc);
+              lastResult = resultName;
+            });
+
+            return steps.join('\n');
           }
 
           // For legacy function string
@@ -788,6 +902,24 @@
           // Fallback to function toString
           return calc.calculate.toString();
         },
+
+        // Helper method to format variable names to be more human-readable
+        formatVariableName(varName) {
+          // Handle inputs that follow the pattern name__source__unit
+          const parts = varName.split('__');
+          if (parts.length > 1) {
+            // Create a more readable format
+            const baseName = parts[0].replace(/_/g, ' ');
+            return baseName.charAt(0).toUpperCase() + baseName.slice(1);
+          }
+
+          // If it's a simple name or an intermediate result
+          return varName.replace(/_/g, ' ')
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+        },
+
         // Error display to users
         showErrorMessage(message) {
           // Create error alert element
