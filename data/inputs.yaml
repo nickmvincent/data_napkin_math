@@ -311,6 +311,91 @@ inputs:
   source_url: https://www.census.gov/popclock/
   source_notes: US Census
 
+- variable: group_size__youtube__musicpremium_subscribers_paid_2019
+  phrase_for_card: "number of YouTube Music and Premium subscribers in 2019"
+  variable_type: group_size
+  entity: youtube
+  units: musicpremium_subscribers_paid_2019
+  nice_name: Number of YouTube Music and Premium subscribers (paid)
+  value: 20000000
+  scale: 1e6
+  display_units: millions of subscribers
+  value_description: Number of YouTube Music and Premium subscribers (paid)
+  key_assumption: From the numbers reported in 2020 and 2021, assuming that the number of people in free trials are not included in this figure
+  source_url: http://abc.xyz/investor/events/2019-q4-earnings-call
+  source_notes: Alphabet 2019 Q4 Earnings Call
+
+- variable: group_size__youtube__musicpremium_subscribers_paid_2020
+  phrase_for_card: "number of YouTube Music and Premium subscribers in 2020"
+  variable_type: group_size
+  entity: youtube
+  units: musicpremium_subscribers_paid_2020
+  nice_name: Number of YouTube Music and Premium subscribers (paid)
+  value: 30000000
+  scale: 1e6
+  display_units: millions of subscribers
+  value_description: Number of YouTube Music and Premium subscribers (paid)
+  key_assumption: N/A
+  source_url: http://abc.xyz/investor/events/2020-q3-earnings-call
+  source_notes: Alphabet 2020 Q3 Earnings Call
+
+- variable: group_size__youtube__musicpremium_subscribers_trials_2020
+  phrase_for_card: "number of YouTube Music and Premium subscribers in 2020 (trials)"
+  variable_type: group_size
+  entity: youtube
+  units: musicpremium_subscribers_trials_2020
+  nice_name: Number of YouTube Music and Premium subscribers (trials)
+  value: 35000000
+  scale: 1e6
+  display_units: millions of subscribers
+  value_description: Number of YouTube Music and Premium subscribers (trials)
+  key_assumption: N/A
+  source_url: http://abc.xyz/investor/events/2020-q3-earnings-call
+  source_notes: Alphabet 2020 Q3 Earnings Call
+
+- variable: group_size__youtube__musicpremium_subscribers_all_2021
+  phrase_for_card: "number of YouTube Music and Premium subscribers in 2021"
+  variable_type: group_size
+  entity: youtube
+  units: musicpremium_subscribers_all_2021
+  nice_name: Number of YouTube Music and Premium subscribers (paid + in free trial)
+  value: 50000000
+  scale: 1e6
+  display_units: millions of subscribers
+  value_description: Number of YouTube Music and Premium subscribers (paid + in free trial)
+  key_assumption: N/A
+  source_url: http://abc.xyz/investor/events/2021-q3-earnings-call
+  source_notes: Alphabet 2021 Q3 Earnings Call
+
+- variable: group_size__youtube__musicpremium_subscribers_all_2022
+  phrase_for_card: "number of YouTube Music and Premium subscribers in 2022"
+  variable_type: group_size
+  entity: youtube
+  units: musicpremium_subscribers_all_2022
+  nice_name: Number of YouTube Music and Premium subscribers (paid + in free trial)
+  value: 80000000
+  scale: 1e6
+  display_units: millions of subscribers
+  value_description: Number of YouTube Music and Premium subscribers (paid + in free trial)
+  key_assumption: N/A
+  source_url: http://abc.xyz/investor/events/2022-q4-earnings-call
+  source_notes: Alphabet 2022 Q4 Earnings Call
+
+- variable: group_size__youtube__musicpremium_subscribers_all_2024
+  phrase_for_card: "number of YouTube Music and Premium subscribers in 2024"
+  variable_type: group_size
+  entity: youtube
+  units: musicpremium_subscribers_all_2024
+  nice_name: Number of YouTube Music and Premium subscribers (paid + in free trial)
+  value: 100000000
+  scale: 1e6
+  display_units: millions of subscribers
+  value_description: Number of YouTube Music and Premium subscribers (paid + in free trial)
+  key_assumption: N/A
+  source_url: http://abc.xyz/investor/events/2024-q1-earnings-call
+  source_notes: Alphabet 2024 Q1 Earnings Call
+
+
 # - variable: contribution_distribution__wikipedia__unknown
 #   variable_type: distribution
 #   entity: wikipedia
