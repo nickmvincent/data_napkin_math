@@ -57,7 +57,7 @@ export const scenariosData = [
     //     },
     //     category: "Paying for new labour"
     // },
-    
+
     {
         title: "Freelance Cost Per Book",
         description: "Calculate the cost of commissioning a book based on freelance rates.",
@@ -139,6 +139,17 @@ export const scenariosData = [
         calculate: (totalBooks, wordsPerBook, totalTokens) => (totalBooks * wordsPerBook) / totalTokens,
         result: {
             label: "Coverage Ratio",
+        },
+        category: "Misc"
+    },
+    {
+        title: "For reference: YouTube Music and Premium Subscriptions",
+        description: "How valuable can a platform built on videos and video recommendations be? YouTube is free to use, but in recent years, they have been pushing their subscription service harder while making it harder for unsubscribed users to use the site, leading to an increase in subscribers over the years. For example, have a look at the {sub_count__youtube__musicpremium_subscribers_all_2024}",
+        inputs: ["sub_count__youtube__musicpremium_subscribers_all_2024", "subscription_cost__youtube__dollars"],
+        calculate: (subscriptionCounts, subscriptionCost) => (subscriptionCounts * subscriptionCost),
+        result: {
+            label: "Revenue from Paid YouTube Subscriptions",
+            unit: "dollars",
         },
         category: "Misc"
     },
