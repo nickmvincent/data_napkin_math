@@ -1,0 +1,56 @@
+{
+    "files": [],
+    "categories": {
+      "average_length": [
+        "average_length__book__words.md"
+      ],
+      "conversion_rate": [
+        "conversion_rate__stackipedia__contributions_per_document.md",
+        "conversion_rate__stackipedia__visitors_per_contribution.md"
+      ],
+      "dataset_attribute": [
+        "dataset_attribute__redpajama__tokens_per_contribution.md",
+        "dataset_attribute__stackipedia__tokens_per_document.md"
+      ],
+      "dataset_size": [
+        "dataset_size__hle__questions.md",
+        "dataset_size__llama3__tokens.md",
+        "dataset_size__olmo2__tokens.md"
+      ],
+      "deal_group_size": [
+        "deal_group_size__newscorp__employees.md",
+        "deal_group_size__taylorandfrancis__articles.md",
+        "deal_group_size__reddit__daily_active_users.md",
+        "deal_group_size__wsj__journalists.md"
+      ],
+      "deal_value": [
+        "deal_value__newscorp__dollars.md",
+        "deal_value__taylorandfrancis_microsoft__dollars.md",
+        "deal_value__reddit_google__dollars.md"
+      ],
+      "group_size": [
+        "group_size__usa__people.md",
+        "group_size__world__people.md"
+      ],
+      "target_metric": [
+        "target_metric__stackipedia__tokens.md"
+      ],
+      "total_books": [
+        "total_books__books3__books.md"
+      ],
+      "training_detail": [
+        "training_detail__openai__words_per_token.md"
+      ],
+      "wage_data": [
+        "wage_data__generic_freelance_higher__dollars_per_word.md",
+        "wage_data__generic_freelance_lower__dollars_per_word.md",
+        "wage_data__phd__dollars_per_question.md"
+      ],
+      "yearly_revenue": [
+        "yearly_revenue__anthropic__dollars.md",
+        "yearly_revenue__microsoft__dollars.md",
+        "yearly_revenue__openai__dollars.md"
+      ]
+    },
+    "last_updated": "2025-03-19"
+  }

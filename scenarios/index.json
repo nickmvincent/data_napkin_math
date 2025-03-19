@@ -1,0 +1,14 @@
+{
+    "files": [],
+    "categories": {
+      "distributing-money": [
+        "distributing-ai-company-revenue-broadly.md",
+        "distributing-money-from-data-deals.md"
+      ],
+      "paying-for-new-labour": [
+        "commissioning-new-datasets.md",
+        "producing-an-expert-evaluation-set.md"
+      ]
+    },
+    "last_updated": "2025-03-19"
+  }
