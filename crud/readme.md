@@ -1,0 +1,1 @@
+lightweight editor for markdown backend. mainly as proof of concept, likely will be replacable with an existing tool.

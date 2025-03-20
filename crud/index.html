@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown Repository Editor</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.0/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #f1f1f1;
+            --text-color: #333;
+            --border-color: #ddd;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        body {
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        button, input[type="file"] {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #2980b9;
+        }
+        
+        #fileInput {
+            display: none;
+        }
+        
+        .file-upload-label {
+            background: var(--primary-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+        
+        .file-upload-label:hover {
+            background: #2980b9;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 20px;
+            height: calc(100vh - 120px);
+        }
+        
+        #fileTree {
+            border: 1px solid var(--border-color);
+            overflow: auto;
+            padding: 10px;
+            background: var(--secondary-color);
+            border-radius: 4px;
+        }
+        
+        .file-item {
+            padding: 5px;
+            cursor: pointer;
+            border-radius: 3px;
+            margin-bottom: 4px;
+        }
+        
+        .file-item:hover {
+            background: #e4e4e4;
+        }
+        
+        .file-item.active {
+            background: #e4e4e4;
+            font-weight: bold;
+        }
+        
+        .dir-item {
+            cursor: pointer;
+            padding: 5px;
+            font-weight: bold;
+        }
+        
+        .dir-contents {
+            padding-left: 15px;
+        }
+        
+        .editor-preview {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            height: 100%;
+        }
+        
+        #editor, #preview {
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            overflow: auto;
+        }
+        
+        #editor {
+            padding: 10px;
+            font-family: monospace;
+            font-size: 14px;
+            resize: none;
+            white-space: pre-wrap;
+            line-height: 1.5;
+            width: 100%;
+            height: 100%;
+        }
+        
+        #preview {
+            padding: 20px;
+            background: white;
+        }
+        
+        .preview-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .preview-content img {
+            max-width: 100%;
+        }
+        
+        .preview-content pre {
+            background: #f7f7f7;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        
+        .status-bar {
+            margin-top: 10px;
+            padding: 5px 10px;
+            background: var(--secondary-color);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .editor-preview {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr 1fr;
+            }
+            
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Markdown Repository Editor</h1>
+        <div class="controls">
+            <label for="fileInput" class="file-upload-label">Load Repository</label>
+            <input type="file" id="fileInput" accept=".zip" webkitdirectory directory multiple />
+            <button id="downloadBtn" disabled>Download Fork</button>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div id="fileTree">
+            <p>Load a repository to start editing.</p>
+        </div>
+        <div class="editor-preview">
+            <textarea id="editor" placeholder="Select a file to edit" disabled></textarea>
+            <div id="preview">
+                <div class="preview-content">
+                    <p>Preview will appear here.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="status-bar" id="statusBar">Ready to load repository</div>
+    
+    <script>
+        // DOM Elements
+        const fileInput = document.getElementById('fileInput');
+        const fileTree = document.getElementById('fileTree');
+        const editor = document.getElementById('editor');
+        const preview = document.getElementById('preview');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const statusBar = document.getElementById('statusBar');
+        
+        // Main app data
+        const state = {
+            files: {},
+            activeFile: null,
+            originalFiles: {},
+            markdownFiles: []
+        };
+        
+        // Event Listeners
+        fileInput.addEventListener('change', handleFileUpload);
+        editor.addEventListener('input', handleEditorChange);
+        downloadBtn.addEventListener('click', handleDownload);
+        
+        // Handle file repository upload
+        async function handleFileUpload(event) {
+            try {
+                statusBar.textContent = 'Loading repository...';
+                state.files = {};
+                state.originalFiles = {};
+                state.markdownFiles = [];
+                
+                const files = event.target.files;
+                
+                if (files.length === 0) {
+                    return;
+                }
+                
+                // Case 1: Multiple files selected (directory upload)
+                if (files.length > 1) {
+                    for (const file of files) {
+                        // Skip .git and other hidden directories
+                        if (file.webkitRelativePath.includes('/.') || file.webkitRelativePath.startsWith('.')) {
+                            continue;
+                        }
+                        
+                        // Read file contents
+                        const content = await readFileContent(file);
+                        const path = file.webkitRelativePath.split('/').slice(1).join('/');
+                        state.files[path] = content;
+                        state.originalFiles[path] = content;
+                        
+                        if (path.toLowerCase().endsWith('.md')) {
+                            state.markdownFiles.push(path);
+                        }
+                    }
+                }
+                // Case 2: ZIP file uploaded
+                else if (files[0].name.toLowerCase().endsWith('.zip')) {
+                    const zipFile = files[0];
+                    const zip = await JSZip.loadAsync(zipFile);
+                    
+                    // Process all files in the zip
+                    const zipPromises = [];
+                    zip.forEach((path, file) => {
+                        // Skip directories and hidden files
+                        if (file.dir || path.includes('/.') || path.startsWith('.')) {
+                            return;
+                        }
+                        
+                        const promise = file.async('text').then(content => {
+                            state.files[path] = content;
+                            state.originalFiles[path] = content;
+                            
+                            if (path.toLowerCase().endsWith('.md')) {
+                                state.markdownFiles.push(path);
+                            }
+                        });
+                        
+                        zipPromises.push(promise);
+                    });
+                    
+                    await Promise.all(zipPromises);
+                }
+                
+                if (state.markdownFiles.length === 0) {
+                    statusBar.textContent = 'No markdown files found in repository.';
+                    fileTree.innerHTML = '<p>No markdown files found. Please upload a repository with .md files.</p>';
+                    return;
+                }
+                
+                // Enable the editor
+                editor.disabled = false;
+                downloadBtn.disabled = false;
+                
+                // Build and render the file tree
+                renderFileTree();
+                
+                // Select the first markdown file
+                selectFile(state.markdownFiles[0]);
+                
+                statusBar.textContent = `Loaded ${state.markdownFiles.length} markdown files successfully.`;
+            } catch (error) {
+                console.error('Error loading repository:', error);
+                statusBar.textContent = `Error loading repository: ${error.message}`;
+            }
+        }
+        
+        // Render the file tree
+        function renderFileTree() {
+            fileTree.innerHTML = '';
+            const tree = buildDirectoryTree();
+            
+            // Render the root directories
+            for (const [name, content] of Object.entries(tree)) {
+                fileTree.appendChild(renderDirectoryNode(name, content, []));
+            }
+        }
+        
+        // Build a nested directory tree structure from flat file paths
+        function buildDirectoryTree() {
+            const tree = {};
+            
+            state.markdownFiles.forEach(path => {
+                const parts = path.split('/');
+                let current = tree;
+                
+                for (let i = 0; i < parts.length - 1; i++) {
+                    const part = parts[i];
+                    if (!current[part]) {
+                        current[part] = {};
+                    }
+                    current = current[part];
+                }
+                
+                // Add the file at the last level
+                const fileName = parts[parts.length - 1];
+                current[fileName] = null; // null indicates it's a file
+            });
+            
+            return tree;
+        }
+        
+        // Render a directory node and its children
+        function renderDirectoryNode(name, content, pathParts) {
+            const container = document.createElement('div');
+            const currentPath = [...pathParts, name];
+            
+            // Check if it's a file (content === null)
+            if (content === null) {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.textContent = name;
+                fileItem.dataset.path = currentPath.join('/');
+                
+                fileItem.addEventListener('click', () => {
+                    selectFile(fileItem.dataset.path);
+                });
+                
+                return fileItem;
+            }
+            
+            // It's a directory
+            const dirItem = document.createElement('div');
+            dirItem.className = 'dir-item';
+            dirItem.textContent = `📁 ${name}`;
+            
+            // Create container for directory contents
+            const dirContents = document.createElement('div');
+            dirContents.className = 'dir-contents';
+            
+            // Sort entries: directories first, then files
+            const entries = Object.entries(content);
+            entries.sort((a, b) => {
+                // If both are directories or both are files, sort by name
+                if ((a[1] === null && b[1] === null) || (a[1] !== null && b[1] !== null)) {
+                    return a[0].localeCompare(b[0]);
+                }
+                // Directories come before files
+                return a[1] === null ? 1 : -1;
+            });
+            
+            // Add the children
+            for (const [childName, childContent] of entries) {
+                dirContents.appendChild(renderDirectoryNode(childName, childContent, currentPath));
+            }
+            
+            container.appendChild(dirItem);
+            container.appendChild(dirContents);
+            
+            // Toggle directory visibility
+            dirItem.addEventListener('click', () => {
+                dirContents.style.display = dirContents.style.display === 'none' ? 'block' : 'none';
+                dirItem.textContent = `${dirContents.style.display === 'none' ? '📁' : '📂'} ${name}`;
+            });
+            
+            return container;
+        }
+        
+        // Handle editor change event
+        function handleEditorChange() {
+            if (state.activeFile) {
+                // Update the file content
+                state.files[state.activeFile] = editor.value;
+                
+                // Update the preview
+                const previewContent = marked.parse(editor.value);
+                preview.querySelector('.preview-content').innerHTML = previewContent;
+                
+                // Mark unsaved changes if needed
+                if (state.files[state.activeFile] !== state.originalFiles[state.activeFile]) {
+                    statusBar.textContent = `Editing: ${state.activeFile} (unsaved changes)`;
+                } else {
+                    statusBar.textContent = `Editing: ${state.activeFile}`;
+                }
+            }
+        }
+        
+        // Select a file for editing
+        function selectFile(path) {
+            // Deactivate the previous file item
+            const activeItems = document.querySelectorAll('.file-item.active');
+            activeItems.forEach(item => item.classList.remove('active'));
+            
+            // Activate the new file item
+            const fileItem = document.querySelector(`.file-item[data-path="${path}"]`);
+            if (fileItem) {
+                fileItem.classList.add('active');
+            }
+            
+            // Update state and editor
+            state.activeFile = path;
+            editor.value = state.files[path];
+            
+            // Update preview
+            const previewContent = marked.parse(state.files[path]);
+            preview.querySelector('.preview-content').innerHTML = previewContent;
+            
+            // Update status
+            statusBar.textContent = `Editing: ${path}`;
+        }
+        
+        // Handle download of the forked repository
+        async function handleDownload() {
+            try {
+                statusBar.textContent = 'Preparing download...';
+                
+                const zip = new JSZip();
+                
+                // Add all files to the zip
+                for (const [path, content] of Object.entries(state.files)) {
+                    zip.file(path, content);
+                }
+                
+                // Generate the zip file
+                const zipBlob = await zip.generateAsync({ type: 'blob' });
+                
+                // Save the zip file
+                saveAs(zipBlob, 'markdown-fork.zip');
+                
+                statusBar.textContent = 'Fork downloaded successfully!';
+            } catch (error) {
+                console.error('Error downloading fork:', error);
+                statusBar.textContent = `Error downloading fork: ${error.message}`;
+            }
+        }
+        
+        // Utility function to read file content
+        function readFileContent(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(new Error('Failed to read file'));
+                reader.readAsText(file);
+            });
+        }
+    </script>
+</body>
+</html>
