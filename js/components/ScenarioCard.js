@@ -116,13 +116,40 @@ export default {
           {{ scenario.showCalcDetails ? "Hide" : "Show" }} Calculation Details
         </button>
         <div v-if="scenario.showCalcDetails" class="calc-details mt-2">
-          <strong>Calculation Function:</strong>
-          <pre>{{ scenario.calculate?.toString() }}</pre>
-          <strong>Raw Value:</strong> {{ scenario.result.rawValue }}<br />
-          <div v-if="scenario.unitDetails">
-            <strong>Unit Details:</strong> {{ scenario.unitDetails }}
-          </div>
-        </div>
+  <h6>Calculation Details</h6>
+  
+  <!-- Human-readable operation description -->
+  <div class="operation-description mb-2">
+    <strong>Operation:</strong> 
+    <span v-if="scenario.calculation_type === 'operations'">
+      {{ formatOperation(scenario.operations) }}
+    </span>
+    <span v-else>
+      {{ scenario.calculation_type }}
+    </span>
+  </div>
+  
+  <!-- Input values used in calculation -->
+    <div class="calculation-inputs mb-2">
+      <strong>Input Values:</strong>
+      <ul class="list-unstyled ms-3">
+        <li v-for="inputKey in scenario.inputs" :key="inputKey">
+          {{ inputs[inputKey]?.nice_name || formatLabel(inputKey) }}: 
+          <span class="text-primary">{{ formatValue(inputs[inputKey]?.value, inputs[inputKey]?.scale) }} {{ inputs[inputKey]?.display_units }}</span>
+        </li>
+      </ul>
+    </div>
+    
+    <!-- Raw result value -->
+    <div class="mb-2">
+      <strong>Result:</strong> 
+      <span class="text-primary">{{ humanReadable(scenario.result.rawValue) }} {{ scenario.result.units }}</span>
+    </div>
+    
+    <div v-if="scenario.unitDetails" class="mt-2">
+      <strong>Unit Details:</strong> {{ scenario.unitDetails }}
+    </div>
+  </div>
       </div>
     </div>
   </div>
@@ -270,5 +297,79 @@ export default {
       // Emit an event to parent if needed
       this.$emit('update-scenario', this.index, this.scenario);
     },
+    /**
+ * Add this method to the methods section of ScenarioCard.js
+ */
+    formatOperation(operationsJson) {
+      try {
+        // Parse the operations JSON
+        const operations = JSON.parse(operationsJson);
+
+        if (!operations || !operations.length) {
+          return 'No operations defined';
+        }
+
+        // Format each operation in a human-readable way
+        const descriptions = operations.map(op => {
+          // Format the arguments
+          const formattedArgs = op.args.map(arg => {
+            if (typeof arg === 'string' && arg.startsWith('{') && arg.endsWith('}')) {
+              const varName = arg.slice(1, -1);
+              // Try to get the nice name for the variable
+              return this.inputs[varName]?.nice_name || this.formatLabel(varName);
+            }
+            return arg;
+          });
+
+          // Create operation description based on function type
+          switch (op.func) {
+            case 'multiply':
+              return `Multiply ${formattedArgs.join(' × ')}`;
+            case 'divide':
+              return `Divide ${formattedArgs[0]} by ${formattedArgs[1]}`;
+            case 'add':
+              return `Add ${formattedArgs.join(' + ')}`;
+            case 'subtract':
+              return `Subtract ${formattedArgs[1]} from ${formattedArgs[0]}`;
+            case 'power':
+              return `Raise ${formattedArgs[0]} to the power of ${formattedArgs[1]}`;
+            default:
+              return `${op.func}(${formattedArgs.join(', ')})`;
+          }
+        });
+
+        // Join all operations with steps
+        return descriptions.map((desc, index) => `Step ${index + 1}: ${desc}`).join('\n');
+      } catch (error) {
+        console.error('Error formatting operation:', error);
+        return 'Error parsing operations';
+      }
+    },
+
+    /**
+     * Add this helper method if you don't already have it
+     */
+    humanReadable(value) {
+      if (value === undefined || value === null) return 'N/A';
+      if (value === 0) return "0";
+
+      if (Math.abs(value) < 1) {
+        let valueStr = value.toString();
+        let firstNonZeroIndex = valueStr.indexOf(valueStr.match(/[1-9]/));
+        return value.toFixed(firstNonZeroIndex + 1);
+      }
+
+      const units = ["", "thousand", "million", "billion", "trillion"];
+      const order = Math.floor(Math.log10(Math.abs(value)) / 3);
+
+      if (order === 0) {
+        return value.toFixed(2);
+      }
+
+      const unitName = units[order] || `10^${order * 3}`;
+      const adjustedValue = value / Math.pow(10, 3 * order);
+
+      return `${adjustedValue.toFixed(2)} ${unitName}`;
+    }
   }
 };

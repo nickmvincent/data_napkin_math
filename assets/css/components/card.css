@@ -106,3 +106,46 @@
         transform: translateY(0);
     }
 }
+
+/* Add these styles to your card.css file */
+
+/* Calculation details area styling */
+.calc-details {
+    background: var(--light-gray);
+    padding: 15px;
+    border-radius: var(--border-radius);
+    margin-top: 10px;
+    font-size: 0.9rem;
+    border-left: 3px solid var(--primary-color);
+}
+
+.calc-details h6 {
+    color: var(--primary-color);
+    margin-bottom: 12px;
+}
+
+.calc-details .operation-description {
+    white-space: pre-line;
+    background-color: rgba(16, 163, 127, 0.05);
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+.calc-details .calculation-inputs {
+    padding: 8px 0;
+}
+
+.calc-details .text-primary {
+    color: var(--primary-color) !important;
+    font-weight: 600;
+}
+
+.calc-details ul.list-unstyled {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.calc-details ul.list-unstyled li {
+    margin-bottom: 3px;
+}
