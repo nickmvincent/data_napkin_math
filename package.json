@@ -1,21 +1,33 @@
 {
-  "name": "data_napkin_math",
-  "module": "index.ts",
-  "type": "module",
-  "devDependencies": {
-    "@types/bun": "latest",
-    "@types/node": "^22.13.11",
-    "install": "^0.13.0",
-    "npm": "^11.2.0",
-    "ts-node": "^10.9.2"
-  },
-  "peerDependencies": {
-    "typescript": "^5.8.2"
-  },
-  "dependencies": {
-    "gray-matter": "^4.0.3"
-  },
+  "name": "data-napkin-math",
+  "version": "1.0.0",
+  "description": "Interactive web application for exploring data value calculations",
+  "main": "index.html",
   "scripts": {
-    "buildSite": "bun src/buildSite.ts"
-  }
+    "build": "ts-node src/buildSite.ts",
+    "serve": "http-server -p 8000",
+    "dev": "npm run build && npm run serve",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nickmvincent/data_napkin_math.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nickmvincent/data_napkin_math/issues"
+  },
+  "homepage": "https://github.com/nickmvincent/data_napkin_math#readme",
+  "devDependencies": {
+    "@types/node": "^18.15.11",
+    "front-matter": "^4.0.2",
+    "fs-extra": "^11.1.1",
+    "glob": "^10.2.1",
+    "http-server": "^14.1.1",
+    "marked": "^4.3.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {}
 }

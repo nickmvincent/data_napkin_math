@@ -1,0 +1,99 @@
+/* Chart Component Styles */
+
+/* Visualization area layout */
+.visualization-area {
+    margin-bottom: 20px;
+}
+
+/* Main chart container */
+.exploration-visualization {
+    height: 300px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 10px;
+    background-color: var(--white);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+/* Plot container (where chart renders) */
+.plot-container {
+    width: 100%;
+    height: 100%;
+}
+
+/* Sensitivity controls panel */
+.sensitivity-controls {
+    padding: 15px;
+    background-color: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    height: 300px;
+}
+
+.sensitivity-controls h6 {
+    margin-bottom: 10px;
+    color: var(--black);
+}
+
+.sensitivity-controls p {
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+/* Range controls */
+.range-controls {
+    margin-top: 15px;
+}
+
+.range-value {
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+/* Range input styling */
+input[type="range"] {
+    width: 100%;
+    margin: 10px 0;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    background: var(--primary-color);
+}
+
+input[type="range"]::-moz-range-thumb {
+    background: var(--primary-color);
+}
+
+/* Chart loading and error states */
+.chart-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    color: var(--dark-gray);
+}
+
+.chart-error {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.chart-error p {
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .visualization-area .row {
+        flex-direction: column;
+    }
+
+    .exploration-visualization,
+    .sensitivity-controls {
+        margin-bottom: 15px;
+        height: 250px;
+    }
+}

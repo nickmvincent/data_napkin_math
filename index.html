@@ -3,319 +3,23 @@
 
 <head>
   <meta charset="UTF-8" />
-  <!-- Google Fonts for a polished, newspaper-like feel -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Playfair+Display:wght@400;700&display=swap"
-    rel="stylesheet" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Data Napkin Math</title>
+  
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" />
+  
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+  
+  <!-- Chart.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+  
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="assets/css/main.css" />
+  
   <!-- Vue 3 -->
   <script src="https://unpkg.com/vue@3"></script>
-  <!-- js-yaml for YAML parsing -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.0.0/js-yaml.min.js"></script>
-
-  <style>
-    /* Overall Fonts & Colors */
-    body {
-      font-family: 'Merriweather', serif;
-      background-color: #fdfdfd;
-      color: #333;
-      margin: 0;
-      padding: 0;
-    }
-
-    h1,
-    h2,
-    h3,
-    h4 {
-      font-family: 'Playfair Display', serif;
-    }
-
-    /* Fixed-top Navbar */
-    .navbar.fixed-top {
-      z-index: 1100;
-      border-bottom: 1px solid #ddd;
-    }
-
-    /* Top Toolbar */
-    .toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 20px;
-      background: #fafafa;
-      border-bottom: 1px solid #ddd;
-    }
-
-    .toolbar button {
-      font-weight: 700;
-    }
-
-    /* Main Container using Flex */
-    .main-container {
-      display: flex;
-      min-height: calc(100vh - 70px);
-      /* subtract navbar height */
-      max-width: 1400px;
-      margin: 0 auto;
-      width: 100%;
-    }
-
-    /* Left Panel: Constrained height & scrollable */
-    .left-panel {
-      flex: 0 0 400px;
-      padding: 20px;
-      height: calc(100vh - 70px);
-      overflow-y: auto;
-      scroll-behavior: smooth;
-      background: #fff;
-      border-right: 1px solid #ddd;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      text-align: left;
-    }
-
-    /* Main Content: Scenario Cards (with right margin when inspector is open) */
-    /* Note: on mobile we override the margin (see media query) */
-    .main-content {
-      flex-grow: 1;
-      padding: 20px 30px;
-      background: #fdfdfd;
-    }
-
-    /* Right Panel: Fixed to side, scrollable if needed (desktop only) */
-    .right-panel {
-      position: fixed;
-      top: 70px;
-      right: 0;
-      bottom: 0;
-      width: 400px;
-      padding: 20px;
-      overflow-y: auto;
-      scroll-behavior: smooth;
-      background: #fff;
-      border-left: 1px solid #ddd;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      text-align: left;
-    }
-
-    /* Hide panels when not toggled */
-    .hidden {
-      display: none;
-    }
-
-    /* Card styling for scenario cards */
-    .card {
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      padding: 20px;
-      margin-bottom: 30px;
-      background: #fff;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    }
-
-    /* Header styling for a magazine feel */
-    header h1 {
-      font-size: 2.8rem;
-      margin-bottom: 10px;
-    }
-
-    header p {
-      font-size: 1.2rem;
-      line-height: 1.6;
-    }
-
-    /* Remove default number input spinners */
-    input[type=number]::-webkit-outer-spin-button,
-    input[type=number]::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-
-    input[type=number] {
-      -moz-appearance: textfield;
-    }
-
-    /* Left panel input rows */
-    .input-row {
-      border-bottom: 1px solid #eee;
-      padding-bottom: 8px;
-      margin-bottom: 8px;
-    }
-
-    /* Result output styling for cards */
-    .result-output {
-      font-size: 1.8rem;
-      font-weight: bold;
-      color: #10a37f;
-      margin: 15px 0;
-      text-align: center;
-    }
-
-    /* Calculation details area styling */
-    .calc-details {
-      background: #f7f7f7;
-      padding: 10px;
-      border-radius: 4px;
-      margin-top: 10px;
-      font-size: 0.9rem;
-    }
-
-    /* Change Log styling in inspector */
-    .change-log {
-      margin-top: 15px;
-      font-size: 0.9rem;
-    }
-
-    .change-log h6 {
-      margin-bottom: 5px;
-    }
-
-    .change-log ul {
-      list-style: none;
-      padding-left: 0;
-    }
-
-    .change-log li {
-      border-bottom: 1px dashed #ccc;
-      padding: 3px 0;
-    }
-
-    /* Inline fill select styling */
-    .inline-select {
-      display: inline-block;
-      width: auto;
-      vertical-align: baseline;
-      margin: 0 2px;
-      font-size: 0.95rem;
-      border: 1px solid #ccc;
-      border-radius: 3px;
-      padding: 2px 25px 2px 5px;
-      background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="gray"><path d="M2 4l4 4 4-4"/></svg>') no-repeat right 5px center;
-      cursor: pointer;
-      appearance: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-    }
-
-    /* Category Selector (tiles) */
-    .category-selector {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .category-tile {
-      padding: 8px 16px;
-      border: 2px solid #10a37f;
-      border-radius: 4px;
-      background: #fff;
-      cursor: pointer;
-      transition: background 0.2s, color 0.2s, transform 0.2s;
-    }
-
-    .category-tile:hover {
-      transform: scale(1.03);
-    }
-
-    .category-tile.selected {
-      background: #10a37f;
-      color: #fff;
-      border-color: #10a37f;
-      font-weight: bold;
-      box-shadow: 0 2px 8px rgba(16, 163, 127, 0.5);
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      .main-container {
-        flex-direction: column;
-      }
-
-      .left-panel,
-      .right-panel {
-        position: relative;
-        flex: 0 0 auto;
-        width: 100%;
-        border: none;
-        height: auto;
-      }
-
-      .right-panel {
-        margin-top: 20px;
-      }
-
-      /* Hide the inline right panel on mobile since we use a modal instead */
-      .right-panel {
-        display: none !important;
-      }
-
-      .exploration-area {
-        margin-top: 20px;
-        padding: 15px;
-        background-color: #f8f9fa;
-        border-radius: 8px;
-        border: 1px solid #e9ecef;
-      }
-
-      .explore-button {
-        margin-top: 10px;
-        background-color: #10a37f;
-        border-color: #10a37f;
-      }
-
-      .explore-button:hover {
-        background-color: #0d8c6c;
-        border-color: #0d8c6c;
-      }
-
-      .exploration-visualization {
-        height: 300px;
-        border: 1px solid #dee2e6;
-        border-radius: 4px;
-        padding: 10px;
-        background-color: white;
-        margin-bottom: 20px;
-      }
-
-      .plot-container {
-        width: 100%;
-        height: 100%;
-      }
-
-      .sensitivity-controls {
-        padding: 15px;
-        background-color: white;
-        border: 1px solid #dee2e6;
-        border-radius: 4px;
-        height: 300px;
-      }
-
-      .range-controls {
-        margin-top: 15px;
-      }
-
-      .range-value {
-        font-weight: bold;
-      }
-
-      .input-control-row {
-        padding: 10px;
-        border-radius: 4px;
-        transition: background-color 0.2s;
-      }
-
-      .input-control-row:hover {
-        background-color: #e9ecef;
-      }
-    }
-  </style>
 </head>
 
 <body>
@@ -336,16 +40,16 @@
             <a class="nav-link" href="#aboutContent">About</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="https://github.com/nickmvincent/data_napkin_math">GitHub</a>
+            <a class="nav-link" href="https://github.com/nickmvincent/data_napkin_math" target="_blank">GitHub</a>
           </li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <!-- Vue App Container (padded below the navbar) -->
+  <!-- Vue App Container -->
   <div id="app" style="padding-top: 70px;">
-    <!-- Top Toolbar with symmetric toggle buttons -->
+    <!-- Top Toolbar -->
     <div class="toolbar">
       <button class="btn btn-primary" @click="toggleLeftPanel">
         {{ leftPanelOpen ? "Hide Inputs" : "Show Inputs" }}
@@ -355,47 +59,47 @@
       </button>
     </div>
 
-    <!-- Category Selector for Scenarios -->
+    <!-- Category Selector -->
     <div class="container my-3">
-      <div class="category-selector">
-        <div v-for="cat in uniqueCategories" :key="cat" class="category-tile"
-          :class="{ selected: selectedScenario === cat }" @click="toggleCategory(cat)">
-          {{ cat }}
-        </div>
+      <category-selector 
+        :categories="uniqueCategories" 
+        :selected-category="selectedScenario"
+        @category-selected="toggleCategory"
+      ></category-selector>
+    </div>
+
+    <!-- Loading & Error States -->
+    <div v-if="isLoading" class="container text-center my-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-3">Loading data...</p>
+    </div>
+
+    <div v-else-if="error" class="container my-5">
+      <div class="alert alert-danger">
+        <h4 class="alert-heading">Error Loading Data</h4>
+        <p>{{ error }}</p>
+        <hr>
+        <p class="mb-0">Please check the console for more details or try again later.</p>
       </div>
     </div>
 
     <!-- Main Flex Container: Left Panel & Main Content -->
-    <div class="main-container">
-      <!-- Left Panel: All Inputs (Spreadsheet-like view) -->
-      <div :class="['left-panel', { hidden: !leftPanelOpen }]">
-        <h5 style="margin-bottom: 20px;">All Inputs</h5>
-        <div v-for="(input, key) in inputs" :key="key" class="input-row">
-          <div>
-            <strong>{{ input.nice_name || formatLabel(key) }}</strong>
-            <small class="text-muted"> ({{ input.display_units }})</small>
-          </div>
-          <div class="input-group input-group-sm">
-            <input type="number" class="form-control" :value="formatValue(input.value, input.scale)"
-              @input="updateValue($event, key)" />
-            <button class="btn btn-outline-secondary" type="button" @click="adjustValue(key, 10)">×10</button>
-            <button class="btn btn-outline-secondary" type="button" @click="adjustValue(key, 0.1)">×0.1</button>
-            <button class="btn btn-outline-secondary" type="button" @click="resetValue(key)">Reset</button>
-          </div>
-          <div class="mt-1">
-            <button class="btn btn-outline-secondary btn-sm" @click="showDetails(key)">Inspect</button>
-          </div>
-        </div>
-        <!-- <button @click="loadData" class="btn btn-outline-primary btn-sm mt-3"
-                style="border-color: #10a37f; color: #10a37f;">
-          Load Data from Gist
-        </button> -->
-      </div>
+    <div v-else class="main-container">
+      <!-- Left Panel: Inputs -->
+      <input-panel 
+        :inputs="inputs" 
+        :visible="leftPanelOpen"
+        @update-value="updateValue"
+        @adjust-value="adjustValue"
+        @reset-value="resetValue"
+        @inspect="showDetails"
+      ></input-panel>
 
       <!-- Main Content: Scenario Cards -->
-      <!-- Note: we only reserve space for the right panel on desktop -->
       <div class="main-content" :style="{ marginRight: (!isMobile && rightPanelOpen) ? '400px' : '0' }">
-        <header id="headerContent">
+        <header id="headerContent" class="page-header">
           <h1>Napkin Math for Training Data Value</h1>
           <p>
             Napkin math, back-of-the-envelope estimates, and ballpark figures – this interactive page explores
@@ -409,136 +113,38 @@
           <p style="font-size: 1.1rem; margin-bottom: 30px;">
             Explore the various scenarios below. Modify input values and choose fill options to see how outcomes change.
           </p>
-          <div v-for="(calc, index) in filteredScenarios" :key="index" class="card">
-            <header>
-              <h4>{{ calc.title }}</h4>
-              <!-- Process description template with inline select for each placeholder -->
-              <p>
-                <template v-for="(segment, idx) in parseDescription(calc.description)" :key="idx">
-                  <template v-if="segment.type === 'text'">
-                    {{ segment.text }}
-                  </template>
-                  <template v-else>
-                    <select class="form-select form-select-sm inline-select" v-model="fillSelections[segment.variable]"
-                      @change="onCardDropdownChange(segment.variable, $event.target.value)">
-                      <option v-for="option in getFillOptionsForType(segment.variable)" :key="option.variable"
-                        :value="option.variable">
-                        {{ option.text }}
-                      </option>
-                    </select>
-                  </template>
-                </template>
-              </p>
-              <!-- Top Result Output Only -->
-              <div class="result-output">
-                {{ calc.result.value }} {{ calc.result.units }}
-              </div>
-            </header>
-
-            <!-- Explore Collapsible Button -->
-            <button class="btn btn-primary explore-button" @click="toggleExplore(index)">
-              {{ calc.showExplore ? 'Hide Exploration Tools' : 'Explore what would happen if these numbers changed' }}
-            </button>
-
-            <!-- Collapsible Exploration Area -->
-            <div v-if="calc.showExplore" class="exploration-area">
-              <!-- Visualization Area for plots -->
-              <div v-if="calc.showExplore" class="visualization-area">
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="exploration-visualization" :id="'plot-' + index">
-                      <div v-if="!calc.plotGenerated" class="text-center p-4">
-                        <em>Select a variable below to visualize its impact</em>
-                      </div>
-                      <div v-else-if="calc.chartError" class="text-center p-4 text-danger">
-                        <strong>Chart could not be generated</strong>
-                        <p>Please try a different variable or range</p>
-                      </div>
-                      <div class="plot-container" :id="'plot-container-' + index"></div>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="sensitivity-controls">
-                      <h6>Sensitivity Analysis</h6>
-                      <p>Select a variable to see how changes affect the result:</p>
-                      <div class="form-group">
-                        <select class="form-select" v-model="calc.selectedSensitivityVar"
-                          @change="generateSensitivityPlot(index, calc)">
-                          <option value="">Choose a variable</option>
-                          <option v-for="inputKey in calc.inputs" :key="inputKey" :value="inputKey">
-                            {{ inputs[inputKey]?.nice_name || formatLabel(inputKey) }}
-                          </option>
-                        </select>
-                      </div>
-                      <div class="range-controls" v-if="calc.selectedSensitivityVar">
-                        <label>Range multiplier:
-                          <span class="range-value">{{ calc.sensitivityRange || 5 }}x</span>
-                        </label>
-                        <input type="range" class="form-range" min="2" max="100" v-model.number="calc.sensitivityRange"
-                          @change="generateSensitivityPlot(index, calc)">
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Input Controls Area -->
-              <div class="input-controls mt-4">
-                <h5>Adjust Input Values</h5>
-                <div v-for="inputKey in calc.inputs" :key="inputKey" class="mb-3 input-control-row">
-                  <label class="form-label">
-                    {{ inputs[inputKey]?.nice_name || formatLabel(inputKey) }}
-                    <small class="text-muted"> ({{ inputs[inputKey].display_units }})</small>
-                  </label>
-                  <div class="input-group">
-                    <input type="number" class="form-control"
-                      :value="formatValue(inputs[inputKey].value, inputs[inputKey].scale)"
-                      @input="updateValue($event, inputKey)" />
-                    <button class="btn btn-outline-secondary" type="button"
-                      @click="adjustValue(inputKey, 10)">×10</button>
-                    <button class="btn btn-outline-secondary" type="button"
-                      @click="adjustValue(inputKey, 0.1)">×0.1</button>
-                    <button class="btn btn-outline-secondary" type="button" @click="resetValue(inputKey)">Reset</button>
-                    <button class="btn btn-secondary" type="button" @click="showDetails(inputKey)">
-                      <i class="bi bi-info-circle"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Additional details toggle -->
-              <div class="mt-3">
-                <button class="btn btn-outline-info btn-sm" @click="calc.showCalcDetails = !calc.showCalcDetails">
-                  {{ calc.showCalcDetails ? "Hide" : "Show" }} Calculation Details
-                </button>
-                <div v-if="calc.showCalcDetails" class="calc-details mt-2">
-                  <strong>Calculation Function:</strong>
-                  <pre>{{ calc.calculate?.toString() }}</pre>
-                  <strong>Raw Value:</strong> {{ calc.result.rawValue }}<br />
-                  <div v-if="calc.unitDetails">
-                    <strong>Unit Details:</strong> {{ calc.unitDetails }}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          
+          <!-- Scenario Cards -->
+          <scenario-card
+            v-for="(scenario, index) in filteredScenarios"
+            :key="index"
+            :scenario="scenario"
+            :index="index"
+            :inputs="inputs"
+            :fill-selections="fillSelections"
+            @toggle-explore="toggleExplore"
+            @update-value="updateValue"
+            @adjust-value="adjustValue"
+            @reset-value="resetValue"
+            @inspect-input="showDetails"
+            @variable-change="onCardDropdownChange"
+            @generate-plot="generateSensitivityPlot"
+          ></scenario-card>
         </section>
 
-        <section id="aboutContent" style="margin-top: 50px;">
+        <section id="aboutContent" class="about-section">
           <details open>
-            <summary style="font-size: 1.2rem; cursor: pointer;">About this page</summary>
+            <summary>About this page</summary>
             <div style="margin-top: 10px; line-height: 1.6;">
               <p>
                 <strong>This website is in an early beta state!</strong> Head over to our GitHub page for details and to
                 contribute.
                 There are many open debates about policy and norms around the use of data for AI systems – and often,
-                back-of-the-envelope estimates
-                like these are the starting point.
+                back-of-the-envelope estimates like these are the starting point.
               </p>
               <p>
                 This interactive tool allows you to adjust assumptions and play with the numbers. The underlying math is
-                simple arithmetic,
-                yet it provides a framework to reason about order-of-magnitude estimates.
+                simple arithmetic, yet it provides a framework to reason about order-of-magnitude estimates.
               </p>
               <p>
                 To participate in the discussion regarding reasonable default values, check out the
@@ -550,824 +156,23 @@
         </section>
       </div>
 
-      <!-- Right Panel: Inspector (Fixed) for Desktop -->
-      <!-- (On mobile this panel is hidden via CSS; see media query) -->
-      <div ref="inspectorPanel" :class="['right-panel', { hidden: !rightPanelOpen }]" id="desktopInspector">
-        <button class="btn btn-outline-secondary btn-sm" @click="toggleRightPanel">Hide Inspector</button>
-        <h5>Inspector</h5>
-        <div v-if="selectedInputDetails">
-          <h6>{{ selectedInputDetails.nice_name || formatLabel(selectedInputKey) }}</h6>
-          <p><em>({{ selectedInputDetails.display_units }})</em></p>
-          <ul class="list-unstyled" style="font-size: 0.95rem;">
-            <li><strong>Raw Value:</strong> {{ selectedInputDetails.value }}</li>
-            <li v-if="selectedInputDetails.default_value"><strong>Default Value:</strong> {{
-              selectedInputDetails.default_value }}</li>
-            <li v-if="selectedInputDetails.value_description"><strong>Description:</strong> {{
-              selectedInputDetails.value_description }}</li>
-            <li v-if="selectedInputDetails.variable_type"><strong>Variable Type:</strong> {{
-              selectedInputDetails.variable_type }}</li>
-            <li v-if="selectedInputDetails.key_assumption"><strong>Assumption:</strong> {{
-              selectedInputDetails.key_assumption }}</li>
-            <li v-if="selectedInputDetails.source_notes"><strong>Source Notes:</strong> {{
-              selectedInputDetails.source_notes }}</li>
-            <li v-if="selectedInputDetails.units"><strong>Units:</strong> {{ selectedInputDetails.units }}</li>
-            <li v-if="selectedInputDetails.source_url">
-              <strong>Source URL:</strong>
-              <a :href="selectedInputDetails.source_url" target="_blank">{{ selectedInputDetails.source_url }}</a>
-            </li>
-          </ul>
-          <div v-if="logs[selectedInputKey] && logs[selectedInputKey].length" class="change-log">
-            <h6>Change Log:</h6>
-            <ul>
-              <li v-for="(entry, index) in logs[selectedInputKey]" :key="index">
-                {{ entry.time }}: {{ entry.value }}
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div v-else>
-          <p>Click on an input (from the left panel or a scenario card) to inspect its details here.</p>
-        </div>
-      </div>
-
-      <!-- Mobile Inspector Modal -->
-      <div class="modal fade" id="inspectorModal" tabindex="-1" aria-labelledby="inspectorModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-fullscreen-sm-down">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="inspectorModalLabel">Inspector</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                @click="toggleRightPanel"></button>
-            </div>
-            <div class="modal-body">
-              <div v-if="selectedInputDetails">
-                <h6>{{ selectedInputDetails.nice_name || formatLabel(selectedInputKey) }}</h6>
-                <p><em>({{ selectedInputDetails.display_units }})</em></p>
-                <ul class="list-unstyled" style="font-size: 0.95rem;">
-                  <li><strong>Raw Value:</strong> {{ selectedInputDetails.value }}</li>
-                  <li v-if="selectedInputDetails.default_value"><strong>Default Value:</strong> {{
-                    selectedInputDetails.default_value }}</li>
-                  <li v-if="selectedInputDetails.value_description"><strong>Description:</strong> {{
-                    selectedInputDetails.value_description }}</li>
-                  <li v-if="selectedInputDetails.variable_type"><strong>Variable Type:</strong> {{
-                    selectedInputDetails.variable_type }}</li>
-                  <li v-if="selectedInputDetails.key_assumption"><strong>Assumption:</strong> {{
-                    selectedInputDetails.key_assumption }}</li>
-                  <li v-if="selectedInputDetails.source_notes"><strong>Source Notes:</strong> {{
-                    selectedInputDetails.source_notes }}</li>
-                  <li v-if="selectedInputDetails.units"><strong>Units:</strong> {{ selectedInputDetails.units }}</li>
-                  <li v-if="selectedInputDetails.source_url">
-                    <strong>Source URL:</strong>
-                    <a :href="selectedInputDetails.source_url" target="_blank">{{ selectedInputDetails.source_url }}</a>
-                  </li>
-                </ul>
-                <div v-if="logs[selectedInputKey] && logs[selectedInputKey].length" class="change-log">
-                  <h6>Change Log:</h6>
-                  <ul>
-                    <li v-for="(entry, index) in logs[selectedInputKey]" :key="index">
-                      {{ entry.time }}: {{ entry.value }}
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div v-else>
-                <p>Click on an input (from the left panel or a scenario card) to inspect its details here.</p>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                @click="toggleRightPanel">Close</button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- Right Panel: Inspector -->
+      <inspector-panel
+        :selected-key="selectedInputKey"
+        :inputs="inputs"
+        :logs="logs"
+        :visible="rightPanelOpen"
+        :is-mobile="isMobile"
+        @close="toggleRightPanel"
+      ></inspector-panel>
     </div>
   </div>
 
   <!-- Bootstrap JS Bundle -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
-  <script type="module">
-    function evaluateOperations(ops, scenarioInputs, inputsDict) {
-      // Build a context with input values keyed by variable name.
-      const context = {};
-      for (const key of scenarioInputs) {
-        if (inputsDict[key] !== undefined) {
-          context[key] = inputsDict[key].value;
-        } else {
-          throw new Error(`Missing input value for key: ${key}`);
-        }
-      }
-
-      let result;
-      // Process each operation in sequence.
-      for (const op of ops) {
-        // Map each argument: if it’s in the form "{key}", look up in context.
-        const args = op.args.map(arg => {
-          if (arg.startsWith("{") && arg.endsWith("}")) {
-            const key = arg.slice(1, -1);
-            if (context.hasOwnProperty(key)) {
-              return context[key];
-            } else {
-              throw new Error(`Missing value for key "${key}" in operation`);
-            }
-          } else {
-            return parseFloat(arg);
-          }
-        });
-
-        switch (op.func) {
-          case "divide":
-            result = args[0] / args[1];
-            break;
-          case "multiply":
-            result = args[0] * args[1];
-            break;
-          // Add other operations as needed.
-          default:
-            throw new Error(`Unsupported function "${op.func}"`);
-        }
-
-        // If the operation has a name, store its result in the context for later use.
-        if (op.name) {
-          context[op.name] = result;
-        }
-      }
-
-      return result;
-    }
-
-
-    const app = Vue.createApp({
-      data() {
-        return {
-          leftPanelOpen: false,
-          rightPanelOpen: false,
-          inputs: {},
-          scenariosData: [],
-          selectedInputKey: null,
-          selectedScenario: "All",
-          variants: {},
-          logs: {},
-          // For inline fill, store the selected variable for each placeholder.
-          fillSelections: {},
-          activeFillVariable: null,
-          // New reactive properties for mobile handling:
-          isMobile: window.innerWidth < 768,
-          mobileInspectorOpen: false,
-
-          plotLibraryLoaded: false,
-        };
-      },
-      computed: {
-        selectedInputDetails() {
-          return this.selectedInputKey ? this.inputs[this.selectedInputKey] : null;
-        },
-        filteredScenarios() {
-          return this.selectedScenario === "All"
-            ? this.scenariosData
-            : this.scenariosData.filter(scenario => scenario.category === this.selectedScenario);
-        },
-        // Group inputs by variable_type.
-        inputsByType() {
-          return Object.values(this.inputs).reduce((groups, input) => {
-            if (!groups[input.variable_type]) {
-              groups[input.variable_type] = [];
-            }
-            groups[input.variable_type].push(input);
-            return groups;
-          }, {});
-        },
-        // Compute unique categories from scenarios.
-        uniqueCategories() {
-          const cats = this.scenariosData
-            .filter(scenario => scenario.category)
-            .map(scenario => scenario.category);
-          return ["All", ...new Set(cats)];
-        },
-        // Change inspector button text based on mobile/desktop and open state.
-        inspectorButtonText() {
-          if (this.isMobile) {
-            return this.mobileInspectorOpen ? "Hide Inspector" : "Show Inspector";
-          }
-          return this.rightPanelOpen ? "Hide Inspector" : "Show Inspector";
-        }
-      },
-      methods: {
-        toggleLeftPanel() {
-          this.leftPanelOpen = !this.leftPanelOpen;
-        },
-        toggleRightPanel() {
-          if (this.isMobile) {
-            const modalEl = document.getElementById("inspectorModal");
-            const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
-            modal.toggle();
-          } else {
-            this.rightPanelOpen = !this.rightPanelOpen;
-          }
-        },
-        toggleCategory(cat) {
-          this.selectedScenario = (this.selectedScenario === cat) ? "All" : cat;
-        },
-        formatLabel(key) {
-          return key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase());
-        },
-        formatValue(value, scale) {
-          return scale ? value / scale : value;
-        },
-        updateValue(event, key) {
-          const scale = this.inputs[key].scale || 1;
-          const newVal = parseFloat(event.target.value) * scale;
-          if (this.inputs[key].value !== newVal) {
-            this.inputs[key].value = newVal;
-            this.logChange(key, newVal);
-            this.updateCalculations();
-          }
-        },
-        adjustValue(key, factor) {
-          const currentVal = parseFloat(this.inputs[key].value) || 0;
-          const newVal = currentVal * factor;
-          this.inputs[key].value = newVal;
-          this.logChange(key, newVal);
-          this.updateCalculations();
-        },
-        resetValue(key) {
-          const defaultVal = this.inputs[key].default_value;
-          this.inputs[key].value = defaultVal;
-          this.logChange(key, defaultVal);
-          this.updateCalculations();
-        },
-        logChange(key, newValue) {
-          if (!this.logs[key]) {
-            this.logs[key] = [];
-          }
-          const timestamp = new Date().toLocaleTimeString();
-          this.logs[key].push({ time: timestamp, value: newValue });
-        },
-        showDetails(key) {
-          this.selectedInputKey = key;
-          if (this.isMobile) {
-            const modalEl = document.getElementById("inspectorModal");
-            const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
-            modal.show();
-          } else {
-            this.rightPanelOpen = true;
-            this.$nextTick(() => {
-              if (this.$refs.inspectorPanel) {
-                this.$refs.inspectorPanel.scrollTop = 0;
-              }
-            });
-          }
-        },
-        onCardDropdownChange(variable, newValue) {
-          // Store just the variable name, not the display text
-          this.fillSelections[variable] = newValue;
-          this.applyCardVariantChange();
-        },
-
-        applyCardVariantChange() {
-          this.scenariosData.forEach((calc) => {
-            if (!calc.originalInputs) {
-              calc.originalInputs = [...calc.inputs];
-            }
-
-            // Replace the inputs with the selected variables
-            calc.inputs = calc.originalInputs.map(key => {
-              // Use the stored selection if available, otherwise keep original
-              return this.fillSelections[key] || key;
-            });
-          });
-
-          this.updateCalculations();
-        },
-        updateCalculations() {
-          if (!this.scenariosData.length || !Object.keys(this.inputs).length) {
-            console.warn("Cannot update calculations: missing scenarios or inputs data");
-            return;
-          }
-
-          this.scenariosData.forEach((calc) => {
-            if (!calc.inputs || !calc.inputs.length) {
-              console.error(`Input keys not found for calculation: ${calc.title}`);
-              calc.result.value = "Error: Missing inputs";
-              return;
-            }
-
-            const inputValues = calc.inputs.map(key => {
-              if (!this.inputs[key]) {
-                console.error(`Missing input definition for key: ${key} in calculation: ${calc.title}`);
-                return null;
-              }
-              return this.inputs[key].value;
-            });
-
-            if (inputValues.includes(null)) {
-              console.error(`Missing inputs for calculation: ${calc.title}`);
-              calc.result.value = "Error: Invalid inputs";
-              return;
-            }
-
-            if (typeof calc.calculate !== "function") {
-              console.error(`No calculation function for: ${calc.title}`);
-              calc.result.value = "Error: No calculation method";
-              return;
-            }
-
-            try {
-              const result = calc.calculate(...inputValues);
-              calc.result.value = this.humanReadable(result);
-              calc.result.rawValue = result;
-            } catch (error) {
-              console.error("Error evaluating calculation:", error, "Calculation:", calc.title);
-              calc.result.value = "Error: Calculation failed";
-              calc.result.rawValue = null;
-            }
-          });
-        },
-        humanReadable(value) {
-          if (value === 0) return "0";
-          if (Math.abs(value) < 1) {
-            let valueStr = value.toString();
-            let firstNonZeroIndex = valueStr.indexOf(valueStr.match(/[1-9]/));
-            return value.toFixed(firstNonZeroIndex + 1);
-          }
-          const units = ["", "thousand", "million", "billion", "trillion"];
-          const order = Math.floor(Math.log10(Math.abs(value)) / 3);
-          if (order === 0) {
-            return value.toFixed(2);
-          }
-          const unitName = units[order] || `10^${order * 3}`;
-          const adjustedValue = value / Math.pow(10, 3 * order);
-          return `${adjustedValue.toFixed(2)} ${unitName}`;
-        },
-        parseDescription(desc) {
-          const segments = [];
-          let lastIndex = 0;
-          // Match variable patterns like {variable_name}
-          const regex = /\{([a-z0-9_]+)\}/g;
-          let match;
-
-          while ((match = regex.exec(desc)) !== null) {
-            if (match.index > lastIndex) {
-              segments.push({ type: 'text', text: desc.slice(lastIndex, match.index) });
-            }
-
-            const varName = match[1];
-            if (this.inputs[varName]) {
-              // This is a valid variable we can replace
-              segments.push({ type: 'variable', variable: varName });
-
-              // Initialize fillSelection for this variable if not set
-              if (!this.fillSelections[varName]) {
-                this.fillSelections[varName] = varName;
-              }
-            } else {
-              // If it's not a known variable, just keep the original text
-              segments.push({ type: 'text', text: match[0] });
-            }
-
-            lastIndex = regex.lastIndex;
-          }
-
-          if (lastIndex < desc.length) {
-            segments.push({ type: 'text', text: desc.slice(lastIndex) });
-          }
-
-          return segments;
-        },
-        getFillOptionsForType(variable) {
-          if (!this.inputs[variable]) return [];
-
-          const vt = this.inputs[variable].variable_type;
-          if (!this.inputsByType[vt]) return [];
-
-          return this.inputsByType[vt].map(input => ({
-            // The value should be just the variable name
-            variable: input.variable_name,
-            // The display text can include name and value
-            text: `${input.title || this.formatLabel(input.variable_name)} (${this.formatValue(input.value, input.scale)} ${input.display_units})`
-          }));
-        },
-
-
-        getFillTextFor(variable) {
-          const selectedVar = this.fillSelections[variable] || variable;
-          return this.inputs[selectedVar] && this.inputs[selectedVar].phrase_for_card
-            ? this.inputs[selectedVar].phrase_for_card
-            : variable;
-        },
-        processDescription(desc) {
-          return this.parseDescription(desc);
-        },
-        async loadData() {
-          try {
-            // Load the aggregated JSON data.
-            const dataUrl = "data/data.json";
-            const response = await fetch(dataUrl);
-            if (!response.ok) throw new Error("Failed to load data");
-            const data = await response.json();
-            console.log("Data successfully loaded", data);
-
-            // Process inputs as before
-            this.inputs = data.inputs.reduce((acc, input) => {
-              const key = input.variable_name;
-              acc[key] = {
-                ...input,
-                default_value: input.value,
-                value: input.value,
-                nice_name: input.title || this.formatLabel(key),
-                display_units: input.display_units || "",
-                variable_type: input.variable_type || "",
-                key_assumption: input.content ?
-                  input.content.match(/## Key Assumption\n\n(.*?)\n\n/s)?.[1] : "",
-                source_notes: input.content ?
-                  input.content.match(/## Source\n\n(.*)/s)?.[1] : "",
-                value_description: input.content ?
-                  input.content.match(/## Description\n\n(.*?)\n\n/s)?.[1] : ""
-              };
-
-              // Create a phrase_for_card property for dropdown display
-              acc[key].phrase_for_card = input.title ?
-                `${input.title} (${input.value} ${input.display_units})` :
-                `${this.formatLabel(key)} (${input.value} ${input.display_units})`;
-
-              // Initialize fill selection
-              this.fillSelections[key] = key;
-              return acc;
-            }, {});
-
-            // Process scenarios with calculation functions
-            this.scenariosData = data.scenarios.map(scenario => {
-              // Create a calculation function based on the operations
-              let calculateFunc;
-
-              if (scenario.calculation_type === "operations") {
-                try {
-                  const operations = JSON.parse(scenario.operations);
-
-                  // Create closure over inputs and operations
-                  calculateFunc = (...args) => {
-                    // Create a mapping from input names to their positions in the args array
-                    const inputMap = {};
-                    scenario.input_variables.forEach((varName, index) => {
-                      inputMap[varName] = index;
-                    });
-
-                    // Context for storing intermediate results
-                    const context = {};
-
-                    // For each input variable, add its value to the context
-                    scenario.input_variables.forEach((varName, index) => {
-                      context[varName] = args[index];
-                    });
-
-                    let result;
-
-                    // Process operations in sequence
-                    for (const op of operations) {
-                      const processedArgs = op.args.map(arg => {
-                        if (typeof arg === 'string' && arg.startsWith('{') && arg.endsWith('}')) {
-                          const varName = arg.slice(1, -1);
-                          if (context[varName] !== undefined) {
-                            return context[varName];
-                          } else {
-                            throw new Error(`Missing value for "${varName}" in calculation`);
-                          }
-                        }
-                        // If it's not a variable reference, treat it as a literal number
-                        return parseFloat(arg);
-                      });
-
-                      // Apply the operation
-                      switch (op.func) {
-                        case "multiply":
-                          result = processedArgs.reduce((a, b) => a * b, 1);
-                          break;
-                        case "divide":
-                          result = processedArgs[0] / processedArgs[1];
-                          break;
-                        default:
-                          throw new Error(`Unsupported operation: ${op.func}`);
-                      }
-
-                      // Store the result if the operation has a name
-                      if (op.name) {
-                        context[op.name] = result;
-                      }
-                    }
-
-                    return result;
-                  };
-                } catch (e) {
-                  console.error(`Error creating calculation function for ${scenario.title}:`, e);
-                  calculateFunc = () => 0; // Default to returning 0 if there's an error
-                }
-              } else {
-                // Default function if no calculation type is specified
-                calculateFunc = () => 0;
-                console.warn(`No calculation type specified for ${scenario.title}`);
-              }
-
-              return {
-                ...scenario,
-                inputs: scenario.input_variables || [],
-                calculate: calculateFunc, // Assign the calculation function here
-                result: {
-                  label: scenario.result_label || '',
-                  value: 0,
-                  rawValue: 0,
-                  units: scenario.result_units || ''
-                },
-                showDiagram: false,
-                showCalcDetails: false,
-                showExplore: false,
-                plotGenerated: false,
-                selectedSensitivityVar: '',
-                sensitivityRange: 5,
-                chart: null,
-                originalInputs: scenario.input_variables ? [...scenario.input_variables] : []
-              };
-            });
-
-            // Calculate initial values
-            this.updateCalculations();
-
-          } catch (e) {
-            console.error("Failed to load data:", e);
-          }
-        },
-        toggleDiagram(index) {
-          this.scenariosData[index].showDiagram = !this.scenariosData[index].showDiagram;
-        },
-
-        toggleExplore(index) {
-          // Initialize if not already present
-          if (this.scenariosData[index].showExplore === undefined) {
-            this.$set(this.scenariosData[index], 'showExplore', false);
-            this.$set(this.scenariosData[index], 'plotGenerated', false);
-            this.$set(this.scenariosData[index], 'chartError', false); // Add this line
-            this.$set(this.scenariosData[index], 'selectedSensitivityVar', '');
-            this.$set(this.scenariosData[index], 'sensitivityRange', 5);
-            this.$set(this.scenariosData[index], 'chart', null);
-          }
-
-          this.scenariosData[index].showExplore = !this.scenariosData[index].showExplore;
-
-          // Clear previous chart if hiding
-          if (!this.scenariosData[index].showExplore && this.scenariosData[index].chart) {
-            this.scenariosData[index].chart.destroy();
-            this.scenariosData[index].chart = null;
-          }
-        },
-        generateSensitivityPlot(index, calc) {
-          // Reset error state
-          this.resetChartError(calc);
-
-          // Check if Chart.js is loaded
-          if (typeof Chart === 'undefined') {
-            console.warn('Chart.js not loaded yet');
-            this.setChartError(calc, 'Chart.js not loaded');
-            return;
-          }
-
-          const selectedVar = calc.selectedSensitivityVar;
-          if (!selectedVar) return;
-
-          // Get the current value and make a range around it
-          const currentValue = this.inputs[selectedVar]?.value;
-          if (currentValue === undefined) {
-            console.error(`No value found for ${selectedVar}`);
-            this.setChartError(calc, `No value found for ${selectedVar}`);
-            return;
-          }
-
-          const scale = this.inputs[selectedVar].scale || 1;
-          const range = calc.sensitivityRange || 5;
-
-          // Generate data points
-          const points = 50;
-          const minFactor = 1 / range;
-          const maxFactor = range;
-          const step = (maxFactor - minFactor) / points;
-
-          const chartData = [];
-
-          // Store original value to restore later
-          const originalValue = currentValue;
-
-          // Calculate result for each point in the range
-          for (let i = 0; i <= points; i++) {
-            const factor = minFactor + (step * i);
-            const newValue = originalValue * factor;
-
-            // Update the input value temporarily
-            this.inputs[selectedVar].value = newValue;
-
-            // Recalculate with the new value
-            try {
-              const inputValues = calc.inputs.map(key => this.inputs[key]?.value);
-              if (!inputValues.includes(undefined)) {
-                const result = calc.calculate(...inputValues);
-
-                // Format the label based on scale
-                let formattedValue;
-                if (scale >= 1000000) {
-                  formattedValue = `${(newValue / scale).toFixed(1)}M`;
-                } else if (scale >= 1000) {
-                  formattedValue = `${(newValue / scale).toFixed(1)}K`;
-                } else {
-                  formattedValue = newValue.toFixed(1);
-                }
-
-                // Add to chart data
-                chartData.push({
-                  x: formattedValue,
-                  y: result,
-                  rawX: newValue
-                });
-              }
-            } catch (e) {
-              console.error('Error calculating sensitivity point:', e);
-              // Skip this point but continue with others
-            }
-          }
-
-          // Restore original value
-          this.inputs[selectedVar].value = originalValue;
-          this.updateCalculations();
-
-          // Sort data by x value (numerically)
-          chartData.sort((a, b) => a.rawX - b.rawX);
-
-          // Extract labels and data for chart
-          const labels = chartData.map(point => point.x);
-          const data = chartData.map(point => point.y);
-
-          // Validate the data
-          if (!this.validateChartData(data) || labels.length !== data.length) {
-            this.setChartError(calc, 'Invalid chart data');
-            return;
-          }
-
-          // Create or update chart
-          const containerId = `plot-container-${index}`;
-          const container = document.getElementById(containerId);
-
-          if (!container) {
-            console.error(`Container ${containerId} not found`);
-            this.setChartError(calc, 'Chart container not found');
-            return;
-          }
-
-          // Destroy existing chart if there is one
-          if (calc.chart) {
-            calc.chart.destroy();
-            calc.chart = null;
-          }
-
-          // Create canvas if it doesn't exist
-          let canvas = container.querySelector('canvas');
-          if (!canvas) {
-            canvas = document.createElement('canvas');
-            container.appendChild(canvas);
-          }
-
-          // Ensure the canvas is clean
-          const ctx = canvas.getContext('2d');
-
-          // Safety check before creating chart
-          if (!labels.length || !data.length) {
-            this.setChartError(calc, 'No valid data points for chart');
-            return;
-          }
-
-          // Create the chart with safe configuration
-          try {
-            calc.chart = new Chart(ctx, {
-              type: 'line',
-              data: {
-                labels: labels,
-                datasets: [{
-                  label: `Impact of ${this.inputs[selectedVar]?.nice_name || this.formatLabel(selectedVar)}`,
-                  data: data,
-                  borderColor: '#10a37f',
-                  backgroundColor: 'rgba(16, 163, 127, 0.1)',
-                  tension: 0.2,
-                  fill: true,
-                  pointRadius: 2
-                }]
-              },
-              options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  title: {
-                    display: true,
-                    text: `How ${this.inputs[selectedVar]?.nice_name || this.formatLabel(selectedVar)} affects the result`,
-                    font: {
-                      size: 14
-                    }
-                  },
-                  tooltip: {
-                    callbacks: {
-                      label: (context) => {
-                        if (context?.raw === undefined) return '';
-                        return `Result: ${this.humanReadable(context.raw)} ${calc.result?.units || ''}`;
-                      },
-                      title: (tooltipItems) => {
-                        if (!tooltipItems?.length || !tooltipItems[0]?.label) return '';
-                        const dataIndex = tooltipItems[0].dataIndex;
-                        if (dataIndex === undefined || !chartData[dataIndex]) return '';
-                        const point = chartData[dataIndex];
-                        return `${this.inputs[selectedVar]?.nice_name || this.formatLabel(selectedVar)}: ${this.humanReadable(point.rawX)} ${this.inputs[selectedVar]?.display_units || ''}`;
-                      }
-                    }
-                  }
-                },
-                scales: {
-                  y: {
-                    title: {
-                      display: true,
-                      text: calc.result?.units || ''
-                    },
-                    ticks: {
-                      callback: (value) => {
-                        return this.humanReadable(value);
-                      }
-                    }
-                  },
-                  x: {
-                    title: {
-                      display: true,
-                      text: this.inputs[selectedVar]?.display_units || ''
-                    }
-                  }
-                }
-              }
-            });
-
-            calc.plotGenerated = true;
-            calc.chartError = false;
-          } catch (e) {
-            console.error('Error creating chart:', e);
-            this.setChartError(calc, e);
-          }
-        },
-        validateChartData(data) {
-          if (!Array.isArray(data) || data.length === 0) {
-            return false;
-          }
-
-          // Check that all data points are valid numbers
-          return data.every(point =>
-            point !== undefined &&
-            point !== null &&
-            !isNaN(parseFloat(point))
-          );
-        },
-
-        // Call this at the start of generateSensitivityPlot to reset error state
-        resetChartError(calc) {
-          calc.chartError = false;
-        },
-
-        // Call this when a chart error occurs
-        setChartError(calc, error) {
-          calc.chartError = true;
-          calc.plotGenerated = true; // Still mark as generated so we show error message
-          console.error('Chart error:', error);
-        }
-      },
-      mounted() {
-        this.loadData();
-
-        // Update mobile flag on window resize.
-        window.addEventListener('resize', () => {
-          this.isMobile = window.innerWidth < 768;
-        });
-
-        // Set up event listeners on the inspector modal to track its open/close state.
-        const modalEl = document.getElementById('inspectorModal');
-        modalEl.addEventListener('shown.bs.modal', () => { this.mobileInspectorOpen = true; });
-        modalEl.addEventListener('hidden.bs.modal', () => { this.mobileInspectorOpen = false; });
-
-        if (!this.plotLibraryLoaded) {
-          const script = document.createElement('script');
-          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js';
-          script.onload = () => {
-            this.plotLibraryLoaded = true;
-            console.log('Chart.js loaded successfully');
-          };
-          script.onerror = () => {
-            console.error('Failed to load Chart.js');
-          };
-          document.head.appendChild(script);
-        }
-      }
-    });
-
-    app.mount("#app");
-  </script>
+  
+  <!-- Main App Script (module type to use ES6 imports) -->
+  <script type="module" src="js/main.js"></script>
 </body>
 
 </html>

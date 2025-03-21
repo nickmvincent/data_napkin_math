@@ -1,0 +1,108 @@
+/* Card Component Styles */
+
+/* Card base */
+.card {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    margin-bottom: 30px;
+    background: var(--white);
+    box-shadow: var(--box-shadow);
+}
+
+.card header {
+    margin-bottom: 15px;
+}
+
+.card h4 {
+    margin-bottom: 10px;
+    color: var(--black);
+}
+
+/* Result output styling */
+.result-output {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin: 15px 0;
+    text-align: center;
+}
+
+/* Inline select styling */
+.inline-select {
+    display: inline-block;
+    width: auto;
+    vertical-align: baseline;
+    margin: 0 2px;
+    font-size: 0.95rem;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 2px 25px 2px 5px;
+    background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="gray"><path d="M2 4l4 4 4-4"/></svg>') no-repeat right 5px center;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+/* Explore button */
+.explore-button {
+    margin-top: 10px;
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    transition: all 0.2s ease;
+}
+
+.explore-button:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+/* Exploration area */
+.exploration-area {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: var(--light-gray);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--medium-gray);
+    animation: fadeIn 0.3s ease;
+}
+
+/* Input controls */
+.input-controls {
+    margin-top: 20px;
+}
+
+.input-control-row {
+    padding: 10px;
+    border-radius: var(--border-radius);
+    transition: background-color 0.2s;
+}
+
+.input-control-row:hover {
+    background-color: var(--medium-gray);
+}
+
+/* Calculation details */
+.calc-details {
+    background: var(--light-gray);
+    padding: 10px;
+    border-radius: var(--border-radius);
+    margin-top: 10px;
+    font-size: 0.9rem;
+    border: 1px solid var(--medium-gray);
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

@@ -1,0 +1,120 @@
+/* Sidebar Component Styles */
+
+/* Left Panel: Input Sidebar */
+.left-panel {
+    flex: 0 0 400px;
+    padding: 20px;
+    height: calc(100vh - 70px);
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    background: var(--white);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    text-align: left;
+    transition: transform 0.3s ease;
+}
+
+/* Right Panel: Inspector Sidebar */
+.right-panel {
+    position: fixed;
+    top: 70px;
+    right: 0;
+    bottom: 0;
+    width: 400px;
+    padding: 20px;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    background: var(--white);
+    border-left: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    text-align: left;
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+
+/* Left panel input rows */
+.input-row {
+    border-bottom: 1px solid var(--medium-gray);
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+}
+
+.input-row:last-child {
+    border-bottom: none;
+}
+
+/* Inspector content */
+.inspector-content h6 {
+    margin-bottom: 5px;
+}
+
+.inspector-content p {
+    font-style: italic;
+    color: var(--dark-gray);
+    margin-bottom: 10px;
+}
+
+.inspector-content ul {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 15px;
+}
+
+.inspector-content li {
+    margin-bottom: 5px;
+}
+
+/* Change Log styling in inspector */
+.change-log {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    border-top: 1px solid var(--medium-gray);
+    padding-top: 10px;
+}
+
+.change-log h6 {
+    margin-bottom: 5px;
+}
+
+.change-log ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.change-log li {
+    border-bottom: 1px dashed var(--medium-gray);
+    padding: 3px 0;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+
+    .left-panel,
+    .right-panel {
+        position: fixed;
+        width: 100%;
+        height: calc(100vh - 70px);
+        z-index: 1050;
+    }
+
+    .left-panel {
+        left: 0;
+        transform: translateX(-100%);
+    }
+
+    .left-panel.visible {
+        transform: translateX(0);
+    }
+
+    .right-panel {
+        transform: translateX(100%);
+    }
+
+    .right-panel.visible {
+        transform: translateX(0);
+    }
+}

@@ -1,0 +1,81 @@
+/* Layout Styles */
+
+/* App container with navbar offset */
+#app {
+  padding-top: 70px;
+}
+
+/* Main Container using Flex */
+.main-container {
+  display: flex;
+  min-height: calc(100vh - 70px);
+  /* subtract navbar height */
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Main Content: Scenario Cards (with right margin when inspector is open) */
+.main-content {
+  flex-grow: 1;
+  padding: 20px 30px;
+  background: #fdfdfd;
+  transition: margin-right 0.3s ease;
+}
+
+/* Toolbar */
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background: var(--light-gray);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.toolbar button {
+  font-weight: 700;
+}
+
+/* Category Selector */
+.category-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 15px 0;
+}
+
+/* Header styling for a magazine feel */
+header.page-header {
+  margin-bottom: 30px;
+}
+
+/* About section */
+.about-section {
+  margin-top: 50px;
+  padding: 20px;
+  background-color: var(--light-gray);
+  border-radius: var(--border-radius);
+}
+
+.about-section summary {
+  font-size: 1.2rem;
+  cursor: pointer;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.about-section details[open] summary {
+  margin-bottom: 15px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .main-container {
+    flex-direction: column;
+  }
+
+  .main-content {
+    margin-right: 0 !important;
+  }
+}

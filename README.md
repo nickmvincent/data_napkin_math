@@ -7,7 +7,7 @@ The tool itself currently exists as a small static website. A key goal of the br
 [Visit the site!](https://nickmvincent.github.io/data_napkin_math/)
 
 ## Usage
-The web page loads default **inputs** from a collaboratively edited database (currently stored in this repo in `data/inputs.yaml` and available for reading and comments via Google Docs and Google Sheets). Each **scenario** is affected by these inputs, and people using the webpage can edit each input, enabling them to test different assumptions quickly. Users can:
+The web page loads default **inputs** from a collaboratively edited database.
 
 - **Edit Inputs Directly**: Modify key input values to see how they impact various scenarios (e.g., "What if AI company revenue were to change?").
 - **Switch Between Related Variables**: Use the interface to swap one default input for a related real-world value (for instance, to swap out OpenAI's revenue for Anthropic's revenue as an input into some calculation, or swap out the size of one popular pre-training dataset for a different dataset).
@@ -23,60 +23,3 @@ There are three ways to contribute to the data and assumptions underlying the Da
 
 
 For detailed guidelines, see the [Contributor Guide](https://github.com/nickmvincent/data_napkin_math/wiki/Contributor-Guide) in the [Wiki](https://github.com/nickmvincent/data_napkin_math/wiki).
-
-You are also more than welcome to contribute towards the front-end and back-end development of the app. See our open issues for ideas, or bring your own!
-
-## How the inputs and scenarios are updated
-
-Currently, the shared data underlying this app is handled in a lightweight manner: all inputs
-and scenarios are loaded from `data/inputs.yaml` and `scenarios.js`. This may change in the future
-(suggestions welcome!).
-
-The current implementation requires manual approval to make changes:
-
-- a maintainer merges PRs and incorporates comments from Google Drive and GitHub issues
-- the maintainer runs `npm run export` to produce an updated files (found in the `export folder`) that can be shared via Google Drive.
-
-
-## For developers: Installation and Pre-reqs
-
-To install the full repo:
-
-```
-git clone https://github.com/nickmvincent/data-napkin-math.git
-cd data-napkin-math
-```
-
-There are currently no pre-requisites required to run the app: the current version is a static site that loads Vue, Boostrap, and js-yaml via CDN; just open `index.html. No server setup is required. This may change in the future.
-
-However, you will need Node.js to run tests and to export the .yaml inputs and .js calculations to .csv and .md.
-
-Node:
-- Install [Node.js](https://nodejs.org/)
-- run `npm install` to install dependencies
-- run `npm test` or `npm run test` to run tests. See `tests/` for more.
-- run `npm run export` to export .yaml input and .js calculations to csv and md.
-
-## Directory Structure
-
-Directories:
-- `data/`: Contains the data file (`inputs.yaml`) with inputs.
-- `exports/`: Contains inputs and and scenarios in CSV and Markdown format. Automatically populated via `node run export`.
-- `scripts/`: Contains scripts (export inputs and scenarios).
-- `tests`/: validate input and scenario data (check that inputs meet certain requirement and check that calculations are runnable).
-
-Key files:
-- `index.html`: The main HTML page that hosts the application.
-- `scenarios.js`: A Javascript file with all the scenario calculations.
-- `style.css`: Styles for the application.
-
-Config files:
-- .python-version (for uv)
-- package.json (for node)
-- pyproject.toml (for uv)
-- uv.lock
-
-
-## License
-This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
-
