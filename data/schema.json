@@ -1,0 +1,104 @@
+{
+    "schemas": [
+      {
+        "name": "InputVariable",
+        "description": "A numerical input variable for data napkin math calculations",
+        "fields": {
+          "title": {
+            "type": "string",
+            "description": "Human-readable name of the variable"
+          },
+          "value": {
+            "type": "number",
+            "description": "Raw numerical value"
+          },
+          "scale": {
+            "type": "number",
+            "description": "Scaling factor for display (e.g., 1000000 for millions)"
+          },
+          "display_units": {
+            "type": "string",
+            "description": "Units for display (e.g., 'millions of dollars')"
+          },
+          "variable_name": {
+            "type": "string",
+            "description": "Machine-readable variable name"
+          },
+          "variable_type": {
+            "type": "string",
+            "description": "Type of variable (dataset_size, yearly_revenue, etc.)"
+          },
+          "entity": {
+            "type": "string",
+            "description": "Entity the variable is associated with"
+          },
+          "units": {
+            "type": "string",
+            "description": "Units of measurement"
+          },
+          "source_url": {
+            "type": "string",
+            "description": "URL of the source for this value"
+          },
+          "date_added": {
+            "type": "date",
+            "description": "Date when this variable was added"
+          },
+          "tags": {
+            "type": "array",
+            "description": "Tags for categorization"
+          }
+        },
+        "required": ["title", "value", "variable_name", "variable_type", "entity", "units"],
+        "subdirectory": "inputs"
+      },
+      {
+        "name": "ScenarioCalculation",
+        "description": "A calculation scenario using input variables",
+        "fields": {
+          "title": {
+            "type": "string",
+            "description": "Title of the calculation scenario"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of what this calculation represents"
+          },
+          "input_variables": {
+            "type": "array",
+            "description": "List of input variable names used in this calculation"
+          },
+          "calculation_type": {
+            "type": "string",
+            "description": "Type of calculation (operations, formula, etc.)"
+          },
+          "operations": {
+            "type": "string",
+            "description": "JSON string of operations to perform"
+          },
+          "result_label": {
+            "type": "string",
+            "description": "Label for the calculation result"
+          },
+          "result_units": {
+            "type": "string",
+            "description": "Units for the calculation result"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category of the calculation"
+          },
+          "date_added": {
+            "type": "date",
+            "description": "Date when this scenario was added"
+          },
+          "tags": {
+            "type": "array",
+            "description": "Tags for categorization"
+          }
+        },
+        "required": ["title", "description", "input_variables", "calculation_type"],
+        "subdirectory": "scenarios"
+      }
+    ]
+  }
