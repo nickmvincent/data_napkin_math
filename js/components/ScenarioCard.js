@@ -3,34 +3,34 @@
  * Renders a single scenario card with exploration capabilities
  */
 export default {
-    name: 'ScenarioCard',
+  name: 'ScenarioCard',
 
-    props: {
-        scenario: {
-            type: Object,
-            required: true
-        },
-        index: {
-            type: Number,
-            required: true
-        },
-        inputs: {
-            type: Object,
-            required: true
-        },
-        fillSelections: {
-            type: Object,
-            required: true
-        }
+  props: {
+    scenario: {
+      type: Object,
+      required: true
     },
-
-    data() {
-        return {
-            isLoading: false
-        };
+    index: {
+      type: Number,
+      required: true
     },
+    inputs: {
+      type: Object,
+      required: true
+    },
+    fillSelections: {
+      type: Object,
+      required: true
+    }
+  },
 
-    template: `
+  data() {
+    return {
+      isLoading: false
+    };
+  },
+
+  template: `
       <div class="card">
         <header>
           <h4>{{ scenario.title }}</h4>
@@ -146,101 +146,137 @@ export default {
       </div>
     `,
 
-    computed: {
-        parsedDescription() {
-            return this.parseDescription(this.scenario.description);
-        }
+  computed: {
+    parsedDescription() {
+      return this.parseDescription(this.scenario.description);
+    }
+  },
+
+  methods: {
+    toggleExplore() {
+      this.$emit('toggle-explore', this.index);
     },
 
-    methods: {
-        toggleExplore() {
-            this.$emit('toggle-explore', this.index);
-        },
+    // Updated to safely emit events with proper payload structure
+    updateValue(event, key) {
+      if (!event || !key) {
+        console.error("Missing event or key in updateValue:", { event, key });
+        return;
+      }
 
-        updateValue(event, key) {
-            this.$emit('update-value', { event, key });
-        },
+      // Create a safe payload with the data needed by the parent
+      const payload = {
+        key: key,
+        value: event.target.value // Pass the raw input value
+      };
 
-        adjustValue(key, factor) {
-            this.$emit('adjust-value', { key, factor });
-        },
+      this.$emit('update-value', payload);
+    },
 
-        resetValue(key) {
-            this.$emit('reset-value', key);
-        },
+    // Updated to safely emit events
+    adjustValue(key, factor) {
+      if (!key || factor === undefined) {
+        console.error("Missing key or factor in adjustValue:", { key, factor });
+        return;
+      }
 
-        inspectInput(key) {
-            this.$emit('inspect-input', key);
-        },
+      this.$emit('adjust-value', { key, factor });
+    },
 
-        onVariableChange(variable, value) {
-            this.$emit('variable-change', { variable, value });
-        },
+    // Updated to safely emit events
+    resetValue(key) {
+      if (!key) {
+        console.error("Missing key in resetValue");
+        return;
+      }
 
-        generateSensitivityPlot() {
-            this.$emit('generate-plot', this.index);
-        },
+      this.$emit('reset-value', key);
+    },
 
-        parseDescription(desc) {
-            if (!desc) return [];
+    inspectInput(key) {
+      if (!key) {
+        console.error("Missing key in inspectInput");
+        return;
+      }
 
-            const segments = [];
-            let lastIndex = 0;
-            // Match variable patterns like {variable_name}
-            const regex = /\{([a-z0-9_]+)\}/g;
-            let match;
+      this.$emit('inspect-input', key);
+    },
 
-            while ((match = regex.exec(desc)) !== null) {
-                if (match.index > lastIndex) {
-                    segments.push({ type: 'text', text: desc.slice(lastIndex, match.index) });
-                }
+    onVariableChange(variable, value) {
+      if (!variable || value === undefined) {
+        console.error("Missing variable or value in onVariableChange");
+        return;
+      }
 
-                const varName = match[1];
-                if (this.inputs[varName]) {
-                    // This is a valid variable we can replace
-                    segments.push({ type: 'variable', variable: varName });
-                } else {
-                    // If it's not a known variable, just keep the original text
-                    segments.push({ type: 'text', text: match[0] });
-                }
+      this.$emit('variable-change', { variable, value });
+    },
 
-                lastIndex = regex.lastIndex;
-            }
+    generateSensitivityPlot() {
+      this.$emit('generate-plot', this.index);
+    },
 
-            if (lastIndex < desc.length) {
-                segments.push({ type: 'text', text: desc.slice(lastIndex) });
-            }
+    parseDescription(desc) {
+      if (!desc) return [];
 
-            return segments;
-        },
+      const segments = [];
+      let lastIndex = 0;
+      // Match variable patterns like {variable_name}
+      const regex = /\{([a-z0-9_]+)\}/g;
+      let match;
 
-        getFillOptions(variable) {
-            if (!this.inputs[variable]) return [];
-
-            // Group inputs by variable_type
-            const inputsByType = {};
-            Object.values(this.inputs).forEach(input => {
-                if (!inputsByType[input.variable_type]) {
-                    inputsByType[input.variable_type] = [];
-                }
-                inputsByType[input.variable_type].push(input);
-            });
-
-            const vt = this.inputs[variable].variable_type;
-            if (!inputsByType[vt]) return [];
-
-            return inputsByType[vt].map(input => ({
-                variable: input.variable_name,
-                text: `${input.title || this.formatLabel(input.variable_name)} (${this.formatValue(input.value, input.scale)} ${input.display_units})`
-            }));
-        },
-
-        formatLabel(key) {
-            return key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase());
-        },
-
-        formatValue(value, scale) {
-            return scale ? value / scale : value;
+      while ((match = regex.exec(desc)) !== null) {
+        if (match.index > lastIndex) {
+          segments.push({ type: 'text', text: desc.slice(lastIndex, match.index) });
         }
+
+        const varName = match[1];
+        if (this.inputs[varName]) {
+          // This is a valid variable we can replace
+          segments.push({ type: 'variable', variable: varName });
+        } else {
+          // If it's not a known variable, just keep the original text
+          segments.push({ type: 'text', text: match[0] });
+        }
+
+        lastIndex = regex.lastIndex;
+      }
+
+      if (lastIndex < desc.length) {
+        segments.push({ type: 'text', text: desc.slice(lastIndex) });
+      }
+
+      return segments;
+    },
+
+    getFillOptions(variable) {
+      if (!this.inputs[variable]) return [];
+
+      // Group inputs by variable_type
+      const inputsByType = {};
+      Object.values(this.inputs).forEach(input => {
+        if (!inputsByType[input.variable_type]) {
+          inputsByType[input.variable_type] = [];
+        }
+        inputsByType[input.variable_type].push(input);
+      });
+
+      const vt = this.inputs[variable].variable_type;
+      if (!inputsByType[vt]) return [];
+
+      return inputsByType[vt].map(input => ({
+        variable: input.variable_name,
+        text: `${input.title || this.formatLabel(input.variable_name)} (${this.formatValue(input.value, input.scale)} ${input.display_units})`
+      }));
+    },
+
+    formatLabel(key) {
+      if (!key) return '';
+      return key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase());
+    },
+
+    formatValue(value, scale) {
+      if (value === undefined || value === null) return '';
+      return scale ? value / scale : value;
     }
+  }
 };
