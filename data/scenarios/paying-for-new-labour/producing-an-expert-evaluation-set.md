@@ -5,7 +5,7 @@ input_variables:
   - dataset_size__hle__questions
   - wage_data__phd__dollars_per_question
 calculation_type: operations
-operations: [{"func": "multiply", "args": ["{dataset_size__hle__questions}", "{wage_data__phd__dollars_per_question}"]}]
+operations: '[{"func": "multiply", "args": ["{dataset_size__hle__questions}", "{wage_data__phd__dollars_per_question}"]}]'
 result_label: Dataset Cost
 result_units: dollars
 category: Paying for new labour

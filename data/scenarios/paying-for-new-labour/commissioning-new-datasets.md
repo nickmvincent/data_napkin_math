@@ -6,7 +6,7 @@ input_variables:
   - training_detail__openai__words_per_token
   - wage_data__generic_freelance_higher__dollars_per_word
 calculation_type: operations
-operations: [{"func": "multiply", "args": ["{dataset_size__llama3__tokens}", "{training_detail__openai__words_per_token}"], "name": "total_words"}, {"func": "multiply", "args": ["{total_words}", "{wage_data__generic_freelance_higher__dollars_per_word}"]}]
+operations: '[{"func": "multiply", "args": ["{dataset_size__llama3__tokens}", "{training_detail__openai__words_per_token}"], "name": "total_words"}, {"func": "multiply", "args": ["{total_words}", "{wage_data__generic_freelance_higher__dollars_per_word}"]}]'
 result_label: Dataset Cost
 result_units: dollars
 category: Paying for new labour
