@@ -1,1 +1,0 @@
-Contains a single script that converts YAML data "source of truth" to .csv and .md.
