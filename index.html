@@ -11,6 +11,7 @@
   <title>Data Napkin Math</title>
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
   <!-- Vue 3 -->
   <script src="https://unpkg.com/vue@3"></script>
   <!-- js-yaml for YAML parsing -->
@@ -254,6 +255,65 @@
       .right-panel {
         display: none !important;
       }
+
+      .exploration-area {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+      }
+
+      .explore-button {
+        margin-top: 10px;
+        background-color: #10a37f;
+        border-color: #10a37f;
+      }
+
+      .explore-button:hover {
+        background-color: #0d8c6c;
+        border-color: #0d8c6c;
+      }
+
+      .exploration-visualization {
+        height: 300px;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        padding: 10px;
+        background-color: white;
+        margin-bottom: 20px;
+      }
+
+      .plot-container {
+        width: 100%;
+        height: 100%;
+      }
+
+      .sensitivity-controls {
+        padding: 15px;
+        background-color: white;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        height: 300px;
+      }
+
+      .range-controls {
+        margin-top: 15px;
+      }
+
+      .range-value {
+        font-weight: bold;
+      }
+
+      .input-control-row {
+        padding: 10px;
+        border-radius: 4px;
+        transition: background-color 0.2s;
+      }
+
+      .input-control-row:hover {
+        background-color: #e9ecef;
+      }
     }
   </style>
 </head>
@@ -349,7 +409,6 @@
           <p style="font-size: 1.1rem; margin-bottom: 30px;">
             Explore the various scenarios below. Modify input values and choose fill options to see how outcomes change.
           </p>
-          <!-- Calculation Cards (filtered by selectedScenario) -->
           <div v-for="(calc, index) in filteredScenarios" :key="index" class="card">
             <header>
               <h4>{{ calc.title }}</h4>
@@ -374,40 +433,92 @@
               <div class="result-output">
                 {{ calc.result.value }} {{ calc.result.units }}
               </div>
-              <div v-if="calc.diagram">
-                <button class="btn btn-link btn-sm" @click="toggleDiagram(index)">Toggle Diagram</button>
-                <div v-if="calc.showDiagram">
-                  <img :src="calc.diagram" alt="Diagram" style="max-width:100%; margin-bottom: 10px;" />
+            </header>
+
+            <!-- Explore Collapsible Button -->
+            <button class="btn btn-primary explore-button" @click="toggleExplore(index)">
+              {{ calc.showExplore ? 'Hide Exploration Tools' : 'Explore what would happen if these numbers changed' }}
+            </button>
+
+            <!-- Collapsible Exploration Area -->
+            <div v-if="calc.showExplore" class="exploration-area">
+              <!-- Visualization Area for plots -->
+              <div v-if="calc.showExplore" class="visualization-area">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="exploration-visualization" :id="'plot-' + index">
+                      <div v-if="!calc.plotGenerated" class="text-center p-4">
+                        <em>Select a variable below to visualize its impact</em>
+                      </div>
+                      <div v-else-if="calc.chartError" class="text-center p-4 text-danger">
+                        <strong>Chart could not be generated</strong>
+                        <p>Please try a different variable or range</p>
+                      </div>
+                      <div class="plot-container" :id="'plot-container-' + index"></div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="sensitivity-controls">
+                      <h6>Sensitivity Analysis</h6>
+                      <p>Select a variable to see how changes affect the result:</p>
+                      <div class="form-group">
+                        <select class="form-select" v-model="calc.selectedSensitivityVar"
+                          @change="generateSensitivityPlot(index, calc)">
+                          <option value="">Choose a variable</option>
+                          <option v-for="inputKey in calc.inputs" :key="inputKey" :value="inputKey">
+                            {{ inputs[inputKey]?.nice_name || formatLabel(inputKey) }}
+                          </option>
+                        </select>
+                      </div>
+                      <div class="range-controls" v-if="calc.selectedSensitivityVar">
+                        <label>Range multiplier:
+                          <span class="range-value">{{ calc.sensitivityRange || 5 }}x</span>
+                        </label>
+                        <input type="range" class="form-range" min="2" max="100" v-model.number="calc.sensitivityRange"
+                          @change="generateSensitivityPlot(index, calc)">
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </header>
-            <div v-if="Object.keys(inputs).length === 0">Loading inputs...</div>
-            <!-- For each input used by the scenario -->
-            <div v-else v-for="inputKey in calc.inputs" :key="inputKey" class="mb-3">
-              <label class="form-label">
-                {{ inputs[inputKey]?.nice_name || formatLabel(inputKey) }}
-                <small class="text-muted"> ({{ inputs[inputKey].display_units }})</small>
-              </label>
-              <div class="input-group">
-                <input type="number" class="form-control"
-                  :value="formatValue(inputs[inputKey].value, inputs[inputKey].scale)"
-                  @input="updateValue($event, inputKey)" />
-                <button class="btn btn-outline-secondary" type="button" @click="adjustValue(inputKey, 10)">×10</button>
-                <button class="btn btn-outline-secondary" type="button"
-                  @click="adjustValue(inputKey, 0.1)">×0.1</button>
-                <button class="btn btn-outline-secondary" type="button" @click="resetValue(inputKey)">Reset</button>
+
+              <!-- Input Controls Area -->
+              <div class="input-controls mt-4">
+                <h5>Adjust Input Values</h5>
+                <div v-for="inputKey in calc.inputs" :key="inputKey" class="mb-3 input-control-row">
+                  <label class="form-label">
+                    {{ inputs[inputKey]?.nice_name || formatLabel(inputKey) }}
+                    <small class="text-muted"> ({{ inputs[inputKey].display_units }})</small>
+                  </label>
+                  <div class="input-group">
+                    <input type="number" class="form-control"
+                      :value="formatValue(inputs[inputKey].value, inputs[inputKey].scale)"
+                      @input="updateValue($event, inputKey)" />
+                    <button class="btn btn-outline-secondary" type="button"
+                      @click="adjustValue(inputKey, 10)">×10</button>
+                    <button class="btn btn-outline-secondary" type="button"
+                      @click="adjustValue(inputKey, 0.1)">×0.1</button>
+                    <button class="btn btn-outline-secondary" type="button" @click="resetValue(inputKey)">Reset</button>
+                    <button class="btn btn-secondary" type="button" @click="showDetails(inputKey)">
+                      <i class="bi bi-info-circle"></i>
+                    </button>
+                  </div>
+                </div>
               </div>
-              <button class="btn btn-secondary btn-sm mt-2" @click="showDetails(inputKey)">Inspect This Input</button>
-            </div>
-            <button class="btn btn-outline-info btn-sm" @click="calc.showCalcDetails = !calc.showCalcDetails">
-              {{ calc.showCalcDetails ? "Hide" : "Show" }} Calculation Details
-            </button>
-            <div v-if="calc.showCalcDetails" class="calc-details">
-              <strong>Calculation Function:</strong>
-              <pre>{{ calc.calculate.toString() }}</pre>
-              <strong>Raw Value:</strong> {{ calc.result.rawValue }}<br />
-              <div v-if="calc.unitDetails">
-                <strong>Unit Details:</strong> {{ calc.unitDetails }}
+
+              <!-- Additional details toggle -->
+              <div class="mt-3">
+                <button class="btn btn-outline-info btn-sm" @click="calc.showCalcDetails = !calc.showCalcDetails">
+                  {{ calc.showCalcDetails ? "Hide" : "Show" }} Calculation Details
+                </button>
+                <div v-if="calc.showCalcDetails" class="calc-details mt-2">
+                  <strong>Calculation Function:</strong>
+                  <pre>{{ calc.calculate?.toString() }}</pre>
+                  <strong>Raw Value:</strong> {{ calc.result.rawValue }}<br />
+                  <div v-if="calc.unitDetails">
+                    <strong>Unit Details:</strong> {{ calc.unitDetails }}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -603,7 +714,9 @@
           activeFillVariable: null,
           // New reactive properties for mobile handling:
           isMobile: window.innerWidth < 768,
-          mobileInspectorOpen: false
+          mobileInspectorOpen: false,
+
+          plotLibraryLoaded: false,
         };
       },
       computed: {
@@ -855,7 +968,7 @@
             const data = await response.json();
             console.log("Data successfully loaded", data);
 
-            // In loadData() method, when processing inputs:
+            // Process inputs as before
             this.inputs = data.inputs.reduce((acc, input) => {
               const key = input.variable_name;
               acc[key] = {
@@ -882,68 +995,83 @@
               this.fillSelections[key] = key;
               return acc;
             }, {});
-            // In the loadData() method, modify the scenarios processing:
-            this.scenariosData = data.scenarios.map(scenario => {
-              // Create calculation function from operations JSON
-              let calculateFunc;
-              try {
-                if (scenario.calculation_type === "operations") {
-                  const operations = JSON.parse(scenario.operations);
-                  // In the loadData() method, when creating calculation functions:
-                  calculateFunc = function (...args) {
-                    let result = 0;
-                    let tempResults = {};
 
-                    // Map the input variables to their indices
+            // Process scenarios with calculation functions
+            this.scenariosData = data.scenarios.map(scenario => {
+              // Create a calculation function based on the operations
+              let calculateFunc;
+
+              if (scenario.calculation_type === "operations") {
+                try {
+                  const operations = JSON.parse(scenario.operations);
+
+                  // Create closure over inputs and operations
+                  calculateFunc = (...args) => {
+                    // Create a mapping from input names to their positions in the args array
                     const inputMap = {};
                     scenario.input_variables.forEach((varName, index) => {
                       inputMap[varName] = index;
                     });
 
-                    operations.forEach(op => {
-                      if (op.func === "multiply") {
-                        const values = op.args.map(arg => {
-                          if (typeof arg === 'string' && arg.startsWith('{') && arg.endsWith('}')) {
-                            const varName = arg.slice(1, -1);
-                            // Use the correct index based on our current inputs
-                            return tempResults[varName] !== undefined ?
-                              tempResults[varName] :
-                              args[inputMap[varName]];
+                    // Context for storing intermediate results
+                    const context = {};
+
+                    // For each input variable, add its value to the context
+                    scenario.input_variables.forEach((varName, index) => {
+                      context[varName] = args[index];
+                    });
+
+                    let result;
+
+                    // Process operations in sequence
+                    for (const op of operations) {
+                      const processedArgs = op.args.map(arg => {
+                        if (typeof arg === 'string' && arg.startsWith('{') && arg.endsWith('}')) {
+                          const varName = arg.slice(1, -1);
+                          if (context[varName] !== undefined) {
+                            return context[varName];
+                          } else {
+                            throw new Error(`Missing value for "${varName}" in calculation`);
                           }
-                          return arg;
-                        });
-                        result = values.reduce((a, b) => a * b, 1);
-                      } else if (op.func === "divide") {
-                        const values = op.args.map(arg => {
-                          if (typeof arg === 'string' && arg.startsWith('{') && arg.endsWith('}')) {
-                            const varName = arg.slice(1, -1);
-                            return tempResults[varName] !== undefined ?
-                              tempResults[varName] :
-                              args[inputMap[varName]];
-                          }
-                          return arg;
-                        });
-                        result = values[0] / values[1];
+                        }
+                        // If it's not a variable reference, treat it as a literal number
+                        return parseFloat(arg);
+                      });
+
+                      // Apply the operation
+                      switch (op.func) {
+                        case "multiply":
+                          result = processedArgs.reduce((a, b) => a * b, 1);
+                          break;
+                        case "divide":
+                          result = processedArgs[0] / processedArgs[1];
+                          break;
+                        default:
+                          throw new Error(`Unsupported operation: ${op.func}`);
                       }
 
-                      // Store intermediate result if the operation has a name
+                      // Store the result if the operation has a name
                       if (op.name) {
-                        tempResults[op.name] = result;
+                        context[op.name] = result;
                       }
-                    });
+                    }
 
                     return result;
                   };
+                } catch (e) {
+                  console.error(`Error creating calculation function for ${scenario.title}:`, e);
+                  calculateFunc = () => 0; // Default to returning 0 if there's an error
                 }
-              } catch (e) {
-                console.error("Failed to parse calculation operations:", e);
+              } else {
+                // Default function if no calculation type is specified
                 calculateFunc = () => 0;
+                console.warn(`No calculation type specified for ${scenario.title}`);
               }
 
               return {
                 ...scenario,
                 inputs: scenario.input_variables || [],
-                calculate: calculateFunc,
+                calculate: calculateFunc, // Assign the calculation function here
                 result: {
                   label: scenario.result_label || '',
                   value: 0,
@@ -952,18 +1080,262 @@
                 },
                 showDiagram: false,
                 showCalcDetails: false,
+                showExplore: false,
+                plotGenerated: false,
+                selectedSensitivityVar: '',
+                sensitivityRange: 5,
+                chart: null,
                 originalInputs: scenario.input_variables ? [...scenario.input_variables] : []
               };
             });
 
+            // Calculate initial values
             this.updateCalculations();
+
           } catch (e) {
             console.error("Failed to load data:", e);
           }
         },
-
         toggleDiagram(index) {
           this.scenariosData[index].showDiagram = !this.scenariosData[index].showDiagram;
+        },
+
+        toggleExplore(index) {
+          // Initialize if not already present
+          if (this.scenariosData[index].showExplore === undefined) {
+            this.$set(this.scenariosData[index], 'showExplore', false);
+            this.$set(this.scenariosData[index], 'plotGenerated', false);
+            this.$set(this.scenariosData[index], 'chartError', false); // Add this line
+            this.$set(this.scenariosData[index], 'selectedSensitivityVar', '');
+            this.$set(this.scenariosData[index], 'sensitivityRange', 5);
+            this.$set(this.scenariosData[index], 'chart', null);
+          }
+
+          this.scenariosData[index].showExplore = !this.scenariosData[index].showExplore;
+
+          // Clear previous chart if hiding
+          if (!this.scenariosData[index].showExplore && this.scenariosData[index].chart) {
+            this.scenariosData[index].chart.destroy();
+            this.scenariosData[index].chart = null;
+          }
+        },
+        generateSensitivityPlot(index, calc) {
+          // Reset error state
+          this.resetChartError(calc);
+
+          // Check if Chart.js is loaded
+          if (typeof Chart === 'undefined') {
+            console.warn('Chart.js not loaded yet');
+            this.setChartError(calc, 'Chart.js not loaded');
+            return;
+          }
+
+          const selectedVar = calc.selectedSensitivityVar;
+          if (!selectedVar) return;
+
+          // Get the current value and make a range around it
+          const currentValue = this.inputs[selectedVar]?.value;
+          if (currentValue === undefined) {
+            console.error(`No value found for ${selectedVar}`);
+            this.setChartError(calc, `No value found for ${selectedVar}`);
+            return;
+          }
+
+          const scale = this.inputs[selectedVar].scale || 1;
+          const range = calc.sensitivityRange || 5;
+
+          // Generate data points
+          const points = 50;
+          const minFactor = 1 / range;
+          const maxFactor = range;
+          const step = (maxFactor - minFactor) / points;
+
+          const chartData = [];
+
+          // Store original value to restore later
+          const originalValue = currentValue;
+
+          // Calculate result for each point in the range
+          for (let i = 0; i <= points; i++) {
+            const factor = minFactor + (step * i);
+            const newValue = originalValue * factor;
+
+            // Update the input value temporarily
+            this.inputs[selectedVar].value = newValue;
+
+            // Recalculate with the new value
+            try {
+              const inputValues = calc.inputs.map(key => this.inputs[key]?.value);
+              if (!inputValues.includes(undefined)) {
+                const result = calc.calculate(...inputValues);
+
+                // Format the label based on scale
+                let formattedValue;
+                if (scale >= 1000000) {
+                  formattedValue = `${(newValue / scale).toFixed(1)}M`;
+                } else if (scale >= 1000) {
+                  formattedValue = `${(newValue / scale).toFixed(1)}K`;
+                } else {
+                  formattedValue = newValue.toFixed(1);
+                }
+
+                // Add to chart data
+                chartData.push({
+                  x: formattedValue,
+                  y: result,
+                  rawX: newValue
+                });
+              }
+            } catch (e) {
+              console.error('Error calculating sensitivity point:', e);
+              // Skip this point but continue with others
+            }
+          }
+
+          // Restore original value
+          this.inputs[selectedVar].value = originalValue;
+          this.updateCalculations();
+
+          // Sort data by x value (numerically)
+          chartData.sort((a, b) => a.rawX - b.rawX);
+
+          // Extract labels and data for chart
+          const labels = chartData.map(point => point.x);
+          const data = chartData.map(point => point.y);
+
+          // Validate the data
+          if (!this.validateChartData(data) || labels.length !== data.length) {
+            this.setChartError(calc, 'Invalid chart data');
+            return;
+          }
+
+          // Create or update chart
+          const containerId = `plot-container-${index}`;
+          const container = document.getElementById(containerId);
+
+          if (!container) {
+            console.error(`Container ${containerId} not found`);
+            this.setChartError(calc, 'Chart container not found');
+            return;
+          }
+
+          // Destroy existing chart if there is one
+          if (calc.chart) {
+            calc.chart.destroy();
+            calc.chart = null;
+          }
+
+          // Create canvas if it doesn't exist
+          let canvas = container.querySelector('canvas');
+          if (!canvas) {
+            canvas = document.createElement('canvas');
+            container.appendChild(canvas);
+          }
+
+          // Ensure the canvas is clean
+          const ctx = canvas.getContext('2d');
+
+          // Safety check before creating chart
+          if (!labels.length || !data.length) {
+            this.setChartError(calc, 'No valid data points for chart');
+            return;
+          }
+
+          // Create the chart with safe configuration
+          try {
+            calc.chart = new Chart(ctx, {
+              type: 'line',
+              data: {
+                labels: labels,
+                datasets: [{
+                  label: `Impact of ${this.inputs[selectedVar]?.nice_name || this.formatLabel(selectedVar)}`,
+                  data: data,
+                  borderColor: '#10a37f',
+                  backgroundColor: 'rgba(16, 163, 127, 0.1)',
+                  tension: 0.2,
+                  fill: true,
+                  pointRadius: 2
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  title: {
+                    display: true,
+                    text: `How ${this.inputs[selectedVar]?.nice_name || this.formatLabel(selectedVar)} affects the result`,
+                    font: {
+                      size: 14
+                    }
+                  },
+                  tooltip: {
+                    callbacks: {
+                      label: (context) => {
+                        if (context?.raw === undefined) return '';
+                        return `Result: ${this.humanReadable(context.raw)} ${calc.result?.units || ''}`;
+                      },
+                      title: (tooltipItems) => {
+                        if (!tooltipItems?.length || !tooltipItems[0]?.label) return '';
+                        const dataIndex = tooltipItems[0].dataIndex;
+                        if (dataIndex === undefined || !chartData[dataIndex]) return '';
+                        const point = chartData[dataIndex];
+                        return `${this.inputs[selectedVar]?.nice_name || this.formatLabel(selectedVar)}: ${this.humanReadable(point.rawX)} ${this.inputs[selectedVar]?.display_units || ''}`;
+                      }
+                    }
+                  }
+                },
+                scales: {
+                  y: {
+                    title: {
+                      display: true,
+                      text: calc.result?.units || ''
+                    },
+                    ticks: {
+                      callback: (value) => {
+                        return this.humanReadable(value);
+                      }
+                    }
+                  },
+                  x: {
+                    title: {
+                      display: true,
+                      text: this.inputs[selectedVar]?.display_units || ''
+                    }
+                  }
+                }
+              }
+            });
+
+            calc.plotGenerated = true;
+            calc.chartError = false;
+          } catch (e) {
+            console.error('Error creating chart:', e);
+            this.setChartError(calc, e);
+          }
+        },
+        validateChartData(data) {
+          if (!Array.isArray(data) || data.length === 0) {
+            return false;
+          }
+
+          // Check that all data points are valid numbers
+          return data.every(point =>
+            point !== undefined &&
+            point !== null &&
+            !isNaN(parseFloat(point))
+          );
+        },
+
+        // Call this at the start of generateSensitivityPlot to reset error state
+        resetChartError(calc) {
+          calc.chartError = false;
+        },
+
+        // Call this when a chart error occurs
+        setChartError(calc, error) {
+          calc.chartError = true;
+          calc.plotGenerated = true; // Still mark as generated so we show error message
+          console.error('Chart error:', error);
         }
       },
       mounted() {
@@ -978,6 +1350,19 @@
         const modalEl = document.getElementById('inspectorModal');
         modalEl.addEventListener('shown.bs.modal', () => { this.mobileInspectorOpen = true; });
         modalEl.addEventListener('hidden.bs.modal', () => { this.mobileInspectorOpen = false; });
+
+        if (!this.plotLibraryLoaded) {
+          const script = document.createElement('script');
+          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js';
+          script.onload = () => {
+            this.plotLibraryLoaded = true;
+            console.log('Chart.js loaded successfully');
+          };
+          script.onerror = () => {
+            console.error('Failed to load Chart.js');
+          };
+          document.head.appendChild(script);
+        }
       }
     });
 
