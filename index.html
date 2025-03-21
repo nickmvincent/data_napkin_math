@@ -5,19 +5,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Data Napkin Math</title>
-
+  
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" />
-
+  
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
-
+  
   <!-- Chart.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
-
+  
+  <!-- Chart.js Annotation Plugin -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/2.1.0/chartjs-plugin-annotation.min.js"></script>
+  
   <!-- Main CSS -->
   <link rel="stylesheet" href="assets/css/main.css" />
-
+  
   <!-- Vue 3 -->
   <script src="https://unpkg.com/vue@3"></script>
 </head>
@@ -61,8 +64,11 @@
 
     <!-- Category Selector -->
     <div class="container my-3">
-      <category-selector :categories="uniqueCategories" :selected-category="selectedScenario"
-        @category-selected="toggleCategory"></category-selector>
+      <category-selector 
+        :categories="uniqueCategories" 
+        :selected-category="selectedScenario"
+        @category-selected="toggleCategory"
+      ></category-selector>
     </div>
 
     <!-- Loading & Error States -->
@@ -85,8 +91,14 @@
     <!-- Main Flex Container: Left Panel & Main Content -->
     <div v-else class="main-container">
       <!-- Left Panel: Inputs -->
-      <input-panel :inputs="inputs" :visible="leftPanelOpen" @update-value="updateValue" @adjust-value="adjustValue"
-        @reset-value="resetValue" @inspect="showDetails"></input-panel>
+      <input-panel 
+        :inputs="inputs" 
+        :visible="leftPanelOpen"
+        @update-value="updateValue"
+        @adjust-value="adjustValue"
+        @reset-value="resetValue"
+        @inspect="showDetails"
+      ></input-panel>
 
       <!-- Main Content: Scenario Cards -->
       <div class="main-content" :style="{ marginRight: (!isMobile && rightPanelOpen) ? '400px' : '0' }">
@@ -104,13 +116,23 @@
           <p style="font-size: 1.1rem; margin-bottom: 30px;">
             Explore the various scenarios below. Modify input values and choose fill options to see how outcomes change.
           </p>
-
+          
           <!-- Scenario Cards -->
-          <scenario-card v-for="(scenario, index) in filteredScenarios" :key="index" :scenario="scenario" :index="index"
-            :inputs="inputs" :fill-selections="fillSelections" @toggle-explore="toggleExplore"
-            @update-value="updateValue" @adjust-value="adjustValue" @reset-value="resetValue"
-            @inspect-input="showDetails" @variable-change="onCardDropdownChange"
-            @generate-plot="generateSensitivityPlot"></scenario-card>
+          <scenario-card
+            v-for="(scenario, index) in filteredScenarios"
+            :key="index"
+            :scenario="scenario"
+            :index="index"
+            :inputs="inputs"
+            :fill-selections="fillSelections"
+            @toggle-explore="toggleExplore"
+            @update-value="updateValue"
+            @adjust-value="adjustValue"
+            @reset-value="resetValue"
+            @inspect-input="showDetails"
+            @variable-change="onCardDropdownChange"
+            @generate-plot="generateSensitivityPlot"
+          ></scenario-card>
         </section>
 
         <section id="aboutContent" class="about-section">
@@ -138,14 +160,21 @@
       </div>
 
       <!-- Right Panel: Inspector -->
-      <inspector-panel :selected-key="selectedInputKey" :selected-input="selectedInputDetails" :inputs="inputs"
-        :logs="logs" :visible="rightPanelOpen" :is-mobile="isMobile" @close="toggleRightPanel"></inspector-panel>
+      <inspector-panel
+        :selected-key="selectedInputKey"
+        :selected-input="selectedInputDetails"
+        :inputs="inputs"
+        :logs="logs"
+        :visible="rightPanelOpen"
+        :is-mobile="isMobile"
+        @close="toggleRightPanel"
+      ></inspector-panel>
     </div>
   </div>
 
   <!-- Bootstrap JS Bundle -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
-
+  
   <!-- Main App Script (module type to use ES6 imports) -->
   <script type="module" src="js/main.js"></script>
 </body>

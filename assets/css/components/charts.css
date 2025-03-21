@@ -28,7 +28,7 @@
     background-color: var(--white);
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
-    height: 300px;
+    min-height: 300px;
 }
 
 .sensitivity-controls h6 {
@@ -48,6 +48,20 @@
 
 .range-value {
     font-weight: bold;
+    color: var(--primary-color);
+}
+
+/* Current value indicator */
+.current-value-indicator {
+    background-color: var(--light-gray);
+    border: 1px solid var(--border-color);
+    border-left: 3px solid var(--primary-color);
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: var(--border-radius);
+}
+
+.current-value-indicator strong {
     color: var(--primary-color);
 }
 
@@ -85,15 +99,33 @@ input[type="range"]::-moz-range-thumb {
     margin-top: 5px;
 }
 
+/* Chart annotation styling */
+.current-value-line {
+    border-color: rgba(255, 99, 132, 0.8);
+    border-width: 2px;
+    border-style: dashed;
+}
+
+.baseline-line {
+    border-color: rgba(53, 162, 235, 0.8);
+    border-width: 2px;
+    border-style: solid;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .visualization-area .row {
         flex-direction: column;
     }
 
-    .exploration-visualization,
-    .sensitivity-controls {
-        margin-bottom: 15px;
+    .exploration-visualization {
         height: 250px;
+        margin-bottom: 15px;
+    }
+
+    .sensitivity-controls {
+        min-height: auto;
+        margin-bottom: 15px;
+        padding: 10px;
     }
 }

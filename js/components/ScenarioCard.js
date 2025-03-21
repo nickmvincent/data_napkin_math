@@ -2,8 +2,16 @@
  * ScenarioCard Component
  * Renders a single scenario card with exploration capabilities
  */
+
+import SensitivityChart from './SensitivityChart.js';
+
+
 export default {
   name: 'ScenarioCard',
+
+  components: {
+    SensitivityChart
+  },
 
   props: {
     scenario: {
@@ -32,118 +40,92 @@ export default {
 
   template: `
       <div class="card">
-        <header>
-          <h4>{{ scenario.title }}</h4>
-          <!-- Description with variable selectors -->
-          <p>
-            <template v-for="(segment, idx) in parsedDescription" :key="idx">
-              <template v-if="segment.type === 'text'">
-                {{ segment.text }}
-              </template>
-              <template v-else>
-                <select class="form-select form-select-sm inline-select" v-model="fillSelections[segment.variable]"
-                  @change="onVariableChange(segment.variable, $event.target.value)">
-                  <option v-for="option in getFillOptions(segment.variable)" :key="option.variable"
-                    :value="option.variable">
-                    {{ option.text }}
-                  </option>
-                </select>
-              </template>
-            </template>
-          </p>
-          <!-- Result output -->
-          <div class="result-output">
-            {{ scenario.result.value }} {{ scenario.result.units }}
-          </div>
-        </header>
-  
-        <!-- Explore button -->
-        <button class="btn btn-primary explore-button" @click="toggleExplore">
-          {{ scenario.showExplore ? 'Hide Exploration Tools' : 'Explore what would happen if these numbers changed' }}
-        </button>
-  
-        <!-- Exploration area -->
-        <div v-if="scenario.showExplore" class="exploration-area">
-          <!-- Visualization area -->
-          <div class="visualization-area">
-            <div class="row">
-              <div class="col-md-6">
-                <div class="exploration-visualization" :id="'plot-' + index">
-                  <div v-if="!scenario.plotGenerated" class="chart-placeholder">
-                    <em>Select a variable below to visualize its impact</em>
-                  </div>
-                  <div v-else-if="scenario.chartError" class="chart-placeholder chart-error">
-                    <div>
-                      <strong>Chart could not be generated</strong>
-                      <p>Please try a different variable or range</p>
-                    </div>
-                  </div>
-                  <div class="plot-container" :id="'plot-container-' + index"></div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="sensitivity-controls">
-                  <h6>Sensitivity Analysis</h6>
-                  <p>Select a variable to see how changes affect the result:</p>
-                  <div class="form-group">
-                    <select class="form-select" v-model="scenario.selectedSensitivityVar"
-                      @change="generateSensitivityPlot">
-                      <option value="">Choose a variable</option>
-                      <option v-for="inputKey in scenario.inputs" :key="inputKey" :value="inputKey">
-                        {{ inputs[inputKey]?.nice_name || formatLabel(inputKey) }}
-                      </option>
-                    </select>
-                  </div>
-                  <div class="range-controls" v-if="scenario.selectedSensitivityVar">
-                    <label>Range multiplier:
-                      <span class="range-value">{{ scenario.sensitivityRange || 5 }}x</span>
-                    </label>
-                    <input type="range" class="form-range" min="2" max="100" v-model.number="scenario.sensitivityRange"
-                      @change="generateSensitivityPlot">
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-  
-          <!-- Input controls area -->
-          <div class="input-controls mt-4">
-            <h5>Adjust Input Values</h5>
-            <div v-for="inputKey in scenario.inputs" :key="inputKey" class="mb-3 input-control-row">
-              <label class="form-label">
-                {{ inputs[inputKey]?.nice_name || formatLabel(inputKey) }}
-                <small class="text-muted"> ({{ inputs[inputKey].display_units }})</small>
-              </label>
-              <div class="input-group">
-                <input type="number" class="form-control"
-                  :value="formatValue(inputs[inputKey].value, inputs[inputKey].scale)"
-                  @input="updateValue($event, inputKey)" />
-                <button class="btn btn-outline-secondary" type="button" @click="adjustValue(inputKey, 10)">×10</button>
-                <button class="btn btn-outline-secondary" type="button" @click="adjustValue(inputKey, 0.1)">×0.1</button>
-                <button class="btn btn-outline-secondary" type="button" @click="resetValue(inputKey)">Reset</button>
-                <button class="btn btn-secondary" type="button" @click="inspectInput(inputKey)">
-                  <i class="bi bi-info-circle"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-  
-          <!-- Calculation details toggle -->
-          <div class="mt-3">
-            <button class="btn btn-outline-info btn-sm" @click="scenario.showCalcDetails = !scenario.showCalcDetails">
-              {{ scenario.showCalcDetails ? "Hide" : "Show" }} Calculation Details
-            </button>
-            <div v-if="scenario.showCalcDetails" class="calc-details mt-2">
-              <strong>Calculation Function:</strong>
-              <pre>{{ scenario.calculate?.toString() }}</pre>
-              <strong>Raw Value:</strong> {{ scenario.result.rawValue }}<br />
-              <div v-if="scenario.unitDetails">
-                <strong>Unit Details:</strong> {{ scenario.unitDetails }}
-              </div>
-            </div>
+    <header>
+      <h4>{{ scenario.title }}</h4>
+      <!-- Description with variable selectors -->
+      <p>
+        <template v-for="(segment, idx) in parsedDescription" :key="idx">
+          <template v-if="segment.type === 'text'">
+            {{ segment.text }}
+          </template>
+          <template v-else>
+            <select class="form-select form-select-sm inline-select" v-model="fillSelections[segment.variable]"
+              @change="onVariableChange(segment.variable, $event.target.value)">
+              <option v-for="option in getFillOptions(segment.variable)" :key="option.variable"
+                :value="option.variable">
+                {{ option.text }}
+              </option>
+            </select>
+          </template>
+        </template>
+      </p>
+      <!-- Result output -->
+      <div class="result-output">
+        {{ scenario.result.value }} {{ scenario.result.units }}
+      </div>
+    </header>
+
+    <!-- Explore button -->
+    <button class="btn btn-primary explore-button" @click="toggleExplore">
+      {{ scenario.showExplore ? 'Hide Exploration Tools' : 'Explore what would happen if these numbers changed' }}
+    </button>
+
+    <!-- Exploration area -->
+    <div v-if="scenario.showExplore" class="exploration-area">
+      <!-- Visualization area -->
+      <div class="visualization-area">
+        <div class="row">
+          <div class="col-lg-12">
+            <!-- Use SensitivityChart component instead of inline implementation -->
+            <sensitivity-chart
+              :scenario="scenario"
+              :index="index"
+              :inputs="inputs"
+              @recalculate="$emit('recalculate')"
+              @update:scenario="updateScenario"
+            ></sensitivity-chart>
           </div>
         </div>
       </div>
+
+      <!-- Input controls area -->
+      <div class="input-controls mt-4">
+        <h5>Adjust Input Values</h5>
+        <div v-for="inputKey in scenario.inputs" :key="inputKey" class="mb-3 input-control-row">
+          <label class="form-label">
+            {{ inputs[inputKey]?.nice_name || formatLabel(inputKey) }}
+            <small class="text-muted"> ({{ inputs[inputKey].display_units }})</small>
+          </label>
+          <div class="input-group">
+            <input type="number" class="form-control"
+              :value="formatValue(inputs[inputKey].value, inputs[inputKey].scale)"
+              @input="updateValue($event, inputKey)" />
+            <button class="btn btn-outline-secondary" type="button" @click="adjustValue(inputKey, 10)">×10</button>
+            <button class="btn btn-outline-secondary" type="button" @click="adjustValue(inputKey, 0.1)">×0.1</button>
+            <button class="btn btn-outline-secondary" type="button" @click="resetValue(inputKey)">Reset</button>
+            <button class="btn btn-secondary" type="button" @click="inspectInput(inputKey)">
+              <i class="bi bi-info-circle"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calculation details toggle -->
+      <div class="mt-3">
+        <button class="btn btn-outline-info btn-sm" @click="scenario.showCalcDetails = !scenario.showCalcDetails">
+          {{ scenario.showCalcDetails ? "Hide" : "Show" }} Calculation Details
+        </button>
+        <div v-if="scenario.showCalcDetails" class="calc-details mt-2">
+          <strong>Calculation Function:</strong>
+          <pre>{{ scenario.calculate?.toString() }}</pre>
+          <strong>Raw Value:</strong> {{ scenario.result.rawValue }}<br />
+          <div v-if="scenario.unitDetails">
+            <strong>Unit Details:</strong> {{ scenario.unitDetails }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
     `,
 
   computed: {
@@ -277,6 +259,16 @@ export default {
     formatValue(value, scale) {
       if (value === undefined || value === null) return '';
       return scale ? value / scale : value;
-    }
+    },
+
+    updateScenario(updatedScenario) {
+      // Update properties that might be changed by the sensitivity chart
+      this.scenario.selectedSensitivityVar = updatedScenario.selectedSensitivityVar;
+      this.scenario.plotGenerated = updatedScenario.plotGenerated;
+      this.scenario.chartError = updatedScenario.chartError;
+
+      // Emit an event to parent if needed
+      this.$emit('update-scenario', this.index, this.scenario);
+    },
   }
 };

@@ -91,6 +91,9 @@ try {
         },
 
         methods: {
+            recalculate() {
+                this.updateCalculations();
+            },
             // Panel toggling
             toggleLeftPanel() {
                 this.leftPanelOpen = !this.leftPanelOpen;

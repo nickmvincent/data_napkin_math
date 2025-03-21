@@ -5,28 +5,78 @@ import { validateChartData } from './validators.js';
 import { humanReadable } from './formatters.js';
 
 /**
- * Load Chart.js library asynchronously
+ * Load Chart.js library and necessary plugins asynchronously
  * @returns {Promise} - Resolves when Chart.js is loaded
  */
 export function loadChartLibrary() {
+    return new Promise(async (resolve, reject) => {
+        try {
+            // Check if Chart.js is already loaded
+            if (typeof Chart !== 'undefined') {
+                // If Chart.js is loaded, check for annotation plugin
+                await loadChartAnnotationPlugin();
+                resolve();
+                return;
+            }
+
+            // Load Chart.js first
+            const chartScript = document.createElement('script');
+            chartScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js';
+            chartScript.async = true;
+
+            chartScript.onload = async () => {
+                console.log('Chart.js loaded successfully');
+
+                // Then load annotation plugin
+                try {
+                    await loadChartAnnotationPlugin();
+                    resolve();
+                } catch (annotationError) {
+                    console.warn('Chart annotation plugin failed to load:', annotationError);
+                    // Still resolve since the core Chart.js loaded
+                    resolve();
+                }
+            };
+
+            chartScript.onerror = () => {
+                console.error('Failed to load Chart.js');
+                reject(new Error('Failed to load Chart.js'));
+            };
+
+            document.head.appendChild(chartScript);
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+/**
+ * Load Chart.js Annotation plugin
+ * @returns {Promise} - Resolves when annotation plugin is loaded
+ */
+function loadChartAnnotationPlugin() {
     return new Promise((resolve, reject) => {
-        if (typeof Chart !== 'undefined') {
+        // Check if plugin is already registered
+        if (Chart && Chart.registry &&
+            Chart.registry.plugins &&
+            Chart.registry.plugins.items &&
+            Chart.registry.plugins.items.annotation) {
             resolve();
             return;
         }
 
         const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js';
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/2.1.0/chartjs-plugin-annotation.min.js';
         script.async = true;
 
         script.onload = () => {
-            console.log('Chart.js loaded successfully');
+            console.log('Chart.js Annotation plugin loaded successfully');
             resolve();
         };
 
         script.onerror = () => {
-            console.error('Failed to load Chart.js');
-            reject(new Error('Failed to load Chart.js'));
+            console.error('Failed to load Chart.js Annotation plugin');
+            reject(new Error('Failed to load Chart.js Annotation plugin'));
         };
 
         document.head.appendChild(script);
