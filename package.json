@@ -1,0 +1,21 @@
+{
+  "name": "data_napkin_math",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^22.13.11",
+    "install": "^0.13.0",
+    "npm": "^11.2.0",
+    "ts-node": "^10.9.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.3"
+  },
+  "scripts": {
+    "buildSite": "bun src/buildSite.ts"
+  }
+}
