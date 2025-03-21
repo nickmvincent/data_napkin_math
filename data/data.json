@@ -1,0 +1,695 @@
+{
+  "inputs": [
+    {
+      "title": "Average words per token",
+      "value": 0.75,
+      "scale": 1,
+      "display_units": "words per token",
+      "variable_name": "training_detail__openai__words_per_token",
+      "variable_type": "training_detail",
+      "entity": "openai",
+      "units": "words_per_token",
+      "source_url": "https://platform.openai.com/tokenizer",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "training_detail",
+        "openai",
+        "words_per_token"
+      ],
+      "content": "# Average words per token\n\n**Value:** 0.75 words per token\n\n## Description\n\nAverage number of words per token\n\n## Key Assumption\n\nAverage across random queries\n\n## Source\n\n- [https://platform.openai.com/tokenizer](https://platform.openai.com/tokenizer)\n- OpenAI Tokenizer",
+      "relative_path": "training_detail__openai__words_per_token.md"
+    },
+    {
+      "title": "Average Contributions per Document (Stackipedia)",
+      "value": 2,
+      "scale": 1,
+      "display_units": "contributions per document",
+      "variable_name": "conversion_rate__stackipedia__contributions_per_document",
+      "variable_type": "conversion_rate",
+      "entity": "stackipedia",
+      "units": "contributions_per_document",
+      "source_url": "https://example.com/stackipedia-content-aggregation",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "conversion_rate",
+        "stackipedia",
+        "contributions_per_document"
+      ],
+      "content": "# Average Contributions per Document (Stackipedia)\n\n**Value:** 2 contributions per document\n\n## Description\n\nAverage number of contributions required to form one complete document on Stackipedia.\n\n## Key Assumption\n\nAssumes that multiple contributions are aggregated to create a final document.\n\n## Source\n\n- [https://example.com/stackipedia-content-aggregation](https://example.com/stackipedia-content-aggregation)\n- Based on current content creation models.",
+      "relative_path": "conversion_rate__stackipedia__contributions_per_document.md"
+    },
+    {
+      "title": "Average Visitors per Contribution (Stackipedia)",
+      "value": 50,
+      "scale": 1,
+      "display_units": "visitors per contribution",
+      "variable_name": "conversion_rate__stackipedia__visitors_per_contribution",
+      "variable_type": "conversion_rate",
+      "entity": "stackipedia",
+      "units": "visitors_per_contribution",
+      "source_url": "https://example.com/stackipedia-engagement",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "conversion_rate",
+        "stackipedia",
+        "visitors_per_contribution"
+      ],
+      "content": "# Average Visitors per Contribution (Stackipedia)\n\n**Value:** 50 visitors per contribution\n\n## Description\n\nThe average number of visitors required to yield one contribution on Stackipedia.\n\n## Key Assumption\n\nDerived from preliminary engagement data on the platform.\n\n## Source\n\n- [https://example.com/stackipedia-engagement](https://example.com/stackipedia-engagement)\n- Based on early user behavior analysis.",
+      "relative_path": "conversion_rate__stackipedia__visitors_per_contribution.md"
+    },
+    {
+      "title": "Average number of a token in a single document (Red Pajama dataset)",
+      "value": 1413,
+      "scale": 1,
+      "display_units": "tokens per contribution",
+      "variable_name": "dataset_attribute__redpajama__tokens_per_contribution",
+      "variable_type": "dataset_attribute",
+      "entity": "redpajama",
+      "units": "tokens_per_contribution",
+      "source_url": "https://github.com/togethercomputer/RedPajama-Data",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "dataset_attribute",
+        "redpajama",
+        "tokens_per_contribution"
+      ],
+      "content": "# Average number of a token in a single document (Red Pajama dataset)\n\n**Value:** 1,413 tokens per contribution\n\n## Description\n\nAverage number of tokens in a single 'contribution'\n\n## Key Assumption\n\nWorking with averages here\n\n## Source\n\n- [https://github.com/togethercomputer/RedPajama-Data](https://github.com/togethercomputer/RedPajama-Data)\n- RedPajama readme reports a ratio of documents to tokens (after dedupe). We use the English figures (20.5T tokens / 14.5B documents)",
+      "relative_path": "dataset_attribute__redpajama__tokens_per_contribution.md"
+    },
+    {
+      "title": "Average Tokens per Document (Stackipedia)",
+      "value": 1500,
+      "scale": 1,
+      "display_units": "tokens per document",
+      "variable_name": "dataset_attribute__stackipedia__tokens_per_document",
+      "variable_type": "dataset_attribute",
+      "entity": "stackipedia",
+      "units": "tokens_per_document",
+      "source_url": "https://example.com/stackipedia-document-length",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "dataset_attribute",
+        "stackipedia",
+        "tokens_per_document"
+      ],
+      "content": "# Average Tokens per Document (Stackipedia)\n\n**Value:** 1,500 tokens per document\n\n## Description\n\nAverage number of tokens found in a high-quality document on Stackipedia.\n\n## Key Assumption\n\nAssumes a typical document length based on current platform content.\n\n## Source\n\n- [https://example.com/stackipedia-document-length](https://example.com/stackipedia-document-length)\n- Estimated from current platform analytics.",
+      "relative_path": "dataset_attribute__stackipedia__tokens_per_document.md"
+    },
+    {
+      "title": "Target Number of Tokens (Stackipedia)",
+      "value": 1000000000,
+      "scale": 1000000000,
+      "display_units": "billions of tokens",
+      "variable_name": "target_metric__stackipedia__tokens",
+      "variable_type": "target_metric",
+      "entity": "stackipedia",
+      "units": "tokens",
+      "source_url": "https://example.com/stackipedia-target-tokens",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "target_metric",
+        "stackipedia",
+        "tokens"
+      ],
+      "content": "# Target Number of Tokens (Stackipedia)\n\n**Value:** 1 billions of tokens\n\n## Description\n\nThe desired total number of tokens to be generated for high-quality content on Stackipedia.\n\n## Key Assumption\n\nAssumes a target scale based on projected platform growth.\n\n## Source\n\n- [https://example.com/stackipedia-target-tokens](https://example.com/stackipedia-target-tokens)\n- Placeholder source for target metric.",
+      "relative_path": "target_metric__stackipedia__tokens.md"
+    },
+    {
+      "title": "PhD rate per question",
+      "value": 300,
+      "scale": 1,
+      "display_units": "dollars per question",
+      "variable_name": "wage_data__phd__dollars_per_question",
+      "variable_type": "wage_data",
+      "entity": "phd",
+      "units": "dollars_per_question",
+      "source_url": "",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "wage_data",
+        "phd",
+        "dollars_per_question"
+      ],
+      "content": "# PhD rate per question\n\n**Value:** 300 dollars per question\n\n## Description\n\nPhD rate per question\n\n## Key Assumption\n\n#todo\n\n## Source\n\n- [#todo](#todo)\n- #todo",
+      "relative_path": "wage_data__phd__dollars_per_question.md"
+    },
+    {
+      "title": "Freelance rate per word (low estimate)",
+      "value": 0.1,
+      "scale": 1,
+      "display_units": "dollars per word",
+      "variable_name": "wage_data__generic_freelance_lower__dollars_per_word",
+      "variable_type": "wage_data",
+      "entity": "generic_freelance_lower",
+      "units": "dollars_per_word",
+      "source_url": "https://www.clearvoice.com/resources/how-much-to-pay-a-freelance-writer/",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "wage_data",
+        "generic_freelance_lower",
+        "dollars_per_word"
+      ],
+      "content": "# Freelance rate per word (low estimate)\n\n**Value:** 0.10 dollars per word\n\n## Description\n\nFreelance rate per word (beginner)\n\n## Key Assumption\n\nRate estimate based on market conditions\n\n## Source\n\n- [https://www.clearvoice.com/resources/how-much-to-pay-a-freelance-writer/](https://www.clearvoice.com/resources/how-much-to-pay-a-freelance-writer/)\n- Survey by ClearVoice, a company",
+      "relative_path": "wage_data__generic_freelance_lower__dollars_per_word.md"
+    },
+    {
+      "title": "Freelance rate per word (high estimate)",
+      "value": 1,
+      "scale": 1,
+      "display_units": "dollars per word",
+      "variable_name": "wage_data__generic_freelance_higher__dollars_per_word",
+      "variable_type": "wage_data",
+      "entity": "generic_freelance_higher",
+      "units": "dollars_per_word",
+      "source_url": "https://www.clearvoice.com/resources/how-much-to-pay-a-freelance-writer/",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "wage_data",
+        "generic_freelance_higher",
+        "dollars_per_word"
+      ],
+      "content": "# Freelance rate per word (high estimate)\n\n**Value:** 1 dollars per word\n\n## Description\n\nFreelance rate per word (expert)\n\n## Key Assumption\n\nRate estimate based on market conditions\n\n## Source\n\n- [https://www.clearvoice.com/resources/how-much-to-pay-a-freelance-writer/](https://www.clearvoice.com/resources/how-much-to-pay-a-freelance-writer/)\n- Survey by ClearVoice, a company",
+      "relative_path": "wage_data__generic_freelance_higher__dollars_per_word.md"
+    },
+    {
+      "title": "Revenue from AI (OpenAI)",
+      "value": 3490000000,
+      "scale": 1000000,
+      "display_units": "millions of dollars",
+      "variable_name": "yearly_revenue__openai__dollars",
+      "variable_type": "yearly_revenue",
+      "entity": "openai",
+      "units": "dollars",
+      "source_url": "https://www.bloomberg.com/news/articles/2024-06-12/openai-doubles-annualized-revenue-to-3-4-billion-information",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "yearly_revenue",
+        "openai",
+        "dollars"
+      ],
+      "content": "# Revenue from AI (OpenAI)\n\n**Value:** 3,490 millions of dollars\n\n## Description\n\nValue generated by AI in dollars\n\n## Key Assumption\n\nAssuming all 2024 OpenAI revenue is from LLMs\n\n## Source\n\n- [https://www.bloomberg.com/news/articles/2024-06-12/openai-doubles-annualized-revenue-to-3-4-billion-information](https://www.bloomberg.com/news/articles/2024-06-12/openai-doubles-annualized-revenue-to-3-4-billion-information)\n- business news coverage of openai",
+      "relative_path": "yearly_revenue__openai__dollars.md"
+    },
+    {
+      "title": "Revenue from AI (Anthropic)",
+      "value": 1000000000,
+      "scale": 1000000,
+      "display_units": "millions of dollars",
+      "variable_name": "yearly_revenue__anthropic__dollars",
+      "variable_type": "yearly_revenue",
+      "entity": "anthropic",
+      "units": "dollars",
+      "source_url": "https://www.pymnts.com/artificial-intelligence-2/2024/anthropic-revenue-reportedly-set-to-jump-to-1-billion-this-year/",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "yearly_revenue",
+        "anthropic",
+        "dollars"
+      ],
+      "content": "# Revenue from AI (Anthropic)\n\n**Value:** 1,000 millions of dollars\n\n## Description\n\nValue generated by AI in dollars\n\n## Key Assumption\n\nassuming all 2024 Anthropic revenue is from LLMs\n\n## Source\n\n- [https://www.pymnts.com/artificial-intelligence-2/2024/anthropic-revenue-reportedly-set-to-jump-to-1-billion-this-year/](https://www.pymnts.com/artificial-intelligence-2/2024/anthropic-revenue-reportedly-set-to-jump-to-1-billion-this-year/)\n- business news coverage of anthropic",
+      "relative_path": "yearly_revenue__anthropic__dollars.md"
+    },
+    {
+      "title": "Revenue from AI (Microsoft)",
+      "value": 65600000000,
+      "scale": 1000000000,
+      "display_units": "billions of dollars",
+      "variable_name": "yearly_revenue__microsoft__dollars",
+      "variable_type": "yearly_revenue",
+      "entity": "microsoft",
+      "units": "dollars",
+      "source_url": "https://www.geekwire.com/2024/microsoft-beats-expectations-with-nearly-25b-in-quarterly-profits-as-ai-revenue-boosts-cloud-growth/",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "yearly_revenue",
+        "microsoft",
+        "dollars"
+      ],
+      "content": "# Revenue from AI (Microsoft)\n\n**Value:** 65.60 billions of dollars\n\n## Description\n\nValue generated by AI in dollars\n\n## Key Assumption\n\nassuming all 2024 Microsoft revenue is from LLMs. Major stretch (for now)\n\n## Source\n\n- [https://www.geekwire.com/2024/microsoft-beats-expectations-with-nearly-25b-in-quarterly-profits-as-ai-revenue-boosts-cloud-growth/](https://www.geekwire.com/2024/microsoft-beats-expectations-with-nearly-25b-in-quarterly-profits-as-ai-revenue-boosts-cloud-growth/)\n- business news coverage",
+      "relative_path": "yearly_revenue__microsoft__dollars.md"
+    },
+    {
+      "title": "Number of Reddit daily active users",
+      "value": 267500000,
+      "scale": 1000000,
+      "display_units": "millions of daily active users",
+      "variable_name": "deal_group_size__reddit__daily_active_users",
+      "variable_type": "deal_group_size",
+      "entity": "reddit",
+      "units": "daily_active_users",
+      "source_url": "https://backlinko.com/reddit-users",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "deal_group_size",
+        "reddit",
+        "daily_active_users"
+      ],
+      "content": "# Number of Reddit daily active users\n\n**Value:** 267.50 millions of daily active users\n\n## Description\n\nNumber of Reddit daily active users\n\n## Key Assumption\n\nNone\n\n## Source\n\n- [https://backlinko.com/reddit-users](https://backlinko.com/reddit-users)\n- article about number of reddit users",
+      "relative_path": "deal_group_size__reddit__daily_active_users.md"
+    },
+    {
+      "title": "Number of News Corp employees",
+      "value": 25000,
+      "scale": 1,
+      "display_units": "people",
+      "variable_name": "deal_group_size__newscorp__employees",
+      "variable_type": "deal_group_size",
+      "entity": "newscorp",
+      "units": "employees",
+      "source_url": "https://en.wikipedia.org/wiki/News_Corp",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "deal_group_size",
+        "newscorp",
+        "employees"
+      ],
+      "content": "# Number of News Corp employees\n\n**Value:** 25,000 people\n\n## Description\n\nNumber of News Corp employees\n\n## Key Assumption\n\nNot specified\n\n## Source\n\n- [https://en.wikipedia.org/wiki/News_Corp](https://en.wikipedia.org/wiki/News_Corp)\n- Wikipedia article (primary source is sec.gov)",
+      "relative_path": "deal_group_size__newscorp__employees.md"
+    },
+    {
+      "title": "Number of WSJ journalists",
+      "value": 2000,
+      "scale": 1,
+      "display_units": "people",
+      "variable_name": "deal_group_size__wsj__journalists",
+      "variable_type": "deal_group_size",
+      "entity": "wsj",
+      "units": "journalists",
+      "source_url": "https://en.wikipedia.org/wiki/The_Wall_Street_Journal",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "deal_group_size",
+        "wsj",
+        "journalists"
+      ],
+      "content": "# Number of WSJ journalists\n\n**Value:** 2,000 people\n\n## Description\n\nNumber of WSJ journalists\n\n## Key Assumption\n\nNot specified\n\n## Source\n\n- [https://en.wikipedia.org/wiki/The_Wall_Street_Journal](https://en.wikipedia.org/wiki/The_Wall_Street_Journal)\n- Wikipedia article",
+      "relative_path": "deal_group_size__wsj__journalists.md"
+    },
+    {
+      "title": "Number of Taylor and Francis Articles",
+      "value": 5291000,
+      "scale": 1000000,
+      "display_units": "millions of articles",
+      "variable_name": "deal_group_size__taylorandfrancis__articles",
+      "variable_type": "deal_group_size",
+      "entity": "taylorandfrancis",
+      "units": "articles",
+      "source_url": "https://www.tandfonline.com/#:~:text=Advanced%20search.%205%2C291%2C000+%20articles.%20Find%20a%20journal.",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "deal_group_size",
+        "taylorandfrancis",
+        "articles"
+      ],
+      "content": "# Number of Taylor and Francis Articles\n\n**Value:** 5.29 millions of articles\n\n## Description\n\nNumber of Taylor and Francis Articles\n\n## Key Assumption\n\nassuming each article has 1 unique author\n\n## Source\n\n- [https://www.tandfonline.com/#:~:text=Advanced%20search.%205%2C291%2C000+%20articles.%20Find%20a%20journal.](https://www.tandfonline.com/#:~:text=Advanced%20search.%205%2C291%2C000+%20articles.%20Find%20a%20journal.)\n- T&F search engine",
+      "relative_path": "deal_group_size__taylorandfrancis__articles.md"
+    },
+    {
+      "title": "Total number of books in Books3",
+      "value": 196640,
+      "scale": 1,
+      "display_units": "books",
+      "variable_name": "total_books__books3__books",
+      "variable_type": "total_books",
+      "entity": "books3",
+      "units": "books",
+      "source_url": "https://www.aiaaic.org/aiaaic-repository/ai-algorithmic-and-automation-incidents/books3-ai-training-dataset",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "total_books",
+        "books3",
+        "books"
+      ],
+      "content": "# Total number of books in Books3\n\n**Value:** 196,640 books\n\n## Description\n\nNumber of books in Books3\n\n## Key Assumption\n\nN/A\n\n## Source\n\n- [https://www.aiaaic.org/aiaaic-repository/ai-algorithmic-and-automation-incidents/books3-ai-training-dataset](https://www.aiaaic.org/aiaaic-repository/ai-algorithmic-and-automation-incidents/books3-ai-training-dataset)\n- Entry in the AIAAIC repository.",
+      "relative_path": "total_books__books3__books.md"
+    },
+    {
+      "title": "Payment made to Reddit by Google",
+      "value": 60000000,
+      "scale": 1000000,
+      "display_units": "millions of dollars",
+      "variable_name": "deal_value__reddit_google__dollars",
+      "variable_type": "deal_value",
+      "entity": "reddit_google",
+      "units": "dollars",
+      "source_url": "https://www.cbsnews.com/news/google-reddit-60-million-deal-ai-training/",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "deal_value",
+        "reddit_google",
+        "dollars"
+      ],
+      "content": "# Payment made to Reddit by Google\n\n**Value:** 60 millions of dollars\n\n## Description\n\nPayment made to Reddit by Google\n\n## Key Assumption\n\nNone\n\n## Source\n\n- [https://www.cbsnews.com/news/google-reddit-60-million-deal-ai-training/](https://www.cbsnews.com/news/google-reddit-60-million-deal-ai-training/)\n- CBS news coverage",
+      "relative_path": "deal_value__reddit_google__dollars.md"
+    },
+    {
+      "title": "Value of the News Corp deal",
+      "value": 50000000,
+      "scale": 1000000,
+      "display_units": "millions of dollars",
+      "variable_name": "deal_value__newscorp__dollars",
+      "variable_type": "deal_value",
+      "entity": "newscorp",
+      "units": "dollars",
+      "source_url": "https://www.nytimes.com/2024/05/22/business/media/openai-news-corp-content-deal.html",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "deal_value",
+        "newscorp",
+        "dollars"
+      ],
+      "content": "# Value of the News Corp deal\n\n**Value:** 50 millions of dollars\n\n## Description\n\nValue of the News Corp deal\n\n## Key Assumption\n\nNot specified\n\n## Source\n\n- [https://www.nytimes.com/2024/05/22/business/media/openai-news-corp-content-deal.html](https://www.nytimes.com/2024/05/22/business/media/openai-news-corp-content-deal.html)\n- notes here",
+      "relative_path": "deal_value__newscorp__dollars.md"
+    },
+    {
+      "title": "Value of the Taylor and Francis deal",
+      "value": 10000000,
+      "scale": 1000000,
+      "display_units": "millions of dollars",
+      "variable_name": "deal_value__taylorandfrancis_microsoft__dollars",
+      "variable_type": "deal_value",
+      "entity": "taylorandfrancis_microsoft",
+      "units": "dollars",
+      "source_url": "https://www.thebookseller.com/news/academic-authors-shocked-after-taylor--francis-sells-access-to-their-research-to-microsoft-ai",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "deal_value",
+        "taylorandfrancis_microsoft",
+        "dollars"
+      ],
+      "content": "# Value of the Taylor and Francis deal\n\n**Value:** 10 millions of dollars\n\n## Description\n\nValue of the Taylor and Francis deal\n\n## Key Assumption\n\nNone\n\n## Source\n\n- [https://www.thebookseller.com/news/academic-authors-shocked-after-taylor--francis-sells-access-to-their-research-to-microsoft-ai](https://www.thebookseller.com/news/academic-authors-shocked-after-taylor--francis-sells-access-to-their-research-to-microsoft-ai)\n- news coverage of deal",
+      "relative_path": "deal_value__taylorandfrancis_microsoft__dollars.md"
+    },
+    {
+      "title": "Total pre-training tokens (Llama 3)",
+      "value": 15000000000000,
+      "scale": 1000000000,
+      "display_units": "billions of tokens",
+      "variable_name": "dataset_size__llama3__tokens",
+      "variable_type": "dataset_size",
+      "entity": "llama3",
+      "units": "tokens",
+      "source_url": "https://github.com/meta-llama/llama3/blob/main/MODEL_CARD.md",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "dataset_size",
+        "llama3",
+        "tokens"
+      ],
+      "content": "# Total pre-training tokens (Llama 3)\n\n**Value:** 15,000 billions of tokens\n\n## Description\n\nTotal tokens used to pre-training a model\n\n## Key Assumption\n\nWe can use 15 trillion as a default value based on the assumption that most frontier models use roughly same pre-training size. 15T is the number cited in Llama3 model card and close to the FineWeb size.\n\n## Source\n\n- [https://github.com/meta-llama/llama3/blob/main/MODEL_CARD.md](https://github.com/meta-llama/llama3/blob/main/MODEL_CARD.md)\n- Source is the Llama 3 model card. It describes total number of tokens for pre-training. It is useful.",
+      "relative_path": "dataset_size__llama3__tokens.md"
+    },
+    {
+      "title": "Total pre-training tokens (Olmo 2)",
+      "value": 5000000000000,
+      "scale": 1000000000,
+      "display_units": "billions of tokens",
+      "variable_name": "dataset_size__olmo2__tokens",
+      "variable_type": "dataset_size",
+      "entity": "olmo2",
+      "units": "tokens",
+      "source_url": "https://huggingface.co/allenai/OLMo-2-1124-7B",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "dataset_size",
+        "olmo2",
+        "tokens"
+      ],
+      "content": "# Total pre-training tokens (Olmo 2)\n\n**Value:** 5,000 billions of tokens\n\n## Description\n\nTotal tokens used to pre-training a model\n\n## Key Assumption\n\n...\n\n## Source\n\n- [https://huggingface.co/allenai/OLMo-2-1124-7B](https://huggingface.co/allenai/OLMo-2-1124-7B)\n- Source is the Olmo 2 model card. It describes total number of tokens for pre-training.",
+      "relative_path": "dataset_size__olmo2__tokens.md"
+    },
+    {
+      "title": "Total questions (HLE)",
+      "value": 3000,
+      "scale": 1,
+      "display_units": "questions",
+      "variable_name": "dataset_size__hle__questions",
+      "variable_type": "dataset_size",
+      "entity": "hle",
+      "units": "questions",
+      "source_url": "",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "dataset_size",
+        "hle",
+        "questions"
+      ],
+      "content": "# Total questions (HLE)\n\n**Value:** 3,000 questions\n\n## Description\n\nTotal questions in Humanity's last examn\n\n## Key Assumption\n\n...\n\n## Source\n\n- [#todo](#todo)\n- #todo",
+      "relative_path": "dataset_size__hle__questions.md"
+    },
+    {
+      "title": "Number of people in USA",
+      "value": 334900000,
+      "scale": 1000000,
+      "display_units": "millions of people",
+      "variable_name": "group_size__usa__people",
+      "variable_type": "group_size",
+      "entity": "usa",
+      "units": "people",
+      "source_url": "https://www.census.gov/popclock/",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "group_size",
+        "usa",
+        "people"
+      ],
+      "content": "# Number of people in USA\n\n**Value:** 334.90 millions of people\n\n## Description\n\nNumber of people in the USA\n\n## Key Assumption\n\nN/A\n\n## Source\n\n- [https://www.census.gov/popclock/](https://www.census.gov/popclock/)\n- US Census",
+      "relative_path": "group_size__usa__people.md"
+    },
+    {
+      "title": "Number of people on Earth",
+      "value": 8100000000,
+      "scale": 1000000000,
+      "display_units": "billions of people",
+      "variable_name": "group_size__world__people",
+      "variable_type": "group_size",
+      "entity": "world",
+      "units": "people",
+      "source_url": "https://www.worldometers.info/world-population/",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "group_size",
+        "world",
+        "people"
+      ],
+      "content": "# Number of people on Earth\n\n**Value:** 8.10 billions of people\n\n## Description\n\nNumber of people on Earth\n\n## Key Assumption\n\nNot specified\n\n## Source\n\n- [https://www.worldometers.info/world-population/](https://www.worldometers.info/world-population/)\n- Worldometer website",
+      "relative_path": "group_size__world__people.md"
+    },
+    {
+      "title": "Average number of words per book",
+      "value": 80000,
+      "scale": 1,
+      "display_units": "words",
+      "variable_name": "average_length__book__words",
+      "variable_type": "average_length",
+      "entity": "book",
+      "units": "words",
+      "source_url": "https://www.penguin.co.uk/articles/2020/09/book-length-debate-fiction-long-novels",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "average_length",
+        "book",
+        "words"
+      ],
+      "content": "# Average number of words per book\n\n**Value:** 80,000 words\n\n## Description\n\nAn average number of words per book\n\n## Key Assumption\n\nAverage number of words per book\n\n## Source\n\n- [https://www.penguin.co.uk/articles/2020/09/book-length-debate-fiction-long-novels](https://www.penguin.co.uk/articles/2020/09/book-length-debate-fiction-long-novels)\n- No additional notes.",
+      "relative_path": "average_length__book__words.md"
+    }
+  ],
+  "scenarios": [
+    {
+      "title": "Distributing Money from Data Deals",
+      "description": "If we distribute the payments from recent data deal (say, {deal_value__reddit_google__dollars}) to some group of people (say, {deal_group_size__reddit__daily_active_users}), how much will each person get?",
+      "input_variables": [
+        "deal_value__reddit_google__dollars",
+        "deal_group_size__reddit__daily_active_users"
+      ],
+      "calculation_type": "operations",
+      "operations": "[{\"func\": \"divide\", \"args\": [\"{deal_value__reddit_google__dollars}\", \"{deal_group_size__reddit__daily_active_users}\"]}]",
+      "result_label": "Per Person Revenue",
+      "result_units": "dollars",
+      "category": "Distributing money",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "calculation",
+        "distributing-money"
+      ],
+      "content": "# Distributing Money from Data Deals\n\n## Description\n\nIf we distribute the payments from recent data deal (say, 60 millions of dollars) to some group of people (say, 267.50 millions of daily active users), how much will each person get?\n\n## Inputs\n\n- **Payment made to Reddit by Google**: 60 millions of dollars\n- **Number of Reddit daily active users**: 267.50 millions of daily active users\n\n## Calculation\n\n- Divide: 60 millions of dollars ÷ 267.50 millions of daily active users\n\n## Result\n\nThe Per Person Revenue is calculated in dollars.\n\n## Category\n\nDistributing money",
+      "relative_path": "distributing-money-from-data-deals.md"
+    },
+    {
+      "title": "Distributing AI Company Revenue Broadly",
+      "description": "If we distribute AI revenue (say, {yearly_revenue__openai__dollars}) to some group of people (say, {group_size__world__people}), how much will each person get?",
+      "input_variables": [
+        "yearly_revenue__openai__dollars",
+        "group_size__world__people"
+      ],
+      "calculation_type": "operations",
+      "operations": "[{\"func\": \"divide\", \"args\": [\"{yearly_revenue__openai__dollars}\", \"{group_size__world__people}\"]}]",
+      "result_label": "Per Person Revenue",
+      "result_units": "dollars",
+      "category": "Distributing money",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "calculation",
+        "distributing-money"
+      ],
+      "content": "# Distributing AI Company Revenue Broadly\n\n## Description\n\nIf we distribute AI revenue (say, 3,490 millions of dollars) to some group of people (say, 8.10 billions of people), how much will each person get?\n\n## Inputs\n\n- **Revenue from AI (OpenAI)**: 3,490 millions of dollars\n- **Number of people on Earth**: 8.10 billions of people\n\n## Calculation\n\n- Divide: 3,490 millions of dollars ÷ 8.10 billions of people\n\n## Result\n\nThe Per Person Revenue is calculated in dollars.\n\n## Category\n\nDistributing money",
+      "relative_path": "distributing-ai-company-revenue-broadly.md"
+    },
+    {
+      "title": "Commissioning New Datasets",
+      "description": "How much would it cost to pay for a brand new LLM-scale pre-training dataset (say, {dataset_size__llama3__tokens}) assuming moderate freelance writing wages (say, {wage_data__generic_freelance_higher__dollars_per_word})?",
+      "input_variables": [
+        "dataset_size__llama3__tokens",
+        "training_detail__openai__words_per_token",
+        "wage_data__generic_freelance_higher__dollars_per_word"
+      ],
+      "calculation_type": "operations",
+      "operations": "[{\"func\": \"multiply\", \"args\": [\"{dataset_size__llama3__tokens}\", \"{training_detail__openai__words_per_token}\"], \"name\": \"total_words\"}, {\"func\": \"multiply\", \"args\": [\"{total_words}\", \"{wage_data__generic_freelance_higher__dollars_per_word}\"]}]",
+      "result_label": "Dataset Cost",
+      "result_units": "dollars",
+      "category": "Paying for new labour",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "calculation",
+        "paying-for-new-labour"
+      ],
+      "content": "# Commissioning New Datasets\n\n## Description\n\nHow much would it cost to pay for a brand new LLM-scale pre-training dataset (say, 15,000 billions of tokens) assuming moderate freelance writing wages (say, 1 dollars per word)?\n\n## Inputs\n\n- **Total pre-training tokens (Llama 3)**: 15,000 billions of tokens\n- **Average words per token**: 0.75 words per token\n- **Freelance rate per word (high estimate)**: 1 dollars per word\n\n## Calculation\n\n- Multiply: 15,000 billions of tokens × 0.75 words per token = [total_words]\n- Multiply: [total_words] × 1 dollars per word = [result]\n\n## Result\n\nThe Dataset Cost is calculated in dollars.\n\n## Category\n\nPaying for new labour",
+      "relative_path": "commissioning-new-datasets.md"
+    },
+    {
+      "title": "Producing an expert evaluation set",
+      "description": "How much would it cost to pay for an eval dataset (say, {dataset_size__hle__questions}) assuming moderate expert hourly wages (say, {wage_data__phd__dollars_per_question})?",
+      "input_variables": [
+        "dataset_size__hle__questions",
+        "wage_data__phd__dollars_per_question"
+      ],
+      "calculation_type": "operations",
+      "operations": "[{\"func\": \"multiply\", \"args\": [\"{dataset_size__hle__questions}\", \"{wage_data__phd__dollars_per_question}\"]}]",
+      "result_label": "Dataset Cost",
+      "result_units": "dollars",
+      "category": "Paying for new labour",
+      "date_added": "2025-03-19T00:00:00.000Z",
+      "tags": [
+        "calculation",
+        "paying-for-new-labour"
+      ],
+      "content": "# Producing an expert evaluation set\n\n## Description\n\nHow much would it cost to pay for an eval dataset (say, 3,000 questions) assuming moderate expert hourly wages (say, 300 dollars per question)?\n\n## Inputs\n\n- **Total questions (HLE)**: 3,000 questions\n- **PhD rate per question**: 300 dollars per question\n\n## Calculation\n\n- Multiply: 3,000 questions × 300 dollars per question = [result]\n\n## Result\n\nThe Dataset Cost is calculated in dollars.\n\n## Category\n\nPaying for new labour",
+      "relative_path": "producing-an-expert-evaluation-set.md"
+    }
+  ],
+  "schemas": [
+    {
+      "name": "InputVariable",
+      "description": "A numerical input variable for data napkin math calculations",
+      "fields": {
+        "title": {
+          "type": "string",
+          "description": "Human-readable name of the variable"
+        },
+        "value": {
+          "type": "number",
+          "description": "Raw numerical value"
+        },
+        "scale": {
+          "type": "number",
+          "description": "Scaling factor for display (e.g., 1000000 for millions)"
+        },
+        "display_units": {
+          "type": "string",
+          "description": "Units for display (e.g., 'millions of dollars')"
+        },
+        "variable_name": {
+          "type": "string",
+          "description": "Machine-readable variable name"
+        },
+        "variable_type": {
+          "type": "string",
+          "description": "Type of variable (dataset_size, yearly_revenue, etc.)"
+        },
+        "entity": {
+          "type": "string",
+          "description": "Entity the variable is associated with"
+        },
+        "units": {
+          "type": "string",
+          "description": "Units of measurement"
+        },
+        "source_url": {
+          "type": "string",
+          "description": "URL of the source for this value"
+        },
+        "date_added": {
+          "type": "date",
+          "description": "Date when this variable was added"
+        },
+        "tags": {
+          "type": "array",
+          "description": "Tags for categorization"
+        }
+      },
+      "required": [
+        "title",
+        "value",
+        "variable_name",
+        "variable_type",
+        "entity",
+        "units"
+      ],
+      "subdirectory": "inputs"
+    },
+    {
+      "name": "ScenarioCalculation",
+      "description": "A calculation scenario using input variables",
+      "fields": {
+        "title": {
+          "type": "string",
+          "description": "Title of the calculation scenario"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of what this calculation represents"
+        },
+        "input_variables": {
+          "type": "array",
+          "description": "List of input variable names used in this calculation"
+        },
+        "calculation_type": {
+          "type": "string",
+          "description": "Type of calculation (operations, formula, etc.)"
+        },
+        "operations": {
+          "type": "string",
+          "description": "JSON string of operations to perform"
+        },
+        "result_label": {
+          "type": "string",
+          "description": "Label for the calculation result"
+        },
+        "result_units": {
+          "type": "string",
+          "description": "Units for the calculation result"
+        },
+        "category": {
+          "type": "string",
+          "description": "Category of the calculation"
+        },
+        "date_added": {
+          "type": "date",
+          "description": "Date when this scenario was added"
+        },
+        "tags": {
+          "type": "array",
+          "description": "Tags for categorization"
+        }
+      },
+      "required": [
+        "title",
+        "description",
+        "input_variables",
+        "calculation_type"
+      ],
+      "subdirectory": "scenarios"
+    }
+  ]
+}

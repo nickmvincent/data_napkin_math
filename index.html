@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <!-- Google Fonts for a polished, newspaper-like feel -->
-  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Playfair+Display:wght@400;700&display=swap"
+    rel="stylesheet" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Data Napkin Math</title>
   <!-- Bootstrap CSS -->
@@ -12,8 +15,7 @@
   <script src="https://unpkg.com/vue@3"></script>
   <!-- js-yaml for YAML parsing -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.0.0/js-yaml.min.js"></script>
-  <!-- Scenarios module (assumed to exist) -->
-  <script type="module" src="./scenarios.js"></script>
+
   <style>
     /* Overall Fonts & Colors */
     body {
@@ -23,14 +25,20 @@
       margin: 0;
       padding: 0;
     }
-    h1, h2, h3, h4 {
+
+    h1,
+    h2,
+    h3,
+    h4 {
       font-family: 'Playfair Display', serif;
     }
+
     /* Fixed-top Navbar */
     .navbar.fixed-top {
       z-index: 1100;
       border-bottom: 1px solid #ddd;
     }
+
     /* Top Toolbar */
     .toolbar {
       display: flex;
@@ -40,17 +48,21 @@
       background: #fafafa;
       border-bottom: 1px solid #ddd;
     }
+
     .toolbar button {
       font-weight: 700;
     }
+
     /* Main Container using Flex */
     .main-container {
       display: flex;
-      min-height: calc(100vh - 70px); /* subtract navbar height */
+      min-height: calc(100vh - 70px);
+      /* subtract navbar height */
       max-width: 1400px;
       margin: 0 auto;
       width: 100%;
     }
+
     /* Left Panel: Constrained height & scrollable */
     .left-panel {
       flex: 0 0 400px;
@@ -65,6 +77,7 @@
       gap: 15px;
       text-align: left;
     }
+
     /* Main Content: Scenario Cards (with right margin when inspector is open) */
     /* Note: on mobile we override the margin (see media query) */
     .main-content {
@@ -72,6 +85,7 @@
       padding: 20px 30px;
       background: #fdfdfd;
     }
+
     /* Right Panel: Fixed to side, scrollable if needed (desktop only) */
     .right-panel {
       position: fixed;
@@ -89,10 +103,12 @@
       gap: 15px;
       text-align: left;
     }
+
     /* Hide panels when not toggled */
     .hidden {
       display: none;
     }
+
     /* Card styling for scenario cards */
     .card {
       border: 1px solid #ddd;
@@ -100,32 +116,38 @@
       padding: 20px;
       margin-bottom: 30px;
       background: #fff;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     }
+
     /* Header styling for a magazine feel */
     header h1 {
       font-size: 2.8rem;
       margin-bottom: 10px;
     }
+
     header p {
       font-size: 1.2rem;
       line-height: 1.6;
     }
+
     /* Remove default number input spinners */
     input[type=number]::-webkit-outer-spin-button,
     input[type=number]::-webkit-inner-spin-button {
       -webkit-appearance: none;
       margin: 0;
     }
+
     input[type=number] {
       -moz-appearance: textfield;
     }
+
     /* Left panel input rows */
     .input-row {
       border-bottom: 1px solid #eee;
       padding-bottom: 8px;
       margin-bottom: 8px;
     }
+
     /* Result output styling for cards */
     .result-output {
       font-size: 1.8rem;
@@ -134,6 +156,7 @@
       margin: 15px 0;
       text-align: center;
     }
+
     /* Calculation details area styling */
     .calc-details {
       background: #f7f7f7;
@@ -142,22 +165,27 @@
       margin-top: 10px;
       font-size: 0.9rem;
     }
+
     /* Change Log styling in inspector */
     .change-log {
       margin-top: 15px;
       font-size: 0.9rem;
     }
+
     .change-log h6 {
       margin-bottom: 5px;
     }
+
     .change-log ul {
       list-style: none;
       padding-left: 0;
     }
+
     .change-log li {
       border-bottom: 1px dashed #ccc;
       padding: 3px 0;
     }
+
     /* Inline fill select styling */
     .inline-select {
       display: inline-block;
@@ -174,12 +202,14 @@
       -webkit-appearance: none;
       -moz-appearance: none;
     }
+
     /* Category Selector (tiles) */
     .category-selector {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
     }
+
     .category-tile {
       padding: 8px 16px;
       border: 2px solid #10a37f;
@@ -188,9 +218,11 @@
       cursor: pointer;
       transition: background 0.2s, color 0.2s, transform 0.2s;
     }
+
     .category-tile:hover {
       transform: scale(1.03);
     }
+
     .category-tile.selected {
       background: #10a37f;
       color: #fff;
@@ -198,21 +230,26 @@
       font-weight: bold;
       box-shadow: 0 2px 8px rgba(16, 163, 127, 0.5);
     }
+
     /* Responsive adjustments */
     @media (max-width: 768px) {
       .main-container {
         flex-direction: column;
       }
-      .left-panel, .right-panel {
+
+      .left-panel,
+      .right-panel {
         position: relative;
         flex: 0 0 auto;
         width: 100%;
         border: none;
         height: auto;
       }
+
       .right-panel {
         margin-top: 20px;
       }
+
       /* Hide the inline right panel on mobile since we use a modal instead */
       .right-panel {
         display: none !important;
@@ -220,13 +257,14 @@
     }
   </style>
 </head>
+
 <body>
   <!-- Fixed-top Navbar -->
   <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <div class="container-fluid">
       <a class="navbar-brand" href="#headerContent">Data Napkin Math</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
@@ -260,10 +298,8 @@
     <!-- Category Selector for Scenarios -->
     <div class="container my-3">
       <div class="category-selector">
-        <div v-for="cat in uniqueCategories" :key="cat"
-             class="category-tile"
-             :class="{ selected: selectedScenario === cat }"
-             @click="toggleCategory(cat)">
+        <div v-for="cat in uniqueCategories" :key="cat" class="category-tile"
+          :class="{ selected: selectedScenario === cat }" @click="toggleCategory(cat)">
           {{ cat }}
         </div>
       </div>
@@ -280,9 +316,8 @@
             <small class="text-muted"> ({{ input.display_units }})</small>
           </div>
           <div class="input-group input-group-sm">
-            <input type="number" class="form-control"
-                   :value="formatValue(input.value, input.scale)"
-                   @input="updateValue($event, key)" />
+            <input type="number" class="form-control" :value="formatValue(input.value, input.scale)"
+              @input="updateValue($event, key)" />
             <button class="btn btn-outline-secondary" type="button" @click="adjustValue(key, 10)">×10</button>
             <button class="btn btn-outline-secondary" type="button" @click="adjustValue(key, 0.1)">×0.1</button>
             <button class="btn btn-outline-secondary" type="button" @click="resetValue(key)">Reset</button>
@@ -325,11 +360,10 @@
                     {{ segment.text }}
                   </template>
                   <template v-else>
-                    <select class="form-select form-select-sm inline-select"
-                            v-model="fillSelections[segment.variable]"
-                            @change="onCardDropdownChange(segment.variable, $event.target.value)">
+                    <select class="form-select form-select-sm inline-select" v-model="fillSelections[segment.variable]"
+                      @change="onCardDropdownChange(segment.variable, $event.target.value)">
                       <option v-for="option in getFillOptionsForType(segment.variable)" :key="option.variable"
-                              :value="option.variable">
+                        :value="option.variable">
                         {{ option.text }}
                       </option>
                     </select>
@@ -356,10 +390,11 @@
               </label>
               <div class="input-group">
                 <input type="number" class="form-control"
-                       :value="formatValue(inputs[inputKey].value, inputs[inputKey].scale)"
-                       @input="updateValue($event, inputKey)" />
+                  :value="formatValue(inputs[inputKey].value, inputs[inputKey].scale)"
+                  @input="updateValue($event, inputKey)" />
                 <button class="btn btn-outline-secondary" type="button" @click="adjustValue(inputKey, 10)">×10</button>
-                <button class="btn btn-outline-secondary" type="button" @click="adjustValue(inputKey, 0.1)">×0.1</button>
+                <button class="btn btn-outline-secondary" type="button"
+                  @click="adjustValue(inputKey, 0.1)">×0.1</button>
                 <button class="btn btn-outline-secondary" type="button" @click="resetValue(inputKey)">Reset</button>
               </div>
               <button class="btn btn-secondary btn-sm mt-2" @click="showDetails(inputKey)">Inspect This Input</button>
@@ -383,17 +418,21 @@
             <summary style="font-size: 1.2rem; cursor: pointer;">About this page</summary>
             <div style="margin-top: 10px; line-height: 1.6;">
               <p>
-                <strong>This website is in an early beta state!</strong> Head over to our GitHub page for details and to contribute.
-                There are many open debates about policy and norms around the use of data for AI systems – and often, back-of-the-envelope estimates
+                <strong>This website is in an early beta state!</strong> Head over to our GitHub page for details and to
+                contribute.
+                There are many open debates about policy and norms around the use of data for AI systems – and often,
+                back-of-the-envelope estimates
                 like these are the starting point.
               </p>
               <p>
-                This interactive tool allows you to adjust assumptions and play with the numbers. The underlying math is simple arithmetic,
+                This interactive tool allows you to adjust assumptions and play with the numbers. The underlying math is
+                simple arithmetic,
                 yet it provides a framework to reason about order-of-magnitude estimates.
               </p>
               <p>
                 To participate in the discussion regarding reasonable default values, check out the
-                <a href="https://github.com/nickmvincent/data_napkin_math" target="_blank">GitHub page</a> or leave a comment in our public folder.
+                <a href="https://github.com/nickmvincent/data_napkin_math" target="_blank">GitHub page</a> or leave a
+                comment in our public folder.
               </p>
             </div>
           </details>
@@ -410,11 +449,16 @@
           <p><em>({{ selectedInputDetails.display_units }})</em></p>
           <ul class="list-unstyled" style="font-size: 0.95rem;">
             <li><strong>Raw Value:</strong> {{ selectedInputDetails.value }}</li>
-            <li v-if="selectedInputDetails.default_value"><strong>Default Value:</strong> {{ selectedInputDetails.default_value }}</li>
-            <li v-if="selectedInputDetails.value_description"><strong>Description:</strong> {{ selectedInputDetails.value_description }}</li>
-            <li v-if="selectedInputDetails.variable_type"><strong>Variable Type:</strong> {{ selectedInputDetails.variable_type }}</li>
-            <li v-if="selectedInputDetails.key_assumption"><strong>Assumption:</strong> {{ selectedInputDetails.key_assumption }}</li>
-            <li v-if="selectedInputDetails.source_notes"><strong>Source Notes:</strong> {{ selectedInputDetails.source_notes }}</li>
+            <li v-if="selectedInputDetails.default_value"><strong>Default Value:</strong> {{
+              selectedInputDetails.default_value }}</li>
+            <li v-if="selectedInputDetails.value_description"><strong>Description:</strong> {{
+              selectedInputDetails.value_description }}</li>
+            <li v-if="selectedInputDetails.variable_type"><strong>Variable Type:</strong> {{
+              selectedInputDetails.variable_type }}</li>
+            <li v-if="selectedInputDetails.key_assumption"><strong>Assumption:</strong> {{
+              selectedInputDetails.key_assumption }}</li>
+            <li v-if="selectedInputDetails.source_notes"><strong>Source Notes:</strong> {{
+              selectedInputDetails.source_notes }}</li>
             <li v-if="selectedInputDetails.units"><strong>Units:</strong> {{ selectedInputDetails.units }}</li>
             <li v-if="selectedInputDetails.source_url">
               <strong>Source URL:</strong>
@@ -436,13 +480,14 @@
       </div>
 
       <!-- Mobile Inspector Modal -->
-      <div class="modal fade" id="inspectorModal" tabindex="-1" aria-labelledby="inspectorModalLabel" aria-hidden="true">
+      <div class="modal fade" id="inspectorModal" tabindex="-1" aria-labelledby="inspectorModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-fullscreen-sm-down">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="inspectorModalLabel">Inspector</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                      @click="toggleRightPanel"></button>
+                @click="toggleRightPanel"></button>
             </div>
             <div class="modal-body">
               <div v-if="selectedInputDetails">
@@ -450,11 +495,16 @@
                 <p><em>({{ selectedInputDetails.display_units }})</em></p>
                 <ul class="list-unstyled" style="font-size: 0.95rem;">
                   <li><strong>Raw Value:</strong> {{ selectedInputDetails.value }}</li>
-                  <li v-if="selectedInputDetails.default_value"><strong>Default Value:</strong> {{ selectedInputDetails.default_value }}</li>
-                  <li v-if="selectedInputDetails.value_description"><strong>Description:</strong> {{ selectedInputDetails.value_description }}</li>
-                  <li v-if="selectedInputDetails.variable_type"><strong>Variable Type:</strong> {{ selectedInputDetails.variable_type }}</li>
-                  <li v-if="selectedInputDetails.key_assumption"><strong>Assumption:</strong> {{ selectedInputDetails.key_assumption }}</li>
-                  <li v-if="selectedInputDetails.source_notes"><strong>Source Notes:</strong> {{ selectedInputDetails.source_notes }}</li>
+                  <li v-if="selectedInputDetails.default_value"><strong>Default Value:</strong> {{
+                    selectedInputDetails.default_value }}</li>
+                  <li v-if="selectedInputDetails.value_description"><strong>Description:</strong> {{
+                    selectedInputDetails.value_description }}</li>
+                  <li v-if="selectedInputDetails.variable_type"><strong>Variable Type:</strong> {{
+                    selectedInputDetails.variable_type }}</li>
+                  <li v-if="selectedInputDetails.key_assumption"><strong>Assumption:</strong> {{
+                    selectedInputDetails.key_assumption }}</li>
+                  <li v-if="selectedInputDetails.source_notes"><strong>Source Notes:</strong> {{
+                    selectedInputDetails.source_notes }}</li>
                   <li v-if="selectedInputDetails.units"><strong>Units:</strong> {{ selectedInputDetails.units }}</li>
                   <li v-if="selectedInputDetails.source_url">
                     <strong>Source URL:</strong>
@@ -476,7 +526,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                      @click="toggleRightPanel">Close</button>
+                @click="toggleRightPanel">Close</button>
             </div>
           </div>
         </div>
@@ -487,7 +537,55 @@
   <!-- Bootstrap JS Bundle -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
   <script type="module">
-    import { scenariosData } from "./scenarios.js";
+    function evaluateOperations(ops, scenarioInputs, inputsDict) {
+      // Build a context with input values keyed by variable name.
+      const context = {};
+      for (const key of scenarioInputs) {
+        if (inputsDict[key] !== undefined) {
+          context[key] = inputsDict[key].value;
+        } else {
+          throw new Error(`Missing input value for key: ${key}`);
+        }
+      }
+
+      let result;
+      // Process each operation in sequence.
+      for (const op of ops) {
+        // Map each argument: if it’s in the form "{key}", look up in context.
+        const args = op.args.map(arg => {
+          if (arg.startsWith("{") && arg.endsWith("}")) {
+            const key = arg.slice(1, -1);
+            if (context.hasOwnProperty(key)) {
+              return context[key];
+            } else {
+              throw new Error(`Missing value for key "${key}" in operation`);
+            }
+          } else {
+            return parseFloat(arg);
+          }
+        });
+
+        switch (op.func) {
+          case "divide":
+            result = args[0] / args[1];
+            break;
+          case "multiply":
+            result = args[0] * args[1];
+            break;
+          // Add other operations as needed.
+          default:
+            throw new Error(`Unsupported function "${op.func}"`);
+        }
+
+        // If the operation has a name, store its result in the context for later use.
+        if (op.name) {
+          context[op.name] = result;
+        }
+      }
+
+      return result;
+    }
+
 
     const app = Vue.createApp({
       data() {
@@ -609,52 +707,67 @@
           }
         },
         onCardDropdownChange(variable, newValue) {
+          // Store just the variable name, not the display text
           this.fillSelections[variable] = newValue;
           this.applyCardVariantChange();
         },
+
         applyCardVariantChange() {
           this.scenariosData.forEach((calc) => {
             if (!calc.originalInputs) {
               calc.originalInputs = [...calc.inputs];
             }
+
+            // Replace the inputs with the selected variables
             calc.inputs = calc.originalInputs.map(key => {
+              // Use the stored selection if available, otherwise keep original
               return this.fillSelections[key] || key;
             });
           });
+
           this.updateCalculations();
         },
         updateCalculations() {
+          if (!this.scenariosData.length || !Object.keys(this.inputs).length) {
+            console.warn("Cannot update calculations: missing scenarios or inputs data");
+            return;
+          }
+
           this.scenariosData.forEach((calc) => {
-            const inputKeys = calc.inputs;
-            if (inputKeys) {
-              const inputValues = inputKeys.map(key => {
-                if (this.inputs[key] !== undefined) {
-                  return this.inputs[key].value;
-                } else {
-                  console.error(`Missing input value for key: ${key}`);
-                  return null;
-                }
-              });
-              if (!inputValues.includes(null)) {
-                if (typeof calc.calculate === "function") {
-                  try {
-                    const result = calc.calculate(...inputValues);
-                    calc.result.value = this.humanReadable(result);
-                    calc.result.rawValue = result;
-                  } catch (error) {
-                    console.error("Error evaluating calculation:", error, "Calculation:", calc.title);
-                    calc.result.value = "Error";
-                    calc.result.rawValue = null;
-                  }
-                } else {
-                  calc.result.value = "N/A";
-                  calc.result.rawValue = null;
-                }
-              } else {
-                console.error(`Missing inputs for calculation: ${calc.title}`);
-              }
-            } else {
+            if (!calc.inputs || !calc.inputs.length) {
               console.error(`Input keys not found for calculation: ${calc.title}`);
+              calc.result.value = "Error: Missing inputs";
+              return;
+            }
+
+            const inputValues = calc.inputs.map(key => {
+              if (!this.inputs[key]) {
+                console.error(`Missing input definition for key: ${key} in calculation: ${calc.title}`);
+                return null;
+              }
+              return this.inputs[key].value;
+            });
+
+            if (inputValues.includes(null)) {
+              console.error(`Missing inputs for calculation: ${calc.title}`);
+              calc.result.value = "Error: Invalid inputs";
+              return;
+            }
+
+            if (typeof calc.calculate !== "function") {
+              console.error(`No calculation function for: ${calc.title}`);
+              calc.result.value = "Error: No calculation method";
+              return;
+            }
+
+            try {
+              const result = calc.calculate(...inputValues);
+              calc.result.value = this.humanReadable(result);
+              calc.result.rawValue = result;
+            } catch (error) {
+              console.error("Error evaluating calculation:", error, "Calculation:", calc.title);
+              calc.result.value = "Error: Calculation failed";
+              calc.result.rawValue = null;
             }
           });
         },
@@ -674,33 +787,56 @@
           const adjustedValue = value / Math.pow(10, 3 * order);
           return `${adjustedValue.toFixed(2)} ${unitName}`;
         },
-        // Parse the description into segments (text and variable placeholders).
         parseDescription(desc) {
           const segments = [];
           let lastIndex = 0;
-          const regex = /\{([^}]+)\}/g;
+          // Match variable patterns like {variable_name}
+          const regex = /\{([a-z0-9_]+)\}/g;
           let match;
+
           while ((match = regex.exec(desc)) !== null) {
             if (match.index > lastIndex) {
               segments.push({ type: 'text', text: desc.slice(lastIndex, match.index) });
             }
-            segments.push({ type: 'variable', variable: match[1] });
+
+            const varName = match[1];
+            if (this.inputs[varName]) {
+              // This is a valid variable we can replace
+              segments.push({ type: 'variable', variable: varName });
+
+              // Initialize fillSelection for this variable if not set
+              if (!this.fillSelections[varName]) {
+                this.fillSelections[varName] = varName;
+              }
+            } else {
+              // If it's not a known variable, just keep the original text
+              segments.push({ type: 'text', text: match[0] });
+            }
+
             lastIndex = regex.lastIndex;
           }
+
           if (lastIndex < desc.length) {
             segments.push({ type: 'text', text: desc.slice(lastIndex) });
           }
+
           return segments;
         },
-        // Return fill options for a variable group (by variable_type).
         getFillOptionsForType(variable) {
           if (!this.inputs[variable]) return [];
+
           const vt = this.inputs[variable].variable_type;
+          if (!this.inputsByType[vt]) return [];
+
           return this.inputsByType[vt].map(input => ({
-            variable: input.variable,
-            text: input.phrase_for_card || input.nice_name
+            // The value should be just the variable name
+            variable: input.variable_name,
+            // The display text can include name and value
+            text: `${input.title || this.formatLabel(input.variable_name)} (${this.formatValue(input.value, input.scale)} ${input.display_units})`
           }));
         },
+
+
         getFillTextFor(variable) {
           const selectedVar = this.fillSelections[variable] || variable;
           return this.inputs[selectedVar] && this.inputs[selectedVar].phrase_for_card
@@ -712,41 +848,125 @@
         },
         async loadData() {
           try {
-            const gistUrl = "data/inputs.yaml";
-            const response = await fetch(gistUrl);
-            if (!response.ok) throw new Error("Failed to load data from Gist");
-            const yamlText = await response.text();
-            const data = jsyaml.load(yamlText);
-            console.log("Data successfully loaded");
+            // Load the aggregated JSON data.
+            const dataUrl = "data/data.json";
+            const response = await fetch(dataUrl);
+            if (!response.ok) throw new Error("Failed to load data");
+            const data = await response.json();
+            console.log("Data successfully loaded", data);
+
+            // In loadData() method, when processing inputs:
             this.inputs = data.inputs.reduce((acc, input) => {
-              acc[input.variable] = { ...input, default_value: input.value };
-              if (input.phrase_for_card) {
-                this.fillSelections[input.variable] = input.variable;
-              }
+              const key = input.variable_name;
+              acc[key] = {
+                ...input,
+                default_value: input.value,
+                value: input.value,
+                nice_name: input.title || this.formatLabel(key),
+                display_units: input.display_units || "",
+                variable_type: input.variable_type || "",
+                key_assumption: input.content ?
+                  input.content.match(/## Key Assumption\n\n(.*?)\n\n/s)?.[1] : "",
+                source_notes: input.content ?
+                  input.content.match(/## Source\n\n(.*)/s)?.[1] : "",
+                value_description: input.content ?
+                  input.content.match(/## Description\n\n(.*?)\n\n/s)?.[1] : ""
+              };
+
+              // Create a phrase_for_card property for dropdown display
+              acc[key].phrase_for_card = input.title ?
+                `${input.title} (${input.value} ${input.display_units})` :
+                `${this.formatLabel(key)} (${input.value} ${input.display_units})`;
+
+              // Initialize fill selection
+              this.fillSelections[key] = key;
               return acc;
             }, {});
-            this.variants = {};
-            Object.keys(this.inputs).forEach(key => {
-              this.variants[key] = key;
+            // In the loadData() method, modify the scenarios processing:
+            this.scenariosData = data.scenarios.map(scenario => {
+              // Create calculation function from operations JSON
+              let calculateFunc;
+              try {
+                if (scenario.calculation_type === "operations") {
+                  const operations = JSON.parse(scenario.operations);
+                  // In the loadData() method, when creating calculation functions:
+                  calculateFunc = function (...args) {
+                    let result = 0;
+                    let tempResults = {};
+
+                    // Map the input variables to their indices
+                    const inputMap = {};
+                    scenario.input_variables.forEach((varName, index) => {
+                      inputMap[varName] = index;
+                    });
+
+                    operations.forEach(op => {
+                      if (op.func === "multiply") {
+                        const values = op.args.map(arg => {
+                          if (typeof arg === 'string' && arg.startsWith('{') && arg.endsWith('}')) {
+                            const varName = arg.slice(1, -1);
+                            // Use the correct index based on our current inputs
+                            return tempResults[varName] !== undefined ?
+                              tempResults[varName] :
+                              args[inputMap[varName]];
+                          }
+                          return arg;
+                        });
+                        result = values.reduce((a, b) => a * b, 1);
+                      } else if (op.func === "divide") {
+                        const values = op.args.map(arg => {
+                          if (typeof arg === 'string' && arg.startsWith('{') && arg.endsWith('}')) {
+                            const varName = arg.slice(1, -1);
+                            return tempResults[varName] !== undefined ?
+                              tempResults[varName] :
+                              args[inputMap[varName]];
+                          }
+                          return arg;
+                        });
+                        result = values[0] / values[1];
+                      }
+
+                      // Store intermediate result if the operation has a name
+                      if (op.name) {
+                        tempResults[op.name] = result;
+                      }
+                    });
+
+                    return result;
+                  };
+                }
+              } catch (e) {
+                console.error("Failed to parse calculation operations:", e);
+                calculateFunc = () => 0;
+              }
+
+              return {
+                ...scenario,
+                inputs: scenario.input_variables || [],
+                calculate: calculateFunc,
+                result: {
+                  label: scenario.result_label || '',
+                  value: 0,
+                  rawValue: 0,
+                  units: scenario.result_units || ''
+                },
+                showDiagram: false,
+                showCalcDetails: false,
+                originalInputs: scenario.input_variables ? [...scenario.input_variables] : []
+              };
             });
+
             this.updateCalculations();
           } catch (e) {
-            console.error("Failed to load data from Gist:", e);
+            console.error("Failed to load data:", e);
           }
         },
+
         toggleDiagram(index) {
           this.scenariosData[index].showDiagram = !this.scenariosData[index].showDiagram;
         }
       },
       mounted() {
-        // Initialize scenariosData from the imported module—preserving calculation functions and original inputs.
-        this.scenariosData = scenariosData.map(calc => ({
-          ...calc,
-          result: { label: calc.result.label, value: 0, rawValue: 0, units: calc.result.units },
-          showDiagram: false,
-          showCalcDetails: false,
-          originalInputs: [...calc.inputs]
-        }));
         this.loadData();
 
         // Update mobile flag on window resize.
@@ -764,4 +984,5 @@
     app.mount("#app");
   </script>
 </body>
+
 </html>
