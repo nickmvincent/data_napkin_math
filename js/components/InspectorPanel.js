@@ -1,5 +1,5 @@
 /**
- * InspectorPanel Component
+ * InspectorPanel Component - Improved for symmetry
  * Renders the right sidebar for inspecting input details
  */
 export default {
@@ -39,36 +39,72 @@ export default {
   },
   
   template: `
-    <div v-if="!isMobile" ref="inspectorPanel" :class="['right-panel', { hidden: !visible }]" id="desktopInspector">
-      <button class="btn btn-outline-secondary btn-sm" @click="close">Hide Inspector</button>
-      <h5>Inspector</h5>
+    <div v-if="!isMobile" class="panel-content">
+      <div class="panel-header">
+        <h5>Inspector</h5>
+        <button class="btn btn-link btn-sm p-0" @click="close" v-if="selectedInput">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      
       <div v-if="selectedInput" class="inspector-content">
-        <h6>{{ selectedInput.nice_name || formatLabel(selectedKey) }}</h6>
-        <p><em>({{ selectedInput.display_units }})</em></p>
-        <ul class="list-unstyled" style="font-size: 0.95rem;">
-          <li><strong>Raw Value:</strong> {{ selectedInput.value }}</li>
-          <li v-if="selectedInput.default_value"><strong>Default Value:</strong> {{ selectedInput.default_value }}</li>
-          <li v-if="selectedInput.value_description"><strong>Description:</strong> {{ selectedInput.value_description }}</li>
-          <li v-if="selectedInput.variable_type"><strong>Variable Type:</strong> {{ selectedInput.variable_type }}</li>
-          <li v-if="selectedInput.key_assumption"><strong>Assumption:</strong> {{ selectedInput.key_assumption }}</li>
-          <li v-if="selectedInput.source_notes"><strong>Source Notes:</strong> {{ selectedInput.source_notes }}</li>
-          <li v-if="selectedInput.units"><strong>Units:</strong> {{ selectedInput.units }}</li>
-          <li v-if="selectedInput.source_url">
-            <strong>Source URL:</strong>
-            <a :href="selectedInput.source_url" target="_blank">{{ selectedInput.source_url }}</a>
-          </li>
-        </ul>
+        <div class="inspector-details">
+          <h6>{{ selectedInput.nice_name || formatLabel(selectedKey) }}</h6>
+          
+          <div class="detail-item">
+            <span class="detail-label">Current Value</span>
+            <span class="detail-value">{{ formatValue(selectedInput.value, selectedInput.scale) }} {{ selectedInput.display_units }}</span>
+          </div>
+          
+          <div class="detail-item" v-if="selectedInput.default_value">
+            <span class="detail-label">Default Value</span>
+            <span class="detail-value">{{ formatValue(selectedInput.default_value, selectedInput.scale) }} {{ selectedInput.display_units }}</span>
+          </div>
+          
+          <div class="detail-item" v-if="selectedInput.value_description">
+            <span class="detail-label">Description</span>
+            <span class="detail-value">{{ selectedInput.value_description }}</span>
+          </div>
+          
+          <div class="detail-item" v-if="selectedInput.variable_type">
+            <span class="detail-label">Variable Type</span>
+            <span class="detail-value">{{ formatLabel(selectedInput.variable_type) }}</span>
+          </div>
+          
+          <div class="detail-item" v-if="selectedInput.key_assumption">
+            <span class="detail-label">Key Assumption</span>
+            <span class="detail-value">{{ selectedInput.key_assumption }}</span>
+          </div>
+          
+          <div class="detail-item" v-if="selectedInput.source_notes">
+            <span class="detail-label">Source Notes</span>
+            <span class="detail-value">{{ selectedInput.source_notes }}</span>
+          </div>
+          
+          <div class="detail-item" v-if="selectedInput.source_url">
+            <span class="detail-label">Source</span>
+            <span class="detail-value">
+              <a :href="selectedInput.source_url" target="_blank" rel="noopener">
+                {{ formatUrl(selectedInput.source_url) }}
+                <i class="bi bi-box-arrow-up-right ms-1"></i>
+              </a>
+            </span>
+          </div>
+        </div>
+        
         <div v-if="changeLog.length" class="change-log">
-          <h6>Change Log:</h6>
-          <ul>
-            <li v-for="(entry, index) in changeLog" :key="index">
-              {{ entry.time }}: {{ entry.value }}
-            </li>
-          </ul>
+          <h6>Change History</h6>
+          <div class="change-log-list">
+            <div v-for="(entry, index) in changeLog" :key="index" class="change-log-item">
+              <span class="change-log-time">{{ entry.time }}:</span> {{ formatValue(entry.value, selectedInput.scale) }}
+            </div>
+          </div>
         </div>
       </div>
-      <div v-else>
-        <p>Click on an input (from the left panel or a scenario card) to inspect its details here.</p>
+      
+      <div v-else class="inspector-empty">
+        <i class="bi bi-info-circle" style="font-size: 2rem; color: var(--primary-color);"></i>
+        <p class="mt-3">Select an input variable to view its details</p>
       </div>
     </div>
     
@@ -82,33 +118,65 @@ export default {
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="close"></button>
           </div>
           <div class="modal-body">
+            <!-- Same content as desktop version -->
             <div v-if="selectedInput" class="inspector-content">
-              <h6>{{ selectedInput.nice_name || formatLabel(selectedKey) }}</h6>
-              <p><em>({{ selectedInput.display_units }})</em></p>
-              <ul class="list-unstyled" style="font-size: 0.95rem;">
-                <li><strong>Raw Value:</strong> {{ selectedInput.value }}</li>
-                <li v-if="selectedInput.default_value"><strong>Default Value:</strong> {{ selectedInput.default_value }}</li>
-                <li v-if="selectedInput.value_description"><strong>Description:</strong> {{ selectedInput.value_description }}</li>
-                <li v-if="selectedInput.variable_type"><strong>Variable Type:</strong> {{ selectedInput.variable_type }}</li>
-                <li v-if="selectedInput.key_assumption"><strong>Assumption:</strong> {{ selectedInput.key_assumption }}</li>
-                <li v-if="selectedInput.source_notes"><strong>Source Notes:</strong> {{ selectedInput.source_notes }}</li>
-                <li v-if="selectedInput.units"><strong>Units:</strong> {{ selectedInput.units }}</li>
-                <li v-if="selectedInput.source_url">
-                  <strong>Source URL:</strong>
-                  <a :href="selectedInput.source_url" target="_blank">{{ selectedInput.source_url }}</a>
-                </li>
-              </ul>
+              <div class="inspector-details">
+                <h6>{{ selectedInput.nice_name || formatLabel(selectedKey) }}</h6>
+                
+                <div class="detail-item">
+                  <span class="detail-label">Current Value</span>
+                  <span class="detail-value">{{ formatValue(selectedInput.value, selectedInput.scale) }} {{ selectedInput.display_units }}</span>
+                </div>
+                
+                <div class="detail-item" v-if="selectedInput.default_value">
+                  <span class="detail-label">Default Value</span>
+                  <span class="detail-value">{{ formatValue(selectedInput.default_value, selectedInput.scale) }} {{ selectedInput.display_units }}</span>
+                </div>
+                
+                <div class="detail-item" v-if="selectedInput.value_description">
+                  <span class="detail-label">Description</span>
+                  <span class="detail-value">{{ selectedInput.value_description }}</span>
+                </div>
+                
+                <div class="detail-item" v-if="selectedInput.variable_type">
+                  <span class="detail-label">Variable Type</span>
+                  <span class="detail-value">{{ formatLabel(selectedInput.variable_type) }}</span>
+                </div>
+                
+                <div class="detail-item" v-if="selectedInput.key_assumption">
+                  <span class="detail-label">Key Assumption</span>
+                  <span class="detail-value">{{ selectedInput.key_assumption }}</span>
+                </div>
+                
+                <div class="detail-item" v-if="selectedInput.source_notes">
+                  <span class="detail-label">Source Notes</span>
+                  <span class="detail-value">{{ selectedInput.source_notes }}</span>
+                </div>
+                
+                <div class="detail-item" v-if="selectedInput.source_url">
+                  <span class="detail-label">Source</span>
+                  <span class="detail-value">
+                    <a :href="selectedInput.source_url" target="_blank" rel="noopener">
+                      {{ formatUrl(selectedInput.source_url) }}
+                      <i class="bi bi-box-arrow-up-right ms-1"></i>
+                    </a>
+                  </span>
+                </div>
+              </div>
+              
               <div v-if="changeLog.length" class="change-log">
-                <h6>Change Log:</h6>
-                <ul>
-                  <li v-for="(entry, index) in changeLog" :key="index">
-                    {{ entry.time }}: {{ entry.value }}
-                  </li>
-                </ul>
+                <h6>Change History</h6>
+                <div class="change-log-list">
+                  <div v-for="(entry, index) in changeLog" :key="index" class="change-log-item">
+                    <span class="change-log-time">{{ entry.time }}:</span> {{ formatValue(entry.value, selectedInput.scale) }}
+                  </div>
+                </div>
               </div>
             </div>
-            <div v-else>
-              <p>Click on an input (from the left panel or a scenario card) to inspect its details here.</p>
+            
+            <div v-else class="inspector-empty">
+              <i class="bi bi-info-circle" style="font-size: 2rem; color: var(--primary-color);"></i>
+              <p class="mt-3">Select an input variable to view its details</p>
             </div>
           </div>
           <div class="modal-footer">
@@ -122,7 +190,32 @@ export default {
   methods: {
     formatLabel(key) {
       if (!key) return '';
-      return key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase());
+      return key.replace(/_/g, ' ').replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase());
+    },
+    
+    formatValue(value, scale) {
+      if (value === undefined || value === null) return 'N/A';
+      const scaledValue = scale ? value / scale : value;
+      
+      // Format with appropriate precision
+      if (Math.abs(scaledValue) >= 1000) {
+        return scaledValue.toLocaleString(undefined, { maximumFractionDigits: 2 });
+      } else if (Math.abs(scaledValue) >= 1) {
+        return scaledValue.toFixed(2);
+      } else {
+        return scaledValue.toPrecision(3);
+      }
+    },
+    
+    formatUrl(url) {
+      if (!url) return '';
+      // Remove protocol and www
+      let formatted = url.replace(/^https?:\/\/(www\.)?/, '');
+      // Truncate if too long
+      if (formatted.length > 40) {
+        return formatted.substring(0, 37) + '...';
+      }
+      return formatted;
     },
     
     close() {
@@ -131,8 +224,9 @@ export default {
     
     scrollToTop() {
       this.$nextTick(() => {
-        if (this.$refs.inspectorPanel) {
-          this.$refs.inspectorPanel.scrollTop = 0;
+        const content = this.$el.querySelector('.inspector-content');
+        if (content) {
+          content.scrollTop = 0;
         }
       });
     }

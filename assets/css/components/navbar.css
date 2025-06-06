@@ -30,14 +30,25 @@
     border-radius: var(--border-radius);
 }
 
-/* Category Selector (tiles) */
+/* Category Selector (tiles) - Updated for control bar */
+.category-selector {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+    white-space: nowrap;
+}
+
 .category-tile {
-    padding: 8px 16px;
+    padding: 6px 14px;
     border: 2px solid var(--primary-color);
     border-radius: var(--border-radius);
     background: var(--white);
     cursor: pointer;
     transition: all 0.2s ease;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .category-tile:hover {
@@ -53,6 +64,25 @@
     box-shadow: 0 2px 8px rgba(16, 163, 127, 0.5);
 }
 
+/* Scrollbar styling for category selector */
+.control-bar-center::-webkit-scrollbar {
+    height: 4px;
+}
+
+.control-bar-center::-webkit-scrollbar-track {
+    background: var(--light-gray);
+    border-radius: 2px;
+}
+
+.control-bar-center::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 2px;
+}
+
+.control-bar-center::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-hover);
+}
+
 /* Mobile nav adjustments */
 @media (max-width: 768px) {
     .navbar-toggler {
@@ -65,5 +95,10 @@
         padding: 10px;
         border-radius: var(--border-radius);
         box-shadow: var(--box-shadow);
+    }
+    
+    .category-tile {
+        padding: 5px 12px;
+        font-size: 0.8rem;
     }
 }

@@ -1,4 +1,4 @@
-/* Layout Styles  */
+/* Layout Styles - Improved for symmetry and better UX */
 
 /* App container */
 #app {
@@ -34,11 +34,23 @@
   flex: 1 1 auto;
   display: flex;
   justify-content: center;
+  align-items: center;
   padding: 0 20px;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .control-bar-right {
   text-align: right;
+}
+
+/* Category selector inside control bar */
+.control-bar-center .category-selector {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  margin: 0;
+  flex-wrap: nowrap;
 }
 
 /* Main Layout Container */
@@ -198,6 +210,7 @@ header.page-header p {
   .control-bar {
     flex-wrap: wrap;
     height: auto;
+    min-height: 100px;
     padding: 10px;
   }
   
@@ -207,18 +220,30 @@ header.page-header p {
     width: 100%;
     text-align: center;
     margin-bottom: 5px;
+    min-width: unset;
+  }
+  
+  .control-bar-center {
+    order: 3;
+    max-width: 100%;
+    padding: 5px 0;
+  }
+  
+  .control-bar-left {
+    order: 1;
   }
   
   .control-bar-right {
-    margin-bottom: 0;
+    order: 2;
+    margin-bottom: 10px;
   }
   
   .app-layout {
-    padding-top: 140px; /* Adjust for wrapped control bar */
+    padding-top: 156px; /* Adjust for wrapped control bar */
   }
   
   .side-panel {
-    top: 140px;
+    top: 156px;
     width: 100%;
     max-width: 400px;
   }

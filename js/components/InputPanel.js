@@ -1,5 +1,5 @@
 /**
- * InputPanel Component
+ * InputPanel Component - Improved for symmetry
  * Renders the left sidebar containing all input variables
  */
 export default {
@@ -17,22 +17,39 @@ export default {
     },
 
     template: `
-      <div :class="['left-panel', { hidden: !visible }]">
-        <h5 style="margin-bottom: 20px;">All Inputs</h5>
-        <div v-for="(input, key) in inputs" :key="key" class="input-row">
-          <div>
-            <strong>{{ input.nice_name || formatLabel(key) }}</strong>
-            <small class="text-muted"> ({{ input.display_units }})</small>
-          </div>
-          <div class="input-group input-group-sm">
-            <input type="number" class="form-control" :value="formatValue(input.value, input.scale)"
-              @input="updateValue($event, key)" />
-            <button class="btn btn-outline-secondary" type="button" @click="adjustValue(key, 10)">×10</button>
-            <button class="btn btn-outline-secondary" type="button" @click="adjustValue(key, 0.1)">×0.1</button>
-            <button class="btn btn-outline-secondary" type="button" @click="resetValue(key)">Reset</button>
-          </div>
-          <div class="mt-1">
-            <button class="btn btn-outline-secondary btn-sm" @click="inspect(key)">Inspect</button>
+      <div class="panel-content">
+        <div class="panel-header">
+          <h5>All Inputs</h5>
+          <span class="text-muted">{{ Object.keys(inputs).length }} variables</span>
+        </div>
+        <div class="input-list">
+          <div v-for="(input, key) in inputs" :key="key" class="input-row">
+            <div class="input-header">
+              <span class="input-name">{{ input.nice_name || formatLabel(key) }}</span>
+              <small class="input-units">({{ input.display_units }})</small>
+            </div>
+            <div class="input-controls">
+              <input 
+                type="number" 
+                class="form-control form-control-sm" 
+                :value="formatValue(input.value, input.scale)"
+                @input="updateValue($event, key)" 
+              />
+              <button class="btn btn-outline-secondary btn-sm" type="button" @click="adjustValue(key, 10)">
+                ×10
+              </button>
+              <button class="btn btn-outline-secondary btn-sm" type="button" @click="adjustValue(key, 0.1)">
+                ×0.1
+              </button>
+              <button class="btn btn-outline-secondary btn-sm" type="button" @click="resetValue(key)">
+                <i class="bi bi-arrow-counterclockwise"></i>
+              </button>
+            </div>
+            <div class="input-actions">
+              <button class="btn btn-link btn-sm p-0" @click="inspect(key)">
+                <i class="bi bi-info-circle"></i> Details
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 /**
- * Main Application
+ * Main Application - Updated for improved UI
  * Entry point for the Data Napkin Math application
  */
 import DataService from './services/DataService.js';
@@ -34,7 +34,6 @@ try {
                 isLoading: true,
                 error: null,
                 isMobile: window.innerWidth < 768,
-                mobileInspectorOpen: false,
 
                 // Data
                 inputs: {},
@@ -79,14 +78,6 @@ try {
                     .filter(scenario => scenario.category)
                     .map(scenario => scenario.category);
                 return ["All", ...new Set(cats)];
-            },
-
-            // Change inspector button text based on mobile/desktop and open state
-            inspectorButtonText() {
-                if (this.isMobile) {
-                    return this.mobileInspectorOpen ? "Hide Inspector" : "Show Inspector";
-                }
-                return this.rightPanelOpen ? "Hide Inspector" : "Show Inspector";
             }
         },
 
@@ -94,9 +85,14 @@ try {
             recalculate() {
                 this.updateCalculations();
             },
+
             // Panel toggling
             toggleLeftPanel() {
                 this.leftPanelOpen = !this.leftPanelOpen;
+                // Close right panel on mobile if opening left
+                if (this.isMobile && this.leftPanelOpen) {
+                    this.rightPanelOpen = false;
+                }
             },
 
             toggleRightPanel() {
@@ -106,11 +102,15 @@ try {
                     modal.toggle();
                 } else {
                     this.rightPanelOpen = !this.rightPanelOpen;
+                    // Close left panel on mobile if opening right
+                    if (this.isMobile && this.rightPanelOpen) {
+                        this.leftPanelOpen = false;
+                    }
                 }
             },
 
             toggleCategory(category) {
-                this.selectedScenario = (this.selectedScenario === category) ? "All" : category;
+                this.selectedScenario = category;
             },
 
             // Format utilities
@@ -121,7 +121,6 @@ try {
             // Value modification
             updateValue(payload) {
                 try {
-                    // Check if we received a proper payload object
                     if (!payload || typeof payload !== 'object') {
                         console.error("Invalid payload in updateValue:", payload);
                         return;
@@ -135,7 +134,6 @@ try {
 
                     const scale = this.inputs[key].scale || 1;
 
-                    // Safely parse the value to a number
                     let newVal;
                     try {
                         newVal = parseFloat(value) * scale;
@@ -148,7 +146,6 @@ try {
                         return;
                     }
 
-                    // Update the value if it has changed
                     if (this.inputs[key].value !== newVal) {
                         this.inputs[key].value = newVal;
                         this.logChange(key, newVal);
@@ -161,7 +158,6 @@ try {
 
             adjustValue(payload) {
                 try {
-                    // Check if we received a proper payload object
                     if (!payload || typeof payload !== 'object') {
                         console.error("Invalid payload in adjustValue:", payload);
                         return;
@@ -178,11 +174,9 @@ try {
                         return;
                     }
 
-                    // Get current value and calculate new value
                     const currentVal = parseFloat(this.inputs[key].value) || 0;
                     const newVal = currentVal * factor;
 
-                    // Update value and trigger recalculation
                     this.inputs[key].value = newVal;
                     this.logChange(key, newVal);
                     this.updateCalculations();
@@ -225,6 +219,11 @@ try {
 
                     const timestamp = new Date().toLocaleTimeString();
                     this.logs[key].push({ time: timestamp, value: newValue });
+
+                    // Keep only last 20 changes
+                    if (this.logs[key].length > 20) {
+                        this.logs[key] = this.logs[key].slice(-20);
+                    }
                 } catch (error) {
                     console.error("Error in logChange:", error);
                 }
@@ -347,7 +346,6 @@ try {
 
                 scenario.showExplore = !scenario.showExplore;
 
-                // Initialize props if needed
                 if (scenario.showExplore && !scenario.hasOwnProperty('plotGenerated')) {
                     scenario.plotGenerated = false;
                     scenario.chartError = false;
@@ -355,7 +353,6 @@ try {
                     scenario.sensitivityRange = 5;
                 }
 
-                // Clean up chart when hiding
                 if (!scenario.showExplore && scenario.chart) {
                     destroyChart(scenario.chart);
                     scenario.chart = null;
@@ -369,10 +366,8 @@ try {
 
                 if (!selectedVar) return;
 
-                // Reset chart state
                 scenario.chartError = false;
 
-                // Ensure Chart.js is loaded
                 if (!this.plotLibraryLoaded) {
                     try {
                         await loadChartLibrary();
@@ -386,7 +381,6 @@ try {
                 }
 
                 try {
-                    // Generate chart data
                     const chartData = createSensitivityData(
                         scenario,
                         selectedVar,
@@ -394,14 +388,12 @@ try {
                         scenario.sensitivityRange
                     );
 
-                    // Get chart configuration
                     const config = createChartConfig(
                         chartData,
                         scenario,
                         this.inputs[selectedVar]
                     );
 
-                    // Get container
                     const containerId = `plot-container-${index}`;
                     const container = document.getElementById(containerId);
 
@@ -409,25 +401,21 @@ try {
                         throw new Error(`Container ${containerId} not found`);
                     }
 
-                    // Clean up existing chart
                     if (scenario.chart) {
                         destroyChart(scenario.chart);
                         scenario.chart = null;
                     }
 
-                    // Create canvas if needed
                     let canvas = container.querySelector('canvas');
                     if (!canvas) {
                         canvas = document.createElement('canvas');
                         container.appendChild(canvas);
                     }
 
-                    // Create chart
                     const ctx = canvas.getContext('2d');
                     scenario.chart = new Chart(ctx, config);
                     scenario.plotGenerated = true;
 
-                    // Update calculations after chart generation
                     this.updateCalculations();
 
                 } catch (error) {
@@ -446,50 +434,40 @@ try {
                 try {
                     console.log("App: Starting data loading process");
 
-                    // Attempt to load data directly from a static path first
                     try {
                         const data = await DataService.loadData('data/data.json');
 
-                        // Set processed data
                         this.inputs = data.inputs;
                         this.scenariosData = data.scenarios;
 
-                        // Initialize fillSelections
                         Object.keys(this.inputs).forEach(key => {
                             this.fillSelections[key] = key;
                         });
 
-                        // Calculate initial values
                         this.updateCalculations();
                         console.log("App: Data loaded and calculations performed successfully");
 
-                        // Preload Chart.js for later use
                         loadChartLibrary().then(() => {
                             this.plotLibraryLoaded = true;
                             console.log("App: Chart.js loaded successfully");
                         }).catch(error => {
                             console.warn('App: Chart.js preload failed:', error);
-                            // Don't fail the whole app if chart loading fails
                         });
 
                     } catch (primaryError) {
                         console.error("App: Primary data path failed:", primaryError);
 
-                        // Try an alternate path as fallback
                         try {
                             console.log("App: Trying alternate data path...");
                             const data = await DataService.loadData('/data/data.json');
 
-                            // Set processed data
                             this.inputs = data.inputs;
                             this.scenariosData = data.scenarios;
 
-                            // Initialize fillSelections
                             Object.keys(this.inputs).forEach(key => {
                                 this.fillSelections[key] = key;
                             });
 
-                            // Calculate initial values
                             this.updateCalculations();
                             console.log("App: Data loaded from alternate path successfully");
                         } catch (secondaryError) {
@@ -500,7 +478,6 @@ try {
                 } catch (error) {
                     console.error("App: All data loading attempts failed:", error);
                     this.error = `Failed to load data: ${error.message}`;
-                    // Display a user-friendly error message
                     alert(`Error loading data. Please check if the data/data.json file exists and is properly formatted.\n\nDetails: ${error.message}`);
                 } finally {
                     this.isLoading = false;
@@ -512,32 +489,31 @@ try {
         mounted() {
             console.log("App: mounted() lifecycle hook called");
 
-            // Load data
             this.loadData();
 
             // Track window size for responsive design
-            window.addEventListener('resize', () => {
+            this.handleResize = () => {
                 this.isMobile = window.innerWidth < 768;
-            });
+            };
+            
+            window.addEventListener('resize', this.handleResize);
 
             // Set up modal events for mobile
             const modalEl = document.getElementById('inspectorModal');
             if (modalEl) {
                 modalEl.addEventListener('shown.bs.modal', () => {
-                    this.mobileInspectorOpen = true;
+                    // Modal is shown
                 });
 
                 modalEl.addEventListener('hidden.bs.modal', () => {
-                    this.mobileInspectorOpen = false;
+                    // Modal is hidden
                 });
             }
         },
 
-        // Clean up on unmount
         unmounted() {
-            window.removeEventListener('resize', () => { });
+            window.removeEventListener('resize', this.handleResize);
 
-            // Clean up any charts
             this.scenariosData.forEach(scenario => {
                 if (scenario.chart) {
                     destroyChart(scenario.chart);
@@ -547,13 +523,11 @@ try {
     });
 
     console.log("App created, mounting to #app element");
-    // Mount the app
     app.mount("#app");
     console.log("App mounting complete");
 
 } catch (error) {
     console.error("Fatal error during initialization:", error);
-    // Show error on page
     document.body.innerHTML = `
     <div style="color: red; margin: 20px; padding: 20px; border: 1px solid red;">
       <h2>Application Initialization Error</h2>
