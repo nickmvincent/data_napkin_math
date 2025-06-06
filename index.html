@@ -51,24 +51,29 @@
   </nav>
 
   <!-- Vue App Container -->
-  <div id="app" style="padding-top: 70px;">
-    <!-- Top Toolbar -->
-    <div class="toolbar">
-      <button class="btn btn-primary" @click="toggleLeftPanel">
-        {{ leftPanelOpen ? "Hide Inputs" : "Show Inputs" }}
-      </button>
-      <button class="btn btn-primary" @click="toggleRightPanel">
-        {{ inspectorButtonText }}
-      </button>
-    </div>
-
-    <!-- Category Selector -->
-    <div class="container my-3">
-      <category-selector 
-        :categories="uniqueCategories" 
-        :selected-category="selectedScenario"
-        @category-selected="toggleCategory"
-      ></category-selector>
+  <div id="app">
+    <div class="control-bar">
+      <div class="control-bar-left">
+        <button class="btn btn-sm" :class="leftPanelOpen ? 'btn-primary' : 'btn-outline-primary'" @click="toggleLeftPanel">
+          <i class="bi" :class="leftPanelOpen ? 'bi-layout-sidebar-inset' : 'bi-layout-sidebar'"></i>
+          {{ leftPanelOpen ? "Hide" : "Show" }} Inputs
+        </button>
+      </div>
+      
+      <div class="control-bar-center">
+        <category-selector 
+          :categories="uniqueCategories" 
+          :selected-category="selectedScenario"
+          @category-selected="toggleCategory"
+        ></category-selector>
+      </div>
+      
+      <div class="control-bar-right">
+        <button class="btn btn-sm" :class="rightPanelOpen ? 'btn-primary' : 'btn-outline-primary'" @click="toggleRightPanel">
+          {{ rightPanelOpen ? "Hide" : "Show" }} Inspector
+          <i class="bi" :class="rightPanelOpen ? 'bi-layout-sidebar-inset-reverse' : 'bi-layout-sidebar-reverse'"></i>
+        </button>
+      </div>
     </div>
 
     <!-- Loading & Error States -->
@@ -88,20 +93,22 @@
       </div>
     </div>
 
-    <!-- Main Flex Container: Left Panel & Main Content -->
-    <div v-else class="main-container">
+    <!-- Main Layout Container -->
+    <div v-else class="app-layout">
       <!-- Left Panel: Inputs -->
-      <input-panel 
-        :inputs="inputs" 
-        :visible="leftPanelOpen"
-        @update-value="updateValue"
-        @adjust-value="adjustValue"
-        @reset-value="resetValue"
-        @inspect="showDetails"
-      ></input-panel>
+      <aside :class="['side-panel', 'left-panel', { 'panel-open': leftPanelOpen }]">
+        <input-panel 
+          :inputs="inputs" 
+          :visible="leftPanelOpen"
+          @update-value="updateValue"
+          @adjust-value="adjustValue"
+          @reset-value="resetValue"
+          @inspect="showDetails"
+        ></input-panel>
+      </aside>
 
-      <!-- Main Content: Scenario Cards -->
-      <div class="main-content" :style="{ marginRight: (!isMobile && rightPanelOpen) ? '400px' : '0' }">
+      <!-- Main Content -->
+      <main class="main-content">
         <header id="headerContent" class="page-header">
           <h1>Napkin Math for Training Data Value</h1>
           <p>
@@ -112,33 +119,35 @@
         </header>
 
         <section id="napkinMath">
-          <h2 style="margin-top: 40px; margin-bottom: 20px;">Scenarios</h2>
-          <p style="font-size: 1.1rem; margin-bottom: 30px;">
+          <h2 class="section-title">Scenarios</h2>
+          <p class="section-description">
             Explore the various scenarios below. Modify input values and choose fill options to see how outcomes change.
           </p>
           
           <!-- Scenario Cards -->
-          <scenario-card
-            v-for="(scenario, index) in filteredScenarios"
-            :key="index"
-            :scenario="scenario"
-            :index="index"
-            :inputs="inputs"
-            :fill-selections="fillSelections"
-            @toggle-explore="toggleExplore"
-            @update-value="updateValue"
-            @adjust-value="adjustValue"
-            @reset-value="resetValue"
-            @inspect-input="showDetails"
-            @variable-change="onCardDropdownChange"
-            @generate-plot="generateSensitivityPlot"
-          ></scenario-card>
+          <div class="scenarios-container">
+            <scenario-card
+              v-for="(scenario, index) in filteredScenarios"
+              :key="index"
+              :scenario="scenario"
+              :index="index"
+              :inputs="inputs"
+              :fill-selections="fillSelections"
+              @toggle-explore="toggleExplore"
+              @update-value="updateValue"
+              @adjust-value="adjustValue"
+              @reset-value="resetValue"
+              @inspect-input="showDetails"
+              @variable-change="onCardDropdownChange"
+              @generate-plot="generateSensitivityPlot"
+            ></scenario-card>
+          </div>
         </section>
 
         <section id="aboutContent" class="about-section">
           <details open>
             <summary>About this page</summary>
-            <div style="margin-top: 10px; line-height: 1.6;">
+            <div class="about-content">
               <p>
                 <strong>This website is in an early beta state!</strong> Head over to our GitHub page for details and to
                 contribute.
@@ -157,18 +166,20 @@
             </div>
           </details>
         </section>
-      </div>
+      </main>
 
       <!-- Right Panel: Inspector -->
-      <inspector-panel
-        :selected-key="selectedInputKey"
-        :selected-input="selectedInputDetails"
-        :inputs="inputs"
-        :logs="logs"
-        :visible="rightPanelOpen"
-        :is-mobile="isMobile"
-        @close="toggleRightPanel"
-      ></inspector-panel>
+      <aside :class="['side-panel', 'right-panel', { 'panel-open': rightPanelOpen }]">
+        <inspector-panel
+          :selected-key="selectedInputKey"
+          :selected-input="selectedInputDetails"
+          :inputs="inputs"
+          :logs="logs"
+          :visible="rightPanelOpen"
+          :is-mobile="isMobile"
+          @close="toggleRightPanel"
+        ></inspector-panel>
+      </aside>
     </div>
   </div>
 
