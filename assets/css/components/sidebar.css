@@ -1,120 +1,225 @@
-/* Sidebar Component Styles */
+/* Sidebar Component Styles - Improved for symmetry */
 
-/* Left Panel: Input Sidebar */
-.left-panel {
-    flex: 0 0 400px;
-    padding: 20px;
-    height: calc(100vh - 70px);
-    overflow-y: auto;
-    scroll-behavior: smooth;
-    background: var(--white);
-    border-right: 1px solid var(--border-color);
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    text-align: left;
-    transition: transform 0.3s ease;
+/* Common panel styles */
+.side-panel {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Right Panel: Inspector Sidebar */
-.right-panel {
-    position: fixed;
-    top: 70px;
-    right: 0;
-    bottom: 0;
-    width: 400px;
-    padding: 20px;
-    overflow-y: auto;
-    scroll-behavior: smooth;
-    background: var(--white);
-    border-left: 1px solid var(--border-color);
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    text-align: left;
-    transition: transform 0.3s ease;
-    z-index: 1000;
+/* Panel headers */
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid var(--primary-color);
 }
 
-/* Left panel input rows */
+.panel-header h5 {
+  margin: 0;
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* Left Panel specific */
+.left-panel .input-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
 .input-row {
-    border-bottom: 1px solid var(--medium-gray);
-    padding-bottom: 8px;
-    margin-bottom: 8px;
+  background: var(--light-gray);
+  border-radius: var(--border-radius);
+  padding: 12px;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
 }
 
-.input-row:last-child {
-    border-bottom: none;
+.input-row:hover {
+  background: var(--medium-gray);
+  transform: translateX(2px);
 }
 
-/* Inspector content */
-.inspector-content h6 {
-    margin-bottom: 5px;
+.input-row .input-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
 }
 
-.inspector-content p {
-    font-style: italic;
-    color: var(--dark-gray);
-    margin-bottom: 10px;
+.input-row .input-name {
+  font-weight: 600;
+  color: var(--black);
 }
 
-.inspector-content ul {
-    list-style: none;
-    padding-left: 0;
-    margin-bottom: 15px;
+.input-row .input-units {
+  font-size: 0.85rem;
+  color: var(--dark-gray);
 }
 
-.inspector-content li {
-    margin-bottom: 5px;
+.input-controls {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
 }
 
-/* Change Log styling in inspector */
+.input-controls .form-control {
+  flex: 1;
+}
+
+.input-controls .btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+.input-actions {
+  text-align: right;
+}
+
+/* Right Panel specific */
+.right-panel .inspector-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.inspector-empty {
+  text-align: center;
+  color: var(--dark-gray);
+  padding: 40px 20px;
+  font-style: italic;
+}
+
+.inspector-details {
+  background: var(--light-gray);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.inspector-details h6 {
+  color: var(--primary-color);
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.inspector-details .detail-item {
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--medium-gray);
+}
+
+.inspector-details .detail-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.inspector-details .detail-label {
+  font-weight: 600;
+  color: var(--black);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.inspector-details .detail-value {
+  color: var(--dark-gray);
+  word-break: break-word;
+}
+
+.inspector-details .detail-value a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.inspector-details .detail-value a:hover {
+  text-decoration: underline;
+}
+
+/* Change Log */
 .change-log {
-    margin-top: 15px;
-    font-size: 0.9rem;
-    border-top: 1px solid var(--medium-gray);
-    padding-top: 10px;
+  background: var(--white);
+  border: 1px solid var(--medium-gray);
+  border-radius: var(--border-radius);
+  padding: 15px;
 }
 
 .change-log h6 {
-    margin-bottom: 5px;
+  color: var(--primary-color);
+  margin-bottom: 10px;
+  font-weight: 600;
 }
 
-.change-log ul {
-    list-style: none;
-    padding-left: 0;
+.change-log-list {
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: 0.85rem;
 }
 
-.change-log li {
-    border-bottom: 1px dashed var(--medium-gray);
-    padding: 3px 0;
+.change-log-item {
+  padding: 4px 0;
+  border-bottom: 1px dashed var(--medium-gray);
+  color: var(--dark-gray);
+}
+
+.change-log-item:last-child {
+  border-bottom: none;
+}
+
+.change-log-time {
+  font-weight: 600;
+  color: var(--black);
+}
+
+/* Scrollbar styling for panels */
+.side-panel::-webkit-scrollbar,
+.input-list::-webkit-scrollbar,
+.inspector-content::-webkit-scrollbar,
+.change-log-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.side-panel::-webkit-scrollbar-track,
+.input-list::-webkit-scrollbar-track,
+.inspector-content::-webkit-scrollbar-track,
+.change-log-list::-webkit-scrollbar-track {
+  background: var(--light-gray);
+  border-radius: 3px;
+}
+
+.side-panel::-webkit-scrollbar-thumb,
+.input-list::-webkit-scrollbar-thumb,
+.inspector-content::-webkit-scrollbar-thumb,
+.change-log-list::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 3px;
+}
+
+.side-panel::-webkit-scrollbar-thumb:hover,
+.input-list::-webkit-scrollbar-thumb:hover,
+.inspector-content::-webkit-scrollbar-thumb:hover,
+.change-log-list::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-hover);
 }
 
 /* Mobile adjustments */
 @media (max-width: 768px) {
-
-    .left-panel,
-    .right-panel {
-        position: fixed;
-        width: 100%;
-        height: calc(100vh - 70px);
-        z-index: 1050;
-    }
-
-    .left-panel {
-        left: 0;
-        transform: translateX(-100%);
-    }
-
-    .left-panel.visible {
-        transform: translateX(0);
-    }
-
-    .right-panel {
-        transform: translateX(100%);
-    }
-
-    .right-panel.visible {
-        transform: translateX(0);
-    }
+  .side-panel {
+    padding: 15px;
+  }
+  
+  .panel-header {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+  }
+  
+  .input-row {
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .inspector-details {
+    padding: 15px;
+  }
 }
