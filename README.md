@@ -15,11 +15,10 @@ The web page loads default **inputs** from a collaboratively edited database.
 - **Contribute to collaborative "peer production"**: Help us improve our inputs and scenarios! In the spirit of Wikipedia and open-source software, we want anyone to be able to contriubte data or debate and contest certain assumptions. The inputs for the website are loaded from a YAML file in the project GitHub repository: you can suggest additions and changes via GitHub or Google Drive.
 
 ## Contributing
-There are three ways to contribute to the data and assumptions underlying the Data Napkin Math Project. We present them in order of how much "friction" is involved for a given kind of contribution.
+There are three ways to contribute to the data and assumptions underlying the Data Napkin Math Project
 
-1. (Very low friction) **Note or Issue**: Just send us a note (email, social media DM, etc. -- as of Nov 25, 2024, the best person to contact is [Nick Vincent](https://bsky.app/profile/nickmvincent.bsky.social)) or open a GitHub [Issue](https://github.com/nickmvincent/data_napkin_math/issues) with your thoughts.
-2. (Low friction) **Google Drive Comments**: If you prefer, you can leave suggestions or feedback directly in our [public Google Drive folder (comment link)](https://drive.google.com/drive/folders/1_UKI4KXKeItuDDCmOtxx8cgmoh3weui5?usp=sharing). At this link, you can find copies of the inputs and scenarios in both CSV (Google Sheet) and Markdown (Google Doc) format. Take your pick of what feels easier to leave comments in!
-3. (The most friction, but greatly appreciated) **Pull Requests via GitHub**: Edit the `data/inputs.yaml` file and/or `./scenarios.js`, run `node test` to validate that your edits meet the schema requirements and that you calculations are runnable, and then submit your changes as Pull Request.
-
+1. Google Form: Submit suggestions via a Google form [here](https://forms.gle/5AB1gK99fdbSFeMx7).
+2. Open a GitHub Issue [here](https://github.com/nickmvincent/data_napkin_math/issues) with your thoughts.
+2.  **Pull Requests via GitHub**: Edit or add files to the `data` directory run `node src/buildSite.ts` to validate that your edits meet the schema requirements and that you calculations are runnable, and then submit your changes as Pull Request.
 
 For detailed guidelines, see the [Contributor Guide](https://github.com/nickmvincent/data_napkin_math/wiki/Contributor-Guide) in the [Wiki](https://github.com/nickmvincent/data_napkin_math/wiki).
