@@ -1,10 +1,9 @@
 /**
- * ScenarioCard Component
+ * ScenarioCard Component - With visualization temporarily hidden
  * Renders a single scenario card with exploration capabilities
  */
 
 import SensitivityChart from './SensitivityChart.js';
-
 
 export default {
   name: 'ScenarioCard',
@@ -67,16 +66,16 @@ export default {
 
     <!-- Explore button -->
     <button class="btn btn-primary explore-button" @click="toggleExplore">
-      {{ scenario.showExplore ? 'Hide Exploration Tools' : 'Explore what would happen if these numbers changed' }}
+      {{ scenario.showExplore ? 'Hide Details' : 'Explore what would happen if these numbers changed' }}
     </button>
 
     <!-- Exploration area -->
     <div v-if="scenario.showExplore" class="exploration-area">
-      <!-- Visualization area -->
+      <!-- Visualization temporarily commented out -->
+      <!-- 
       <div class="visualization-area">
         <div class="row">
           <div class="col-lg-12">
-            <!-- Use SensitivityChart component instead of inline implementation -->
             <sensitivity-chart
               :scenario="scenario"
               :index="index"
@@ -87,9 +86,10 @@ export default {
           </div>
         </div>
       </div>
+      -->
 
       <!-- Input controls area -->
-      <div class="input-controls mt-4">
+      <div class="input-controls">
         <h5>Adjust Input Values</h5>
         <div v-for="inputKey in scenario.inputs" :key="inputKey" class="mb-3 input-control-row">
           <label class="form-label">
@@ -220,9 +220,11 @@ export default {
       this.$emit('variable-change', { variable, value });
     },
 
+    /* Commenting out for now - visualization methods
     generateSensitivityPlot() {
       this.$emit('generate-plot', this.index);
     },
+    */
 
     parseDescription(desc) {
       if (!desc) return [];
@@ -297,9 +299,10 @@ export default {
       // Emit an event to parent if needed
       this.$emit('update-scenario', this.index, this.scenario);
     },
+    
     /**
- * Add this method to the methods section of ScenarioCard.js
- */
+     * Format operation for human readability
+     */
     formatOperation(operationsJson) {
       try {
         // Parse the operations JSON
@@ -347,7 +350,7 @@ export default {
     },
 
     /**
-     * Add this helper method if you don't already have it
+     * Human readable number formatting
      */
     humanReadable(value) {
       if (value === undefined || value === null) return 'N/A';

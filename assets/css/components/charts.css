@@ -1,6 +1,18 @@
 /* Chart Component Styles - Compact Design */
 
-/* Exploration area container */
+/* TEMPORARILY HIDDEN - Visualization features commented out */
+/* 
+.exploration-area {
+  margin-top: 15px;
+  padding: 20px;
+  background-color: var(--light-gray);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--medium-gray);
+  animation: fadeIn 0.3s ease;
+}
+*/
+
+/* Simplified exploration area without visualization */
 .exploration-area {
   margin-top: 15px;
   padding: 20px;
