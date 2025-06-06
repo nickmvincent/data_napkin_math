@@ -37,7 +37,6 @@ data-napkin-math/
 │   └── *.md                # Individual scenario definitions
 ├── src/                    # TypeScript source files for build process
 │   ├── buildSite.ts        # Main build script for generating data.json
-│   └── types.ts            # TypeScript type definitions
 ├── js/
 │   ├── main.js             # Main application entry point
 │   ├── components/         # Vue components
