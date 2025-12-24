@@ -1,0 +1,61 @@
+---
+import Layout from '../layouts/Layout.astro';
+import NapkinApp from '../components/NapkinApp.vue';
+import { getCollection } from 'astro:content';
+
+// Load content from markdown files
+const inputEntries = await getCollection('inputs');
+const scenarioEntries = await getCollection('scenarios');
+
+// Transform inputs into the format expected by the app
+const inputs: Record<string, any> = {};
+for (const entry of inputEntries) {
+  const { data } = entry;
+  inputs[data.variable_name] = {
+    id: entry.id,
+    title: data.title,
+    value: data.value,
+    default_value: data.value,
+    scale: data.scale || 1,
+    display_units: data.display_units,
+    variable_name: data.variable_name,
+    variable_type: data.variable_type,
+    entity: data.entity,
+    units: data.units,
+    source_url: data.source_url,
+    nice_name: data.title,
+  };
+}
+
+// Transform scenarios into the format expected by the app
+const scenarios = scenarioEntries.map(entry => {
+  const { data } = entry;
+  return {
+    id: entry.id,
+    title: data.title,
+    description: data.description,
+    input_variables: data.input_variables,
+    inputs: data.input_variables, // Initially same as input_variables
+    calculation_type: data.calculation_type,
+    operations: data.operations,
+    result_label: data.result_label,
+    result_units: data.result_units,
+    category: data.category,
+    result: {
+      value: 'Loading...',
+      rawValue: null,
+      units: data.result_units,
+    },
+    showExplore: false,
+    showCalcDetails: false,
+  };
+});
+---
+
+<Layout title="Data Napkin Math">
+  <NapkinApp
+    client:load
+    initialInputs={inputs}
+    initialScenarios={scenarios}
+  />
+</Layout>
